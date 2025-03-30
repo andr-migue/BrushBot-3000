@@ -1,0 +1,122 @@
+[gd_scene load_steps=4 format=3 uid="uid://bujh2qfwudnhv"]
+
+[ext_resource type="FontFile" uid="uid://q1d5uc4gcdc5" path="res://Fonts/ttf/FiraCode-Regular.ttf" id="1_luy3d"]
+[ext_resource type="Script" uid="uid://dapjfjmom3kjk" path="res://Scripts/GraphicalUi.cs" id="1_xlf2y"]
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
+number_color = Color(0.819608, 0.603922, 0.4, 1)
+symbol_color = Color(1, 1, 1, 1)
+function_color = Color(0.380392, 0.686275, 0.937255, 1)
+member_variable_color = Color(0.878431, 0.423529, 0.458824, 1)
+keyword_colors = {
+"GoTo": "#c678dd",
+"bool": "#c678dd",
+"class": "#c678dd",
+"double": "#c678dd",
+"else": "#c678dd",
+"for": "#c678dd",
+"if": "#c678dd",
+"int": "#c678dd",
+"long": "#c678dd",
+"override": "#c678dd",
+"private": "#c678dd",
+"public": "#c678dd",
+"string": "#c678dd",
+"void": "#c678dd",
+"while": "#c678dd"
+}
+color_regions = {
+"\" \"": Color(0.596078, 0.764706, 0.47451, 1),
+"' '": Color(0.596078, 0.764706, 0.47451, 1)
+}
+
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xlf2y")
+saveDialog = NodePath("FileDialog - Save")
+loadDialog = NodePath("FileDialog - Load")
+edit = NodePath("")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16704, 0.138309, 0.216306, 1)
+
+[node name="CodeEdit" type="CodeEdit" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 80.0
+offset_right = -266.0
+offset_bottom = -148.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1.15235, 1.15536)
+theme_override_colors/background_color = Color(0.145362, 0.160229, 0.189965, 1)
+theme_override_fonts/font = ExtResource("1_luy3d")
+theme_override_font_sizes/font_size = 20
+scroll_smooth = true
+syntax_highlighter = SubResource("CodeHighlighter_ekyth")
+highlight_all_occurrences = true
+highlight_current_line = true
+draw_tabs = true
+draw_spaces = true
+gutters_draw_breakpoints_gutter = true
+gutters_draw_bookmarks = true
+gutters_draw_executing_lines = true
+gutters_draw_line_numbers = true
+gutters_draw_fold_gutter = true
+code_completion_enabled = true
+indent_use_spaces = true
+indent_automatic = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+
+[node name="SaveFile" type="Button" parent="."]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 190.0
+offset_bottom = 62.0
+theme_override_fonts/font = ExtResource("1_luy3d")
+theme_override_font_sizes/font_size = 20
+text = "Save File
+"
+
+[node name="LoadFile" type="Button" parent="."]
+layout_mode = 0
+offset_left = 208.0
+offset_top = 16.0
+offset_right = 382.0
+offset_bottom = 62.0
+theme_override_fonts/font = ExtResource("1_luy3d")
+theme_override_font_sizes/font_size = 20
+text = "Load File"
+
+[node name="FileDialog - Save" type="FileDialog" parent="."]
+initial_position = 1
+access = 2
+
+[node name="FileDialog - Load" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a File"
+initial_position = 1
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+
+[connection signal="pressed" from="SaveFile" to="." method="PressSaveFile"]
+[connection signal="pressed" from="LoadFile" to="." method="PressLoadFile"]
+[connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
+[connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
