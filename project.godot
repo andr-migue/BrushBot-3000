@@ -12,15 +12,31 @@ config_version=5
 
 config/name="BrushBot 3000"
 run/main_scene="res://Scenes/graphical_ui.tscn"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GlobalData="*res://Scripts/GlobalData.cs"
 
 [display]
 
-window/size/viewport_width=1920
-window/size/viewport_height=1080
+window/size/viewport_width=2560
+window/size/viewport_height=1440
+window/size/mode=2
 window/size/resizable=false
+window/stretch/mode="canvas_items"
+window/stretch/aspect="ignore"
 
 [dotnet]
 
 project/assembly_name="BrushBot 3000"
+
+[gui]
+
+common/snap_controls_to_pixels=false
+fonts/dynamic_fonts/use_oversampling=false
+
+[internationalization]
+
+locale/include_text_server_data=true

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://jqc35b4xbcty"
+path="res://.godot/imported/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3-68dfbe555607ea8e7a74e95914908121.mp3str"
+
+[deps]
+
+source_file="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3"
+dest_files=["res://.godot/imported/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3-68dfbe555607ea8e7a74e95914908121.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
