@@ -63,17 +63,17 @@ texture = ExtResource("2_j80mx")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1512.0
+offset_left = 1488.0
 offset_top = 64.0
-offset_right = 1704.0
+offset_right = 1680.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="ColorRect3" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1725.0
+offset_left = 1701.0
 offset_top = 64.0
-offset_right = 1840.0
+offset_right = 1816.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
@@ -112,9 +112,9 @@ script = ExtResource("2_ion1r")
 
 [node name="Play" type="Button" parent="."]
 layout_mode = 0
-offset_left = 624.0
+offset_left = 600.0
 offset_top = 64.0
-offset_right = 728.0
+offset_right = 704.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -136,9 +136,9 @@ expand_icon = true
 
 [node name="Pause" type="Button" parent="."]
 layout_mode = 0
-offset_left = 752.0
+offset_left = 728.0
 offset_top = 64.0
-offset_right = 872.0
+offset_right = 848.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -148,9 +148,9 @@ expand_icon = true
 
 [node name="GoFinal" type="Button" parent="."]
 layout_mode = 0
-offset_left = 896.0
+offset_left = 872.0
 offset_top = 64.0
-offset_right = 998.0
+offset_right = 974.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -160,9 +160,9 @@ expand_icon = true
 
 [node name="Reset" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1024.0
+offset_left = 1000.0
 offset_top = 64.0
-offset_right = 1141.0
+offset_right = 1117.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -172,9 +172,9 @@ expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 1168.0
+offset_left = 1144.0
 offset_top = 64.0
-offset_right = 2107.0
+offset_right = 2083.0
 offset_bottom = 128.0
 theme_override_constants/separation = 26
 
@@ -221,6 +221,7 @@ scale = Vector2(1.25, 1.24609)
 texture = ExtResource("9_63pmv")
 
 [node name="CodeEdit" type="CodeEdit" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
