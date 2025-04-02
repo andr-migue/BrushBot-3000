@@ -22,10 +22,10 @@ GlobalData="*res://Scripts/GlobalData.cs"
 [display]
 
 window/size/viewport_width=2560
-window/size/viewport_height=1440
-window/size/mode=2
-window/size/resizable=false
-window/stretch/mode="canvas_items"
+window/size/viewport_height=1600
+window/size/mode=3
+window/size/borderless=true
+window/stretch/mode="viewport"
 window/stretch/aspect="ignore"
 
 [dotnet]

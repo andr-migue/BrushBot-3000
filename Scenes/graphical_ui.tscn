@@ -1,19 +1,17 @@
 [gd_scene load_steps=14 format=3 uid="uid://bujh2qfwudnhv"]
 
 [ext_resource type="Script" uid="uid://dapjfjmom3kjk" path="res://Scripts/GraphicalUi.cs" id="1_xlf2y"]
-[ext_resource type="Texture2D" uid="uid://dedsb2ra3514m" path="res://Assets/DALL·E 2025-03-30 22.03.23 - A Renaissance-style textured background with warm sepia tones, resembling aged parchment or old sketchbook paper. The surface is adorned with subtle, .webp" id="2_63pmv"]
 [ext_resource type="Script" uid="uid://cofuij8ctruj7" path="res://Scripts/GridGenerator.cs" id="2_ion1r"]
+[ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
 [ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="3_j80mx"]
 [ext_resource type="Texture2D" uid="uid://dn02c53sfrxry" path="res://Assets/pause.png" id="4_txjyv"]
 [ext_resource type="Texture2D" uid="uid://blt0uvq3pt5lw" path="res://Assets/sync.png" id="5_ion1r"]
+[ext_resource type="Texture2D" uid="uid://d1xmt7leqg06x" path="res://Assets/error.png" id="6_7lov0"]
 [ext_resource type="Texture2D" uid="uid://bmrifp745rdrm" path="res://Assets/next.png" id="6_cot47"]
 [ext_resource type="FontFile" uid="uid://ibsvww3uwbxl" path="res://Fonts/Fira Code/ttf/FiraCode-Regular.ttf" id="8_7wjfc"]
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
-
-[sub_resource type="Environment" id="Environment_63pmv"]
-ssao_enabled = true
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
 number_color = Color(0.819608, 0.603922, 0.4, 1)
@@ -43,7 +41,7 @@ color_regions = {
 "' '": Color(0.596078, 0.764706, 0.47451, 1)
 }
 
-[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "rows", "collumns", "grid", "audio")]
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "SizeEdit", "grid", "audio")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,32 +52,28 @@ script = ExtResource("1_xlf2y")
 saveDialog = NodePath("FileDialog - Save")
 loadDialog = NodePath("FileDialog - Load")
 edit = NodePath("CodeEdit")
-rows = NodePath("HBoxContainer/Rows")
-collumns = NodePath("HBoxContainer/Collums")
+SizeEdit = NodePath("HBoxContainer/Size")
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_63pmv")
-
 [node name="Dall·e2025-03-3022_03_23-ARenaissance-styleTexturedBackgroundWithWarmSepiaTones,ResemblingAgedParchmentOrOldSketchbookPaper_TheSurfaceIsAdornedWithSubtle," type="Sprite2D" parent="."]
-position = Vector2(1280, 719.999)
-scale = Vector2(1.42857, 1.40625)
-texture = ExtResource("2_63pmv")
+position = Vector2(1352, 800)
+scale = Vector2(1.76042, 1.5625)
+texture = ExtResource("2_j80mx")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1360.0
+offset_left = 1512.0
 offset_top = 64.0
-offset_right = 1552.0
+offset_right = 1704.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="ColorRect3" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1573.0
+offset_left = 1725.0
 offset_top = 64.0
-offset_right = 1688.0
+offset_right = 1840.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
@@ -109,54 +103,78 @@ access = 2
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 192.0
-offset_right = 1256.0
-offset_bottom = 1400.0
+offset_left = 48.0
+offset_top = 272.0
+offset_right = 1264.0
+offset_bottom = 1488.0
 texture = ExtResource("3_j80mx")
 script = ExtResource("2_ion1r")
 
 [node name="Play" type="Button" parent="."]
 layout_mode = 0
-offset_left = 632.0
+offset_left = 624.0
 offset_top = 64.0
-offset_right = 696.0
+offset_right = 728.0
 offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Play"
 icon = ExtResource("3_ekyth")
+expand_icon = true
+
+[node name="Exit" type="Button" parent="."]
+layout_mode = 0
+offset_left = 2392.0
+offset_top = 64.0
+offset_right = 2494.0
+offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Exit"
+icon = ExtResource("6_7lov0")
 expand_icon = true
 
 [node name="Pause" type="Button" parent="."]
 layout_mode = 0
-offset_left = 728.0
+offset_left = 752.0
 offset_top = 64.0
-offset_right = 792.0
+offset_right = 872.0
 offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Pause"
 icon = ExtResource("4_txjyv")
 expand_icon = true
 
 [node name="GoFinal" type="Button" parent="."]
 layout_mode = 0
-offset_left = 824.0
+offset_left = 896.0
 offset_top = 64.0
-offset_right = 888.0
+offset_right = 998.0
 offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Skip"
 icon = ExtResource("6_cot47")
 expand_icon = true
 
 [node name="Reset" type="Button" parent="."]
 layout_mode = 0
-offset_left = 920.0
+offset_left = 1024.0
 offset_top = 64.0
-offset_right = 984.0
+offset_right = 1141.0
 offset_bottom = 128.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Reset"
 icon = ExtResource("5_ion1r")
 expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 1016.0
+offset_left = 1168.0
 offset_top = 64.0
-offset_right = 1955.0
+offset_right = 2107.0
 offset_bottom = 128.0
 theme_override_constants/separation = 26
 
@@ -189,37 +207,28 @@ text = "Mute"
 alignment = 1
 icon_alignment = 1
 
-[node name="Rows" type="LineEdit" parent="HBoxContainer"]
+[node name="Size" type="LineEdit" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-placeholder_text = "Filas"
-alignment = 1
-expand_to_text_length = true
-
-[node name="Collums" type="LineEdit" parent="HBoxContainer"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("8_7wjfc")
-theme_override_font_sizes/font_size = 25
-placeholder_text = "Columnas"
+placeholder_text = "Size"
 alignment = 1
 expand_to_text_length = true
 
 [node name="ChatGptImage30Mar2025,214940(2)" type="Sprite2D" parent="."]
-position = Vector2(1920, 824)
+position = Vector2(1920, 968)
 scale = Vector2(1.25, 1.24609)
 texture = ExtResource("9_63pmv")
 
 [node name="CodeEdit" type="CodeEdit" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 1304.0
-offset_top = 192.0
-offset_right = -40.0
-offset_bottom = -40.0
+offset_left = 1312.0
+offset_top = 272.0
+offset_right = -56.0
+offset_bottom = -112.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/word_highlighted_color = Color(0, 0, 0, 0.470588)
@@ -268,11 +277,22 @@ stream = ExtResource("10_7wjfc")
 volume_db = 24.0
 autoplay = true
 
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 1904.0
+offset_top = 1552.0
+offset_right = 2536.0
+offset_bottom = 1584.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Developed by Miguel Andrés Cazorla Zamora"
+
 [connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
 [connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
+[connection signal="pressed" from="Play" to="." method="PressPlay"]
+[connection signal="pressed" from="Exit" to="." method="PressExit"]
 [connection signal="pressed" from="HBoxContainer/SaveFile" to="." method="PressSaveFile"]
 [connection signal="pressed" from="HBoxContainer/LoadFile" to="." method="PressLoadFile"]
 [connection signal="pressed" from="HBoxContainer/CheckButton" to="." method="PressEditCode"]
 [connection signal="pressed" from="HBoxContainer/CheckButton2" to="." method="PressMute"]
-[connection signal="text_submitted" from="HBoxContainer/Rows" to="." method="ChangeRows"]
-[connection signal="text_submitted" from="HBoxContainer/Collums" to="." method="ChangeCollumns"]
+[connection signal="text_submitted" from="HBoxContainer/Size" to="." method="ChangeSize"]

@@ -1,19 +1,34 @@
 using Godot;
+using Interpreter;
 public partial class GraphicalUi : Control
 {
     [Export] FileDialog saveDialog;
     [Export] FileDialog loadDialog;
     [Export] CodeEdit edit;
-    [Export] LineEdit rows;
-    [Export] LineEdit collumns;
+    [Export] LineEdit SizeEdit;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
     public override void _Ready()
     {
-        rows.Text = GlobalData.Rows + "";
-        collumns.Text = GlobalData.Collumns + "";
+        SizeEdit.Text = GlobalData.Size + "";
     }
-
+    void PressPlay()
+    {
+        GD.Print("Has pulsado Play");
+        string code = edit.Text;
+        Lexer lexer = new Lexer(code);
+        Token token;
+        do
+        {
+            token = lexer.GetNextToken();
+            GD.Print(token);
+        }
+        while (token.Type != TokenType.EndOfFile);
+    }
+    void PressExit()
+    {
+        GetTree().Quit();
+    }
     void PressSaveFile()
     {
         saveDialog.Popup();
@@ -42,14 +57,9 @@ public partial class GraphicalUi : Control
         edit.Text = script.GetAsText();
         script.Close();
     }
-    void ChangeRows(string text) {
-        if (IsNumber(text)) GlobalData.Rows = int.Parse(text);
-        else rows.Text = GlobalData.Rows + "";
-        grid.QueueRedraw();
-    }
-    void ChangeCollumns(string text) {
-        if (IsNumber(text)) GlobalData.Collumns = int.Parse(text);
-        else collumns.Text = GlobalData.Collumns + "";
+    void ChangeSize(string text) {
+        if (IsNumber(text)) GlobalData.Size = int.Parse(text);
+        else SizeEdit.Text = GlobalData.Size + "";
         grid.QueueRedraw();
     }
     private bool IsNumber(string text) {
