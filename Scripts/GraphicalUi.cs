@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Godot;
 using Interpreter;
 public partial class GraphicalUi : Control
@@ -6,25 +7,35 @@ public partial class GraphicalUi : Control
     [Export] FileDialog saveDialog;
     [Export] FileDialog loadDialog;
     [Export] CodeEdit edit;
+    [Export] TextEdit text;
     [Export] LineEdit SizeEdit;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
     public override void _Ready()
     {
         SizeEdit.Text = GlobalData.Size + "";
-    }
-    void PressPlay()
-    {
-        GD.Print("Has pulsado Play");
+        text.Text = "\0";
         string code = edit.Text;
         Lexer lexer = new Lexer(code);
-        Token token;
-        do
+        List<Token> tokens = lexer.GetTokens();
+        
+        foreach (var token in tokens)
         {
-            token = lexer.GetNextToken();
-            GD.Print(token);
+            text.Text += token.ToString() + '\n';
         }
-        while (token.Type != TokenType.EndOfFile);
+    }
+    void PressPlay(){}
+    void TextChanged()
+    {
+        text.Text = "\0";
+        string code = edit.Text;
+        Lexer lexer = new Lexer(code);
+        List<Token> tokens = lexer.GetTokens();
+        
+        foreach (var token in tokens)
+        {
+            text.Text += token.ToString() + '\n';
+        }
     }
     void PressExit()
     {
@@ -41,6 +52,10 @@ public partial class GraphicalUi : Control
     void PressEditCode()
     {
         edit.Visible = !edit.Visible;
+    }
+    void ShowLexer()
+    {
+        text.Visible = !text.Visible;
     }
     void PressMute()
     {

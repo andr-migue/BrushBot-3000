@@ -1,63 +1,30 @@
 using System.Collections.Generic;
 namespace Interpreter
 {
-    public enum TokenType
-    {
-        Instruction,
-        Identifier,
-        Number,
-        Color,
-        Operator,
-        BiOperator,
-        Delimiter,
-        JumpLine,
-        Unknown,
-        EndOfFile
-    }
-    public class Token
-    {
-        public TokenType Type {get; set; }
-        public string Value {get; set; }
-        public int Ln {get; set; }
-        public int Col {get; set; }
-        public Token(TokenType type, string value, int ln, int col)
-        {
-            Type = type;
-            Value = value;
-            Ln = ln;
-            Col = col;
-        }
-        public override string ToString()
-        {
-            return $"Token ({Type}, Value: {Value}, Ln: {Ln}, Col: {Col})";
-        }
-    }
     public class Lexer
     {
         private string Text;
         private int Position;
+        private List<Token> tokens;
         private char CurrentChar;
-        public int CurrentLn { get; private set; } = 1;
-        public int CurrentCol { get; private set; } = 0;
+        private int CurrentLn = 1;
+        private int CurrentCol = 0;
         public Lexer(string text)
         {
             Text = text;
             Position = 0;
+            tokens = new List<Token>();
             CurrentChar = Text.Length > 0 ? Text[0] : '\0';
         }
-        private HashSet<string> Instructions = new HashSet<string>
+        private HashSet<string> Keywords = new HashSet<string>
         {
             "Spawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle",
             "GetActualX", "GetActualY", "GetCanvasSize", "GetColorCount", "IsBrushColor", "IsBrushSize",
-            "IsCanvasColor", "IsColor"
+            "IsCanvasColor"
         };
         private HashSet<string> Operators = new HashSet<string>
         {
-            "+", "-", "*", "/", "=", "<", ">", "%"
-        };
-        private HashSet<string> BiOperators = new HashSet<string>
-        {
-            "**", "<=", ">=", "<-", "=="
+            "<-","**", "<=", ">=", "==", "!=", "&&", "||", "+", "-", "*", "/", "<", ">", "%", "!"
         };
         private HashSet<string> Delimiters = new HashSet<string>
         {
@@ -78,6 +45,16 @@ namespace Interpreter
             int PeekPosition = Position + 1;
             return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
         }
+        private char DoublePeek()
+        {
+            int PeekPosition = Position + 2;
+            return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
+        }
+        private char Before()
+        {
+            int BeforePosition = Position - 1;
+            return BeforePosition > 0 ? Text[BeforePosition] : '\0';
+        }
         private Token GetJumpLine()
         {
             int ActualLn = CurrentLn;
@@ -88,13 +65,13 @@ namespace Interpreter
                 Advance();
                 Advance();
                 CurrentCol = 0;
-                return new Token(TokenType.JumpLine, "JumpLine", ActualLn, ActualCol);
+                return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
             }
             else // Mac o Unix
             {
                 Advance();
                 CurrentCol = 0;
-                return new Token(TokenType.JumpLine, "JumpLine", ActualLn, ActualCol);
+                return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
             }
         }
         private Token GetNumber()
@@ -125,35 +102,52 @@ namespace Interpreter
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, CurrentCol);
             else return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
         }
-        private Token GetInstruction()
+        private Token GetWord()
         {
+            char before = Before();
             string result = "";
+
             while (CurrentChar != '\0' && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '_' || CurrentChar == '-'))
             {
                 result += CurrentChar;
                 Advance();
             }
 
-            if (Instructions.Contains(result)) return new Token(TokenType.Instruction, result, CurrentLn, CurrentCol);
-            else return new Token(TokenType.Identifier, result, CurrentLn, CurrentCol);
+            if (Keywords.Contains(result))
+            {
+                return new Token(TokenType.Keyword, result, CurrentLn, CurrentCol);
+            }
+            else if ((before == '\r' || before == '\n' || before == ' ') && Peek() == '<' && DoublePeek() == '-') 
+            {
+                return new Token(TokenType.Variable, result, CurrentLn, CurrentCol);
+            }
+            else
+            {
+                return new Token(TokenType.Label, result, CurrentLn, CurrentCol);
+            }
         }
         private Token GetOperatorOrDelimiter()
         {
             string result = "";
             result += CurrentChar;
-            if (Operators.Contains(result))
+            if (Operators.Contains(result) || result == "=")
             {
                 string next = result + Peek();
 
-                if (BiOperators.Contains(next)){
+                if (Operators.Contains(next)){
                     Advance();
                     Advance();
-                    return new Token(TokenType.BiOperator, next, CurrentLn, CurrentCol);
+                    return new Token(TokenType.Operator, next, CurrentLn, CurrentCol);
+                }
+                else if (Operators.Contains(result))
+                {
+                    Advance();
+                    return new Token(TokenType.Operator, result, CurrentLn, CurrentCol);
                 }
                 else
                 {
                     Advance();
-                    return new Token(TokenType.Operator, result, CurrentLn, CurrentCol);
+                    return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
                 }
             }
             else if (Delimiters.Contains(result))
@@ -167,23 +161,25 @@ namespace Interpreter
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
-        public Token GetNextToken()
+        public List<Token> GetTokens()
         {
             while (CurrentChar != '\0')
             {
-                if (CurrentChar == '\r' || CurrentChar == '\n') return GetJumpLine();
+                if (CurrentChar == '\r' || CurrentChar == '\n') tokens.Add(GetJumpLine());
                 
                 else if (char.IsWhiteSpace(CurrentChar)) Advance();
                 
-                else if (char.IsDigit(CurrentChar)) return GetNumber();
+                else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
                 
-                else if (CurrentChar == '"') return GetColor();
+                else if (CurrentChar == '"') tokens.Add(GetColor());
                 
-                else if (char.IsLetter(CurrentChar)) return GetInstruction();
+                else if (char.IsLetter(CurrentChar)) tokens.Add(GetWord());
                 
-                else return GetOperatorOrDelimiter();
+                else tokens.Add(GetOperatorOrDelimiter());
             }
-            return new Token(TokenType.EndOfFile, "EndOfFile", CurrentLn, CurrentCol);
+            tokens.Add(new Token(TokenType.EndOfFile, "END", CurrentLn, CurrentCol));
+
+            return tokens;
         }
     }
 }

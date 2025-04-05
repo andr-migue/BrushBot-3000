@@ -41,7 +41,7 @@ color_regions = {
 "' '": Color(0.596078, 0.764706, 0.47451, 1)
 }
 
-[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "SizeEdit", "grid", "audio")]
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "text", "SizeEdit", "grid", "audio")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -52,6 +52,7 @@ script = ExtResource("1_xlf2y")
 saveDialog = NodePath("FileDialog - Save")
 loadDialog = NodePath("FileDialog - Load")
 edit = NodePath("CodeEdit")
+text = NodePath("TextEdit")
 SizeEdit = NodePath("HBoxContainer/Size")
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
@@ -63,58 +64,33 @@ texture = ExtResource("2_j80mx")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
+offset_left = 1272.0
+offset_top = 64.0
+offset_right = 1464.0
+offset_bottom = 128.0
+color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
+
+[node name="ColorRect4" type="ColorRect" parent="."]
+layout_mode = 0
 offset_left = 1488.0
 offset_top = 64.0
-offset_right = 1680.0
+offset_right = 1784.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="ColorRect3" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1701.0
+offset_left = 1808.0
 offset_top = 64.0
-offset_right = 1816.0
+offset_right = 1920.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
-[node name="FileDialog - Save" type="FileDialog" parent="."]
-transparent_bg = true
-initial_position = 1
-size = Vector2i(1280, 720)
-unresizable = true
-transparent = true
-dialog_hide_on_ok = true
-dialog_autowrap = true
-access = 2
-
-[node name="FileDialog - Load" type="FileDialog" parent="."]
-auto_translate_mode = 1
-transparent_bg = true
-title = "Open a File"
-initial_position = 1
-size = Vector2i(1280, 720)
-unresizable = true
-transparent = true
-ok_button_text = "Open"
-dialog_hide_on_ok = true
-dialog_autowrap = true
-file_mode = 0
-access = 2
-
-[node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 48.0
-offset_top = 272.0
-offset_right = 1264.0
-offset_bottom = 1488.0
-texture = ExtResource("3_j80mx")
-script = ExtResource("2_ion1r")
-
 [node name="Play" type="Button" parent="."]
 layout_mode = 0
-offset_left = 600.0
+offset_left = 384.0
 offset_top = 64.0
-offset_right = 704.0
+offset_right = 488.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -124,9 +100,9 @@ expand_icon = true
 
 [node name="Exit" type="Button" parent="."]
 layout_mode = 0
-offset_left = 2392.0
+offset_left = 2176.0
 offset_top = 64.0
-offset_right = 2494.0
+offset_right = 2278.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -136,9 +112,9 @@ expand_icon = true
 
 [node name="Pause" type="Button" parent="."]
 layout_mode = 0
-offset_left = 728.0
+offset_left = 512.0
 offset_top = 64.0
-offset_right = 848.0
+offset_right = 632.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -148,9 +124,9 @@ expand_icon = true
 
 [node name="GoFinal" type="Button" parent="."]
 layout_mode = 0
-offset_left = 872.0
+offset_left = 656.0
 offset_top = 64.0
-offset_right = 974.0
+offset_right = 758.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -160,9 +136,9 @@ expand_icon = true
 
 [node name="Reset" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1000.0
+offset_left = 784.0
 offset_top = 64.0
-offset_right = 1117.0
+offset_right = 901.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -172,9 +148,9 @@ expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 1144.0
+offset_left = 928.0
 offset_top = 64.0
-offset_right = 2083.0
+offset_right = 2015.0
 offset_bottom = 128.0
 theme_override_constants/separation = 26
 
@@ -199,6 +175,14 @@ text = "Edit Code"
 alignment = 1
 icon_alignment = 1
 
+[node name="CheckButton3" type="CheckButton" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Lexical Analysis"
+alignment = 1
+icon_alignment = 1
+
 [node name="CheckButton2" type="CheckButton" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("8_7wjfc")
@@ -214,6 +198,15 @@ theme_override_font_sizes/font_size = 25
 placeholder_text = "Size"
 alignment = 1
 expand_to_text_length = true
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 272.0
+offset_right = 1264.0
+offset_bottom = 1488.0
+texture = ExtResource("3_j80mx")
+script = ExtResource("2_ion1r")
 
 [node name="ChatGptImage30Mar2025,214940(2)" type="Sprite2D" parent="."]
 position = Vector2(1920, 968)
@@ -238,18 +231,18 @@ theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.1
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Spawn(0, 0)
-Color(\"Black\")
+Color(Black)
 n <- 5
 k <- 3 + 3 * 10
 n <- k * 2
 actual-x <- GetActualX()
 i <- 0
 
-loop1
+loop-1
 DrawLine(1, 0, 1)
 i <- i + 1
 is-brush-color-blue <- IsBrushColor(\"Blue\")
-GoTo [loop-ends-here] (is-brush-color-blue == 1)
+Goto [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop1] (i < 10)
 
 Color(\"Blue\")
@@ -288,12 +281,51 @@ theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Developed by Miguel Andrés Cazorla Zamora"
 
-[connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
-[connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
+[node name="TextEdit" type="TextEdit" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 48.0
+offset_top = 272.0
+offset_right = 1264.0
+offset_bottom = 1488.0
+theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+editable = false
+scroll_smooth = true
+
+[node name="FileDialog - Save" type="FileDialog" parent="."]
+transparent_bg = true
+initial_position = 1
+size = Vector2i(1280, 720)
+unresizable = true
+transparent = true
+dialog_hide_on_ok = true
+dialog_autowrap = true
+access = 2
+
+[node name="FileDialog - Load" type="FileDialog" parent="."]
+auto_translate_mode = 1
+transparent_bg = true
+title = "Open a File"
+initial_position = 1
+size = Vector2i(1280, 720)
+unresizable = true
+transparent = true
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+dialog_autowrap = true
+file_mode = 0
+access = 2
+
 [connection signal="pressed" from="Play" to="." method="PressPlay"]
 [connection signal="pressed" from="Exit" to="." method="PressExit"]
 [connection signal="pressed" from="HBoxContainer/SaveFile" to="." method="PressSaveFile"]
 [connection signal="pressed" from="HBoxContainer/LoadFile" to="." method="PressLoadFile"]
 [connection signal="pressed" from="HBoxContainer/CheckButton" to="." method="PressEditCode"]
+[connection signal="pressed" from="HBoxContainer/CheckButton3" to="." method="ShowLexer"]
 [connection signal="pressed" from="HBoxContainer/CheckButton2" to="." method="PressMute"]
 [connection signal="text_submitted" from="HBoxContainer/Size" to="." method="ChangeSize"]
+[connection signal="text_changed" from="CodeEdit" to="." method="TextChanged"]
+[connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
+[connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
