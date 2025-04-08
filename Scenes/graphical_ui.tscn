@@ -1,7 +1,6 @@
-[gd_scene load_steps=14 format=3 uid="uid://bujh2qfwudnhv"]
+[gd_scene load_steps=16 format=3 uid="uid://bujh2qfwudnhv"]
 
-[ext_resource type="Script" uid="uid://dapjfjmom3kjk" path="res://Scripts/GraphicalUi.cs" id="1_xlf2y"]
-[ext_resource type="Script" uid="uid://cofuij8ctruj7" path="res://Scripts/GridGenerator.cs" id="2_ion1r"]
+[ext_resource type="Script" uid="uid://dapjfjmom3kjk" path="res://Scripts/EngineScripts/GraphicalUi.cs" id="1_7lov0"]
 [ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
 [ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="3_j80mx"]
@@ -12,6 +11,7 @@
 [ext_resource type="FontFile" uid="uid://ibsvww3uwbxl" path="res://Fonts/Fira Code/ttf/FiraCode-Regular.ttf" id="8_7wjfc"]
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
+[ext_resource type="Script" uid="uid://cofuij8ctruj7" path="res://Scripts/EngineScripts/GridGenerator.cs" id="10_mhwis"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
 number_color = Color(0.819608, 0.603922, 0.4, 1)
@@ -41,18 +41,37 @@ color_regions = {
 "' '": Color(0.596078, 0.764706, 0.47451, 1)
 }
 
-[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "text", "SizeEdit", "grid", "audio")]
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_7lov0"]
+number_color = Color(1, 1, 1, 1)
+symbol_color = Color(1, 1, 1, 1)
+function_color = Color(1, 1, 1, 1)
+member_variable_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"Error": "#ff2c2c"
+}
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_mhwis"]
+number_color = Color(1, 1, 1, 1)
+symbol_color = Color(1, 1, 1, 1)
+function_color = Color(1, 1, 1, 1)
+member_variable_color = Color(1, 1, 1, 1)
+keyword_colors = {
+"Error": "#ff2c2c"
+}
+
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "text", "textparser", "SizeEdit", "grid", "audio")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_xlf2y")
+script = ExtResource("1_7lov0")
 saveDialog = NodePath("FileDialog - Save")
 loadDialog = NodePath("FileDialog - Load")
 edit = NodePath("CodeEdit")
-text = NodePath("TextEdit")
+text = NodePath("Lexer")
+textparser = NodePath("Parser")
 SizeEdit = NodePath("HBoxContainer/Size")
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
@@ -64,33 +83,33 @@ texture = ExtResource("2_j80mx")
 
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1272.0
+offset_left = 1384.0
 offset_top = 64.0
-offset_right = 1464.0
+offset_right = 1576.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="ColorRect4" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1488.0
+offset_left = 1600.0
 offset_top = 64.0
-offset_right = 1784.0
+offset_right = 1768.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="ColorRect3" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 1808.0
+offset_left = 1792.0
 offset_top = 64.0
-offset_right = 1920.0
+offset_right = 1904.0
 offset_bottom = 128.0
 color = Color(0.0901961, 0.0901961, 0.0901961, 0.54902)
 
 [node name="Play" type="Button" parent="."]
 layout_mode = 0
-offset_left = 384.0
+offset_left = 496.0
 offset_top = 64.0
-offset_right = 488.0
+offset_right = 600.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -100,21 +119,22 @@ expand_icon = true
 
 [node name="Exit" type="Button" parent="."]
 layout_mode = 0
-offset_left = 2176.0
+offset_left = 2400.0
 offset_top = 64.0
-offset_right = 2278.0
+offset_right = 2504.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Exit"
+text = "Exit
+"
 icon = ExtResource("6_7lov0")
 expand_icon = true
 
 [node name="Pause" type="Button" parent="."]
 layout_mode = 0
-offset_left = 512.0
+offset_left = 624.0
 offset_top = 64.0
-offset_right = 632.0
+offset_right = 744.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -124,9 +144,9 @@ expand_icon = true
 
 [node name="GoFinal" type="Button" parent="."]
 layout_mode = 0
-offset_left = 656.0
+offset_left = 768.0
 offset_top = 64.0
-offset_right = 758.0
+offset_right = 870.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -136,9 +156,9 @@ expand_icon = true
 
 [node name="Reset" type="Button" parent="."]
 layout_mode = 0
-offset_left = 784.0
+offset_left = 896.0
 offset_top = 64.0
-offset_right = 901.0
+offset_right = 1013.0
 offset_bottom = 128.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -148,9 +168,9 @@ expand_icon = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 928.0
+offset_left = 1040.0
 offset_top = 64.0
-offset_right = 2015.0
+offset_right = 2003.0
 offset_bottom = 128.0
 theme_override_constants/separation = 26
 
@@ -179,7 +199,7 @@ icon_alignment = 1
 layout_mode = 2
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Lexical Analysis"
+text = "Analysis"
 alignment = 1
 icon_alignment = 1
 
@@ -206,7 +226,7 @@ offset_top = 272.0
 offset_right = 1264.0
 offset_bottom = 1488.0
 texture = ExtResource("3_j80mx")
-script = ExtResource("2_ion1r")
+script = ExtResource("10_mhwis")
 
 [node name="ChatGptImage30Mar2025,214940(2)" type="Sprite2D" parent="."]
 position = Vector2(1920, 968)
@@ -230,25 +250,6 @@ theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Spawn(0, 0)
-Color(Black)
-n <- 5
-k <- 3 + 3 * 10
-n <- k * 2
-actual-x <- GetActualX()
-i <- 0
-
-loop-1
-DrawLine(1, 0, 1)
-i <- i + 1
-is-brush-color-blue <- IsBrushColor(\"Blue\")
-Goto [loop-ends-here] (is-brush-color-blue == 1)
-GoTo [loop1] (i < 10)
-
-Color(\"Blue\")
-GoTo [loop1] (1 == 1)
-
-loop-ends-here"
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_ekyth")
 highlight_all_occurrences = true
@@ -281,18 +282,35 @@ theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Developed by Miguel Andrés Cazorla Zamora"
 
-[node name="TextEdit" type="TextEdit" parent="."]
+[node name="Lexer" type="TextEdit" parent="."]
 visible = false
 layout_mode = 0
 offset_left = 48.0
 offset_top = 272.0
 offset_right = 1264.0
-offset_bottom = 1488.0
-theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
+offset_bottom = 880.0
+theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0)
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 editable = false
 scroll_smooth = true
+syntax_highlighter = SubResource("CodeHighlighter_7lov0")
+
+[node name="Parser" type="TextEdit" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 48.0
+offset_top = 880.0
+offset_right = 1264.0
+offset_bottom = 1488.0
+theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0)
+theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+editable = false
+scroll_smooth = true
+syntax_highlighter = SubResource("CodeHighlighter_mhwis")
 
 [node name="FileDialog - Save" type="FileDialog" parent="."]
 transparent_bg = true

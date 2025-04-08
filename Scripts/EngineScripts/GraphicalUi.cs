@@ -1,42 +1,55 @@
 using System;
 using System.Collections.Generic;
 using Godot;
-using Interpreter;
+using BrushBot;
 public partial class GraphicalUi : Control
 {
     [Export] FileDialog saveDialog;
     [Export] FileDialog loadDialog;
     [Export] CodeEdit edit;
     [Export] TextEdit text;
+    [Export] TextEdit textparser;
     [Export] LineEdit SizeEdit;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
     public override void _Ready()
     {
         SizeEdit.Text = GlobalData.Size + "";
-        text.Text = "\0";
-        string code = edit.Text;
-        Lexer lexer = new Lexer(code);
-        List<Token> tokens = lexer.GetTokens();
-        
-        foreach (var token in tokens)
-        {
-            text.Text += token.ToString() + '\n';
-        }
+        TextChanged();
     }
-    void PressPlay(){}
-    void TextChanged()
+    void PressPlay()
     {
-        text.Text = "\0";
         string code = edit.Text;
         Lexer lexer = new Lexer(code);
         List<Token> tokens = lexer.GetTokens();
-        
+        text.Text = "\0";
         foreach (var token in tokens)
         {
-            text.Text += token.ToString() + '\n';
+            if (token.Type == TokenType.Unknown)
+            {
+                text.Text += "Error: " + token.ToString() + "\r\n";
+                continue;
+            }
+            text.Text += token.ToString() + "\r\n";
+        }
+
+        Parser parser = new Parser(tokens);
+        var (nodes, errors, result) = parser.Parse();
+        var printer = new AstPrinter();
+        textparser.Text = "\0";
+        foreach (var item in result)
+        {
+            if (item is BrushBot.Node node)
+            {
+                textparser.Text += printer.Print(node) + "\r\n";
+            }
+            else if (item is ParserError error)
+            {
+                textparser.Text += error.Message + "\r\n" + "\r\n";
+            }
         }
     }
+    void TextChanged(){}
     void PressExit()
     {
         GetTree().Quit();
@@ -56,6 +69,7 @@ public partial class GraphicalUi : Control
     void ShowLexer()
     {
         text.Visible = !text.Visible;
+        textparser.Visible = !textparser.Visible;
     }
     void PressMute()
     {

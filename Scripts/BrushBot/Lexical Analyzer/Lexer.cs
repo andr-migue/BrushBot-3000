@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-namespace Interpreter
+namespace BrushBot
 {
     public class Lexer
     {
@@ -18,7 +18,10 @@ namespace Interpreter
         }
         private HashSet<string> Keywords = new HashSet<string>
         {
-            "Spawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle",
+            "Spawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle"
+        };
+        private HashSet<string> Functions = new HashSet<string>
+        {
             "GetActualX", "GetActualY", "GetCanvasSize", "GetColorCount", "IsBrushColor", "IsBrushSize",
             "IsCanvasColor"
         };
@@ -104,7 +107,6 @@ namespace Interpreter
         }
         private Token GetWord()
         {
-            char before = Before();
             string result = "";
 
             while (CurrentChar != '\0' && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '_' || CurrentChar == '-'))
@@ -117,14 +119,13 @@ namespace Interpreter
             {
                 return new Token(TokenType.Keyword, result, CurrentLn, CurrentCol);
             }
-            else if ((before == '\r' || before == '\n' || before == ' ') && Peek() == '<' && DoublePeek() == '-') 
+
+            else if (Functions.Contains(result))
             {
-                return new Token(TokenType.Variable, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Function, result, CurrentLn, CurrentCol);
             }
-            else
-            {
-                return new Token(TokenType.Label, result, CurrentLn, CurrentCol);
-            }
+
+            else return new Token(TokenType.Identifier, result, CurrentLn, CurrentCol);
         }
         private Token GetOperatorOrDelimiter()
         {

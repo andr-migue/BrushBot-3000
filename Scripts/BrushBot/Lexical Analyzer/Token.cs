@@ -1,10 +1,10 @@
-namespace Interpreter
+namespace BrushBot
 {
     public enum TokenType
     {
         Keyword,
-        Label,
-        Variable,
+        Function,
+        Identifier,
         Number,
         Color,
         Operator,
