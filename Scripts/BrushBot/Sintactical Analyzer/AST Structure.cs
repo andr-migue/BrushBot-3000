@@ -1,26 +1,10 @@
-using System.Collections.Generic;
-using System.Linq.Expressions;
+using System;
 namespace BrushBot
 {
-    public abstract class Node{}
-    public class Expression : Node{}
-    public class Literal : Expression
+    public abstract class Node {}
+    public abstract class Expression : Node
     {
-        public Token Expression;
-        public Literal(Token expression)
-        {
-            Expression = expression;
-        }
-    }
-    public class UnaryExpression : Expression
-    {
-        public Token Operator {get; }
-        public Expression Expression {get; }
-        public UnaryExpression(Token oper, Expression expression)
-        {
-            Operator = oper;
-            Expression = expression;
-        }
+        public abstract Object Interpret();
     }
     public class BinaryExpression : Expression
     {
@@ -33,47 +17,200 @@ namespace BrushBot
             Operator = oper;
             Right = right;
         }
+        public override Object Interpret()
+        {
+            Object left = Left.Interpret();
+            Object right = Right.Interpret();
+            string oper = Operator.Value;
+            if (oper == "&&")
+            {
+                if (left is bool && right is bool)
+                {
+                    return (bool)left && (bool)right;
+                }
+                else throw new RuntimeError($"No se puede aplicar el operador '&&' entre {left} y {right}.");
+            }
+            else if (oper == "||")
+            {
+                if (left is bool && right is bool)
+                {
+                    return (bool)left || (bool)right;
+                }
+                else throw new RuntimeError($"No se puede aplicar el operador '||' entre {left} y {right}.");
+            }
+            else if (oper == "==")
+            {
+                return left == right;
+            }
+            else if (oper == "!=")
+            {
+                return left != right;
+            }
+            else if (left is int && right is int)
+            {
+                int newLeft = (int)left;
+                int newRight = (int)right;
+                
+                switch (oper)
+                {
+                    case "<": return newLeft < newRight;
+                    case ">": return newLeft > newRight;
+                    case "<=": return newLeft <= newRight;
+                    case ">=": return newLeft >= newRight;
+                    case "+": return newLeft + newRight;
+                    case "-": return newLeft - newRight;
+                    case "*": return newLeft * newRight;
+                    case "/":
+                        if (newRight != 0)
+                        {
+                            return newLeft / newRight;
+                        }
+                        else throw new RuntimeError("No está definida la división por 0.");
+                    case "%":
+                        if (newRight != 0)
+                        {
+                            return newLeft % newRight;
+                        }
+                        else throw new RuntimeError("No está definida la división por 0.");
+                    case "**": return Math.Pow(newLeft, newRight);
+
+                    default: throw new RuntimeError($"Operador no válido {oper}.");
+                }
+            }
+            else throw new RuntimeError($"Operación Binaria no válida.");
+        }
+    }
+    public class UnaryExpression : Expression
+    {
+        public Token Operator {get; }
+        public Expression Expression {get; }
+        public UnaryExpression(Token oper, Expression expression)
+        {
+            Operator = oper;
+            Expression = expression;
+        }
+        public override Object Interpret()
+        {
+            if (Operator.Value == "-")
+            {
+                Object expr = Expression.Interpret();
+                if (expr is int)
+                {
+                    return -(int)expr;
+                }
+                else if (expr is GroupingExpression grouping)
+                {
+                    if (grouping.Left.Interpret() is int number)
+                    {
+                        return (-number, grouping.Interpret());
+                    }
+                    else throw new RuntimeError($"No se puede aplicar el operador '-' a {grouping.Left.Interpret()}.");
+                }
+                else throw new RuntimeError($"No se puede aplicar el operador '-' a {Expression}.");
+            }
+            else
+            {
+                Object expr = Expression.Interpret();
+                if (expr is bool)
+                {
+                    return !(bool)expr;
+                }
+                else throw new RuntimeError($"No se puede aplicar el operador '!' a {Expression}.");
+            }
+        }
     }
     public class GroupingExpression : Expression
     {
         public Expression Left {get; }
-        public string Comma {get; }
         public Expression Right {get; }
-        public GroupingExpression(Expression left, string comma, Expression right)
+        public GroupingExpression(Expression left, Expression right)
         {
             Left = left;
-            Comma = comma;
             Right = right;
+        }
+        public override Object Interpret()
+        {
+            return (Left.Interpret(), Right.Interpret());
+        }
+    }
+    public class Function : Expression
+    {
+        public Token Name {get; }
+        public Expression Arguments {get; }
+        public Function (Token name, Expression arguments)
+        {
+            Name = name;
+            Arguments = arguments;
+        }
+        public override Object Interpret()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class Literal : Expression
+    {
+        public Token Token;
+        public Literal(Token token)
+        {
+            Token = token;
+        }
+        public override Object Interpret()
+        {
+            if (Token.Type == TokenType.Number)
+            {
+                return int.Parse(Token.Value);
+            }
+            else if (Token.Type == TokenType.Color)
+            {
+                switch (Token.Value)
+                {
+                    case "Transparent" : return Color.Transparent;
+                    case "Red" : return Color.Red;
+                    case "Blue" : return Color.Blue;
+                    case "Green" : return Color.Green;
+                    case "Yellow" : return Color.Yellow;
+                    case "Orange" : return Color.Orange;
+                    case "Purple" : return Color.Purple;
+                    case "Black" : return Color.Black;
+                    case "White" : return Color.White;
+
+                    default : throw new RuntimeError ($"Color no válido.");
+                }
+            }
+            else throw new RuntimeError ($"Literal no válido");
+        }
+    }
+    public class Variable : Expression
+    {
+        public Token Token;
+        public Variable(Token token)
+        {
+            Token = token;
+        }
+        public override Object Interpret()
+        {
+            if (Interpreter.Variables.ContainsKey(Token.Value))
+            {
+                return Interpreter.Variables[Token.Value];
+            }
+            else throw new RuntimeError($"{Token.Value} no existe en este contexto");
         }
     }
     public class Assignment : Node
     {
         public Token Variable {get; }
-        public Token Operator {get; }
         public Expression Expression {get; }
-        public Assignment (Token variable, Token oper, Expression expression)
+        public Assignment (Token variable, Expression expression)
         {
             Variable = variable;
-            Operator = oper;
             Expression = expression;
         }
-    }
-    public class Instruction : Node
-    {
-        public Token Keyword {get; }
-        public Expression Expression {get; }
-        public Instruction (Token keyword, Expression expression)
+        public (string, Object) Assign()
         {
-            Keyword = keyword;
-            Expression = expression;
-        }
-    }
-    public class Jump : Instruction
-    {
-        public Token Label {get; }
-        public Jump(Token GoTo, Token label, Expression expression) : base(GoTo, expression)
-        {
-            Label = label;
+            string Name = Variable.Value;
+            Object Value = Expression.Interpret();
+
+            return (Name, Value);
         }
     }
     public class Label : Node
@@ -84,22 +221,54 @@ namespace BrushBot
             Token = token;
         }
     }
-    public class Variable : Literal
+    public class Instruction : Node
     {
-        public Expression Value {get; }
-        public Variable (Token token, Expression value) : base(token)
+        public Token Keyword {get; }
+        public Expression Arguments {get; }
+        public Instruction (Token keyword, Expression arguments)
         {
-            Value = value;
+            Keyword = keyword;
+            Arguments = arguments;
+        }
+        public void Execute()
+        {
+            switch (Keyword.Value)
+            {
+                case "Spawn" :
+                    Handle.Spawn(Arguments);
+                    break;
+                case "Color" :
+                    Handle.Color(Arguments);
+                    break;
+                case "Size" :
+                    Handle.Size(Arguments);
+                    break;
+                case "DrawLine" :
+                    Handle.DrawLine(Arguments);
+                    break;
+                case "DrawCircle" :
+                    Handle.DrawCircle(Arguments);
+                    break;
+                case "DrawRectangle" :
+                    Handle.DrawRectangle(Arguments);
+                    break;
+                case "Fill" :
+                    Handle.Fill();
+                    break;
+                default: throw new RuntimeError("Instruccion no reconocida");;
+            }
         }
     }
-    public class Function : Expression
+    public class Jump : Node
     {
-        public Token Token {get; }
-        public Expression Value {get; }
-        public Function (Token token, Expression value)
+        public Token GoTo {get; }
+        public Token Label {get; }
+        public Expression Expression {get; }
+        public Jump(Token go, Token label, Expression expression)
         {
-            Token = token;
-            Value = value;
+            GoTo = go;
+            Label = label;
+            Expression = expression;
         }
     }
 }

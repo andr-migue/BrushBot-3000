@@ -15,10 +15,6 @@ run/main_scene="res://Scenes/graphical_ui.tscn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-GlobalData="*res://Scripts/EngineScripts/GlobalData.cs"
-
 [display]
 
 window/size/viewport_width=2560

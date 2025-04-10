@@ -48,16 +48,6 @@ namespace BrushBot
             int PeekPosition = Position + 1;
             return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
         }
-        private char DoublePeek()
-        {
-            int PeekPosition = Position + 2;
-            return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
-        }
-        private char Before()
-        {
-            int BeforePosition = Position - 1;
-            return BeforePosition > 0 ? Text[BeforePosition] : '\0';
-        }
         private Token GetJumpLine()
         {
             int ActualLn = CurrentLn;

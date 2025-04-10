@@ -2,54 +2,72 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using BrushBot;
-public partial class GraphicalUi : Control
+public partial class Main : Control
 {
     [Export] FileDialog saveDialog;
     [Export] FileDialog loadDialog;
     [Export] CodeEdit edit;
-    [Export] TextEdit text;
-    [Export] TextEdit textparser;
+    [Export] TextEdit Terminal;
     [Export] LineEdit SizeEdit;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
     public override void _Ready()
     {
-        SizeEdit.Text = GlobalData.Size + "";
-        TextChanged();
+        SizeEdit.Text = Interpreter.Size + "";
+        Handle.size = Interpreter.Size;
     }
+    #region Buttons
     void PressPlay()
     {
         string code = edit.Text;
+        
         Lexer lexer = new Lexer(code);
         List<Token> tokens = lexer.GetTokens();
-        text.Text = "\0";
+        
+        Parser parser = new Parser(tokens);
+        var (nodes, errors, result) = parser.Parse();
+
+        Interpreter.Init(nodes);
+        Interpreter.Interpret();
+        
+        foreach (var error in Interpreter.Errors)
+        {
+            Terminal.Text += error.Message + "\r\n";
+            continue;
+        }
+
+        grid.QueueRedraw();
+    }
+    void TextChanged()
+    {
+        string code = edit.Text;
+        
+        Lexer lexer = new Lexer(code);
+        List<Token> tokens = lexer.GetTokens();
+        
+        Parser parser = new Parser(tokens);
+        var (nodes, errors, result) = parser.Parse();
+        
+        Terminal.Text = "\0";
         foreach (var token in tokens)
         {
             if (token.Type == TokenType.Unknown)
             {
-                text.Text += "Error: " + token.ToString() + "\r\n";
+                Terminal.Text += "Error: " + token + "\r\n";
                 continue;
             }
-            text.Text += token.ToString() + "\r\n";
         }
-
-        Parser parser = new Parser(tokens);
-        var (nodes, errors, result) = parser.Parse();
-        var printer = new AstPrinter();
-        textparser.Text = "\0";
-        foreach (var item in result)
+        foreach (var error in errors)
         {
-            if (item is BrushBot.Node node)
-            {
-                textparser.Text += printer.Print(node) + "\r\n";
-            }
-            else if (item is ParserError error)
-            {
-                textparser.Text += error.Message + "\r\n" + "\r\n";
-            }
+            Terminal.Text += error.Message + "\r\n";
+            continue;
         }
     }
-    void TextChanged(){}
+    void PressReset()
+    {
+        Interpreter.Picture = new BrushBot.Color[Interpreter.Size, Interpreter.Size];
+        grid.QueueRedraw();
+    }
     void PressExit()
     {
         GetTree().Quit();
@@ -65,11 +83,6 @@ public partial class GraphicalUi : Control
     void PressEditCode()
     {
         edit.Visible = !edit.Visible;
-    }
-    void ShowLexer()
-    {
-        text.Visible = !text.Visible;
-        textparser.Visible = !textparser.Visible;
     }
     void PressMute()
     {
@@ -88,8 +101,17 @@ public partial class GraphicalUi : Control
         script.Close();
     }
     void ChangeSize(string text) {
-        if (IsNumber(text)) GlobalData.Size = int.Parse(text);
-        else SizeEdit.Text = GlobalData.Size + "";
+        if (IsNumber(text))
+        {
+            int size = int.Parse(text);
+            Interpreter.Size = size;
+            Interpreter.Picture = new BrushBot.Color[size, size];
+            Handle.size = size;
+        }
+        else
+        {
+            SizeEdit.Text = Interpreter.Size + "";
+        }
         grid.QueueRedraw();
     }
     private bool IsNumber(string text) {
@@ -100,4 +122,5 @@ public partial class GraphicalUi : Control
         }
         return false;
     }
+    #endregion
 }

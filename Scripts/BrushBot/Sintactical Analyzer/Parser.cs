@@ -1,14 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text.RegularExpressions;
-using Godot;
 namespace BrushBot
 {
-    public class ParserError : Exception
-    {
-        public ParserError(string message) : base(message){}
-    }
     public class Parser
     {
         List<Token> Tokens;
@@ -118,6 +111,18 @@ namespace BrushBot
         {
             return Tokens[Current - 1];
         }
+        private bool ValidateExpression()
+        {
+            if (!Match(TokenType.Keyword, null) || !Match(TokenType.Delimiter, [")", "[", "]", ","]) || !Match(TokenType.JumpLine, null) || !Match(TokenType.Unknown, null) || !Match(TokenType.EndOfFile, null))
+            {
+                return true;
+            }
+            else
+            {
+                Current--;
+                return false;
+            }
+        }
         private Node Node()
         {
             if (Match(TokenType.Keyword, null))
@@ -142,10 +147,10 @@ namespace BrushBot
             }
             else
             {
-                throw Error(CurrentToken(), "Token no reconocido.");
+                throw Error(CurrentToken(), "Sentencia no válida.");
             }
         }
-        private Instruction Instruction()
+        private Node Instruction()
         {
             Token Keyword = PreviousToken();
             if (Keyword.Value == "GoTo")
@@ -213,24 +218,11 @@ namespace BrushBot
                 if (ValidateExpression())
                 {
                     Expression expression = Expression();
-                    return new Assignment(Identifier, oper, expression);
+                    return new Assignment(Identifier, expression);
                 }
                 else throw Error (CurrentToken(), "Expresión no válida.");
             }
-            else throw Error(CurrentToken(), "Token no reconocido.");
-
-        }
-        private bool ValidateExpression()
-        {
-            if (!Match(TokenType.Keyword, null) || !Match(TokenType.Delimiter, [")", "[", "]", ","]) || !Match(TokenType.JumpLine, null) || !Match(TokenType.Unknown, null) || !Match(TokenType.EndOfFile, null))
-            {
-                return true;
-            }
-            else
-            {
-                Current--;
-                return false;
-            }
+            else throw Error(CurrentToken(), "Operador incorrecto.");
         }
         private Expression Expression()
         {
@@ -356,7 +348,7 @@ namespace BrushBot
                     Expression left;
                     if (PreviousToken().Type == TokenType.Identifier)
                     {
-                        left = new Variable(PreviousToken(), null);
+                        left = new Variable(PreviousToken());
                     }
                     else
                     {
@@ -364,7 +356,7 @@ namespace BrushBot
                     }
                     Advance();
                     Expression right = Expression();
-                    return new GroupingExpression(left, ",", right);
+                    return new GroupingExpression(left, right);
                 }
                 Token token = PreviousToken();
                 if (token.Type == TokenType.Number || token.Type == TokenType.Color)
@@ -373,7 +365,7 @@ namespace BrushBot
                 }
                 else if (token.Type == TokenType.Identifier)
                 {
-                    return new Variable(token, null);
+                    return new Variable(token);
                 }
                 else if (token.Type == TokenType.Function)
                 {
