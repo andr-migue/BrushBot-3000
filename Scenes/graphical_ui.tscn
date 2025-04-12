@@ -1,10 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://bujh2qfwudnhv"]
+[gd_scene load_steps=16 format=3 uid="uid://bujh2qfwudnhv"]
 
 [ext_resource type="Script" uid="uid://de40id7bw1g6m" path="res://Scripts/EngineScripts/Main.cs" id="1_7lov0"]
 [ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
 [ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="3_j80mx"]
-[ext_resource type="Texture2D" uid="uid://dn02c53sfrxry" path="res://Assets/pause.png" id="4_txjyv"]
 [ext_resource type="Texture2D" uid="uid://blt0uvq3pt5lw" path="res://Assets/sync.png" id="5_ion1r"]
 [ext_resource type="Texture2D" uid="uid://d1xmt7leqg06x" path="res://Assets/error.png" id="6_7lov0"]
 [ext_resource type="Texture2D" uid="uid://bmrifp745rdrm" path="res://Assets/next.png" id="6_cot47"]
@@ -12,8 +11,37 @@
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
 [ext_resource type="Script" uid="uid://cofuij8ctruj7" path="res://Scripts/EngineScripts/GridGenerator.cs" id="10_mhwis"]
+[ext_resource type="PackedScene" uid="uid://d1nw4oeywy18w" path="res://Scenes/brush.tscn" id="12_7lov0"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
+number_color = Color(0.819608, 0.603922, 0.4, 1)
+symbol_color = Color(1, 1, 1, 1)
+function_color = Color(0.380392, 0.686275, 0.937255, 1)
+member_variable_color = Color(0.878431, 0.423529, 0.458824, 1)
+keyword_colors = {
+"<-": "#e06c75",
+"GoTo": "#c678dd",
+"bool": "#c678dd",
+"class": "#c678dd",
+"double": "#c678dd",
+"else": "#c678dd",
+"for": "#c678dd",
+"if": "#c678dd",
+"int": "#c678dd",
+"long": "#c678dd",
+"override": "#c678dd",
+"private": "#c678dd",
+"public": "#c678dd",
+"string": "#c678dd",
+"void": "#c678dd",
+"while": "#c678dd"
+}
+color_regions = {
+"\" \"": Color(0.596078, 0.764706, 0.47451, 1),
+"' '": Color(0.596078, 0.764706, 0.47451, 1)
+}
+
+[sub_resource type="CodeHighlighter" id="CodeHighlighter_j80mx"]
 number_color = Color(0.819608, 0.603922, 0.4, 1)
 symbol_color = Color(1, 1, 1, 1)
 function_color = Color(0.380392, 0.686275, 0.937255, 1)
@@ -50,7 +78,7 @@ keyword_colors = {
 "Error": "#ff2c2c"
 }
 
-[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "Terminal", "SizeEdit", "grid", "audio")]
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "Terminal", "SizeEdit", "grid", "audio", "CurrentBrushSize", "CurrentPosition", "colorRect")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,6 +93,9 @@ Terminal = NodePath("Terminal")
 SizeEdit = NodePath("Size")
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
+CurrentBrushSize = NodePath("HBoxContainer/Label3")
+CurrentPosition = NodePath("HBoxContainer/Label5")
+colorRect = NodePath("Label4/ColorRect5")
 
 [node name="Dall·e2025-03-3022_03_23-ARenaissance-styleTexturedBackgroundWithWarmSepiaTones,ResemblingAgedParchmentOrOldSketchbookPaper_TheSurfaceIsAdornedWithSubtle," type="Sprite2D" parent="."]
 position = Vector2(1352, 800)
@@ -83,7 +114,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 64.0
 offset_top = 64.0
-offset_right = -1599.0
+offset_right = -1855.0
 offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -92,6 +123,18 @@ theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
+text = "Spawn(0,0)
+Color(\"Blue\")
+
+n <- 2
+label
+DrawLine(1,1,n)
+n <- n + 2
+GoTo [label] (n < 10)
+
+Color(\"Green\")
+Spawn(20,20)
+DrawCircle(1,1, 10)"
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_ekyth")
 highlight_all_occurrences = true
@@ -109,6 +152,94 @@ indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
 
+[node name="Doc" type="CodeEdit" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1856.0
+offset_top = 64.0
+offset_right = -61.0
+offset_bottom = -62.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/word_highlighted_color = Color(0, 0, 0, 0.470588)
+theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
+theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Documentación:
+
+Spawn(x, y)
+Inicializa a BrushBot en la posición (x, y) del canvas. Solo puede aparecer una vez al principio del programa. Si las coordenadas están fuera del canvas, se produce un error de ejecución.
+
+Color(\"Color\")
+Cambia el color del pincel a uno de los siguientes: Red, Blue, Green, Yellow, Orange, Purple, Black, White, Transparent. Si el color es Transparent, el pincel no pinta y actúa como borrador.
+
+Size(k)
+Cambia el tamaño del pincel a k. Si k es un número par, se usa el impar menor más cercano. El tamaño inicial del pincel es 1.
+
+DrawLine(dirX, dirY, distance)
+Dibuja una línea desde la posición actual de BrushBot en la dirección (dirX, dirY), avanzando una cantidad de píxeles igual a distance. BrushBot termina en el último píxel de la línea. Las direcciones válidas son combinaciones de -1, 0 y 1.
+
+DrawCircle(dirX, dirY, radius)
+Dibuja un círculo de radio radius en la dirección (dirX, dirY) desde la posición actual. BrushBot termina en el centro del círculo. Solo se dibuja la circunferencia, no el radio.
+
+DrawRectangle(dirX, dirY, distance, width, height)
+Dibuja un rectángulo cuyo centro se encuentra a una distancia distance en la dirección (dirX, dirY) desde la posición actual. BrushBot termina en el centro del rectángulo.
+
+Fill()
+Rellena con el color actual del pincel todos los píxeles conectados que tengan el mismo color que la posición actual de BrushBot.
+
+Asignación de variable
+variable <- expresión
+Asigna a una variable el valor de una expresión aritmética o booleana. Los nombres de las variables pueden contener letras, números y guiones, pero no pueden comenzar con un número ni con un guion.
+
+Expresiones aritméticas
+Son combinaciones de números, variables numéricas, operaciones (+, -, *, /, %, **) o llamadas a funciones.
+
+Expresiones booleanas
+Se forman mediante comparaciones (==, >=, <=, >, <) y conectores lógicos (&&, ||). El operador || tiene mayor precedencia que &&.
+
+Funciones disponibles
+
+GetActualX()
+Devuelve el valor de la coordenada X actual de BrushBot.
+
+GetActualY()
+Devuelve el valor de la coordenada Y actual de BrushBot.
+
+GetCanvasSize()
+Devuelve el tamaño del canvas (ancho y alto iguales).
+
+GetColorCount(\"Color\", x1, y1, x2, y2)
+Devuelve la cantidad de píxeles del color especificado dentro del rectángulo definido por (x1, y1) y (x2, y2). Si alguna esquina está fuera del canvas, retorna 0.
+
+IsBrushColor(\"Color\")
+Devuelve 1 si el color actual del pincel es igual al especificado, 0 en otro caso.
+
+IsBrushSize(size)
+Devuelve 1 si el tamaño actual del pincel es igual al especificado, 0 en otro caso.
+
+IsCanvasColor(\"Color\", vertical, horizontal)
+Devuelve 1 si el píxel desplazado vertical y horizontalmente desde la posición actual tiene el color especificado. Si está fuera del canvas, devuelve 0.
+
+Etiquetas
+Una etiqueta es una palabra que marca una posición en el código a la que se puede saltar. No producen ninguna acción al ejecutarse. Se nombran siguiendo las mismas reglas de las variables.
+
+Saltos condicionales
+GoTo [etiqueta] (condición)
+Si la condición es verdadera, el programa salta a la etiqueta especificada. Si es falsa, continúa en la siguiente línea. Los corchetes [] y paréntesis () son obligatorios."
+scroll_smooth = true
+syntax_highlighter = SubResource("CodeHighlighter_j80mx")
+highlight_all_occurrences = true
+highlight_current_line = true
+draw_tabs = true
+draw_spaces = true
+indent_use_spaces = true
+indent_automatic = true
+auto_brace_completion_highlight_matching = true
+
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("10_7wjfc")
 volume_db = 24.0
@@ -116,9 +247,9 @@ autoplay = true
 
 [node name="Terminal" type="TextEdit" parent="."]
 layout_mode = 0
-offset_left = 959.0
+offset_left = 703.0
 offset_top = 1216.0
-offset_right = 2496.0
+offset_right = 1857.0
 offset_bottom = 1539.0
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0)
 theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
@@ -128,14 +259,21 @@ editable = false
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_7lov0")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." node_paths=PackedStringArray("Brush")]
 layout_mode = 0
-offset_left = 960.0
+offset_left = 704.0
 offset_top = 64.0
-offset_right = 2112.0
+offset_right = 1856.0
 offset_bottom = 1216.0
 texture = ExtResource("3_j80mx")
 script = ExtResource("10_mhwis")
+Brush = NodePath("brush")
+
+[node name="brush" parent="TextureRect" instance=ExtResource("12_7lov0")]
+z_index = 1
+z_as_relative = false
+position = Vector2(-32, 47)
+frame_progress = 0.381067
 
 [node name="FileDialog - Save" type="FileDialog" parent="."]
 transparent_bg = true
@@ -191,9 +329,9 @@ color = Color(0.168627, 0.168627, 0.168627, 0.952941)
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_left = 1864.0
+offset_left = 65.0
 offset_top = 1552.0
-offset_right = 2496.0
+offset_right = 697.0
 offset_bottom = 1584.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -201,9 +339,9 @@ text = "Developed by Miguel Andrés Cazorla Zamora"
 
 [node name="Label2" type="Label" parent="."]
 layout_mode = 0
-offset_left = 2392.0
+offset_left = 1752.0
 offset_top = 1224.0
-offset_right = 2484.0
+offset_right = 1844.0
 offset_bottom = 1256.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -222,24 +360,11 @@ icon = ExtResource("3_ekyth")
 flat = true
 expand_icon = true
 
-[node name="Pause" type="Button" parent="."]
+[node name="Skip" type="Button" parent="."]
 layout_mode = 0
 offset_left = 192.0
 offset_top = 1.0
-offset_right = 312.0
-offset_bottom = 63.0
-theme_override_fonts/font = ExtResource("8_7wjfc")
-theme_override_font_sizes/font_size = 25
-text = "Pause"
-icon = ExtResource("4_txjyv")
-flat = true
-expand_icon = true
-
-[node name="GoFinal" type="Button" parent="."]
-layout_mode = 0
-offset_left = 336.0
-offset_top = 1.0
-offset_right = 438.0
+offset_right = 294.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -250,9 +375,9 @@ expand_icon = true
 
 [node name="Reset" type="Button" parent="."]
 layout_mode = 0
-offset_left = 464.0
+offset_left = 320.0
 offset_top = 1.0
-offset_right = 581.0
+offset_right = 437.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -263,9 +388,9 @@ expand_icon = true
 
 [node name="SaveFile" type="Button" parent="."]
 layout_mode = 2
-offset_left = 608.0
+offset_left = 464.0
 offset_top = 1.0
-offset_right = 755.0
+offset_right = 611.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -275,9 +400,9 @@ flat = true
 
 [node name="LoadFile" type="Button" parent="."]
 layout_mode = 2
-offset_left = 776.0
+offset_left = 632.0
 offset_top = 1.0
-offset_right = 923.0
+offset_right = 779.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -288,9 +413,9 @@ flat = true
 z_index = 1
 z_as_relative = false
 layout_mode = 2
-offset_left = 952.0
+offset_left = 808.0
 offset_top = 1.0
-offset_right = 1062.0
+offset_right = 918.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -300,9 +425,9 @@ icon_alignment = 1
 
 [node name="Size" type="LineEdit" parent="."]
 layout_mode = 2
-offset_left = 1096.0
+offset_left = 933.0
 offset_top = 1.0
-offset_right = 1167.0
+offset_right = 1004.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -325,10 +450,48 @@ icon = ExtResource("6_7lov0")
 flat = true
 expand_icon = true
 
+[node name="Label4" type="Label" parent="."]
+layout_mode = 2
+offset_left = 1020.0
+offset_top = 16.0
+offset_right = 1112.0
+offset_bottom = 48.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Color:"
+
+[node name="ColorRect5" type="ColorRect" parent="Label4"]
+layout_mode = 0
+offset_left = 107.0
+offset_top = -5.0
+offset_right = 147.0
+offset_bottom = 35.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1189.0
+offset_top = 11.0
+offset_right = 1654.0
+offset_bottom = 51.0
+
+[node name="Label3" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Brush Size: "
+
+[node name="Label5" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Position: "
+
 [connection signal="text_changed" from="CodeEdit" to="." method="TextChanged"]
+[connection signal="text_changed" from="Doc" to="." method="TextChanged"]
 [connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
 [connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
 [connection signal="pressed" from="Play" to="." method="PressPlay"]
+[connection signal="pressed" from="Skip" to="." method="PressSkip"]
 [connection signal="pressed" from="Reset" to="." method="PressReset"]
 [connection signal="pressed" from="SaveFile" to="." method="PressSaveFile"]
 [connection signal="pressed" from="LoadFile" to="." method="PressLoadFile"]

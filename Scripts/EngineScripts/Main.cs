@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using BrushBot;
+using System.Threading.Tasks;
+using System.Linq;
 public partial class Main : Control
 {
     [Export] FileDialog saveDialog;
@@ -11,61 +13,47 @@ public partial class Main : Control
     [Export] LineEdit SizeEdit;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
+    [Export] Godot.Label CurrentBrushSize;
+    [Export] Godot.Label CurrentPosition;
+    [Export] ColorRect colorRect;
     public override void _Ready()
     {
-        SizeEdit.Text = Interpreter.Size + "";
-        Handle.size = Interpreter.Size;
+        Scope.Init();
+        SizeEdit.Text = Scope.Size + "";
+        colorRect.Color = CheckColor(Scope.BrushColor);
+        CurrentBrushSize.Text = $"Brush Size: {Scope.BrushSize}  ";
+        CurrentPosition.Text = $"Position: {Scope.Position}";
+
+        Analysis();
     }
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Scope.flag == true)
+        {
+            colorRect.Color = CheckColor(Scope.BrushColor);
+            CurrentBrushSize.Text = $"Brush Size: {Scope.BrushSize}  ";
+            CurrentPosition.Text = $"Position: {Scope.Position}";
+            grid.QueueRedraw();
+            Scope.flag = false;
+        }
+    }
+
     #region Buttons
     void PressPlay()
     {
-        string code = edit.Text;
-        
-        Lexer lexer = new Lexer(code);
-        List<Token> tokens = lexer.GetTokens();
-        
-        Parser parser = new Parser(tokens);
-        var (nodes, errors, result) = parser.Parse();
-
-        Interpreter.Init(nodes);
-        Interpreter.Interpret();
-        
-        foreach (var error in Interpreter.Errors)
-        {
-            Terminal.Text += error.Message + "\r\n";
-            continue;
-        }
-
-        grid.QueueRedraw();
+        Execute();
+    }
+    void PressSkip()
+    {
+        Handle.delay = 0;
     }
     void TextChanged()
     {
-        string code = edit.Text;
-        
-        Lexer lexer = new Lexer(code);
-        List<Token> tokens = lexer.GetTokens();
-        
-        Parser parser = new Parser(tokens);
-        var (nodes, errors, result) = parser.Parse();
-        
-        Terminal.Text = "\0";
-        foreach (var token in tokens)
-        {
-            if (token.Type == TokenType.Unknown)
-            {
-                Terminal.Text += "Error: " + token + "\r\n";
-                continue;
-            }
-        }
-        foreach (var error in errors)
-        {
-            Terminal.Text += error.Message + "\r\n";
-            continue;
-        }
+        Analysis();
     }
     void PressReset()
     {
-        Interpreter.Picture = new BrushBot.Color[Interpreter.Size, Interpreter.Size];
+        Scope.Picture = new BrushBot.Color[Scope.Size, Scope.Size];
         grid.QueueRedraw();
     }
     void PressExit()
@@ -99,18 +87,18 @@ public partial class Main : Control
         var script = FileAccess.Open(path, FileAccess.ModeFlags.Read);
         edit.Text = script.GetAsText();
         script.Close();
+        Analysis();
     }
     void ChangeSize(string text) {
         if (IsNumber(text))
         {
             int size = int.Parse(text);
-            Interpreter.Size = size;
-            Interpreter.Picture = new BrushBot.Color[size, size];
-            Handle.size = size;
+            Scope.Size = size;
+            Scope.Picture = new BrushBot.Color[size, size];
         }
         else
         {
-            SizeEdit.Text = Interpreter.Size + "";
+            SizeEdit.Text = Scope.Size + "";
         }
         grid.QueueRedraw();
     }
@@ -121,6 +109,85 @@ public partial class Main : Control
             if (char.IsDigit(text[i])) return true;
         }
         return false;
+    }
+    void Analysis()
+    {
+        Scope.Replay();
+        string code = edit.Text;
+        
+        Lexer lexer = new Lexer(code);
+        var (tokens, LexerErrors) = lexer.GetTokens();
+        
+        Parser parser = new Parser(tokens);
+        var (nodes, ParseErrors, result) = parser.Parse();
+
+        Semanter semanter = new Semanter(nodes);
+        var (checknodes, SemantErrors) = semanter.Semant();
+        
+        Terminal.Text = "\0";
+        foreach (var error in LexerErrors)
+        {
+            Terminal.Text += error.Message + "\r\n";
+        }
+        foreach (var error in ParseErrors)
+        {
+            Terminal.Text += error.Message + "\r\n";
+        }
+        foreach (var error in SemantErrors)
+        {
+            Terminal.Text += error.Message + "\r\n";
+        }
+        foreach (var variable in Scope.Variables)
+        {
+            Terminal.Text += "Variable: " + variable + "\r\n";
+        }
+        foreach (var label in Scope.Labels)
+        {
+            Terminal.Text += "Label: " + label + "\r\n";
+        }
+    }
+    void Execute()
+    {
+        Handle.delay = 10;
+        Scope.Replay();
+        string code = edit.Text;
+        
+        Lexer lexer = new Lexer(code);
+        var (tokens, LexerErrors) = lexer.GetTokens();
+        
+        Parser parser = new Parser(tokens);
+        var (nodes, ParseErrors, result) = parser.Parse();
+        
+        Semanter semanter = new Semanter(nodes);
+        var (checknodes, SemantErrors) = semanter.Semant();
+
+        if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
+        {
+            Interpreter interpreter = new Interpreter(checknodes);
+            interpreter.Interpret();
+        }
+        else
+        {
+            Terminal.Text += "Error: No se puede ejecutar sin resolver los errores" + "\r\n";
+        }
+    }
+    public Godot.Color CheckColor(BrushBot.Color color)
+    {
+        switch (color)
+        {
+            case  BrushBot.Color.Transparent: return new Godot.Color(255, 255, 255, 0);
+            case  BrushBot.Color.Red: return new Godot.Color(255, 0, 0);
+            case  BrushBot.Color.Blue: return new Godot.Color(0, 0, 255);
+            case  BrushBot.Color.Green: return new Godot.Color(0, 255, 0);
+            case  BrushBot.Color.Yellow: return new Godot.Color(255, 255, 0);
+            case  BrushBot.Color.Orange: return new Godot.Color(255, 165, 0);
+            case  BrushBot.Color.Purple: return new Godot.Color(160, 32, 240);
+            case  BrushBot.Color.Black: return new Godot.Color(0, 0, 0);
+            case  BrushBot.Color.White: return new Godot.Color(255, 255, 255);
+            case  BrushBot.Color.Pink : return new Godot.Color(255, 80, 220);
+
+            default: return new Godot.Color(255, 255, 255, 0);
+        }
     }
     #endregion
 }

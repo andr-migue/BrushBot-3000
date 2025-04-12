@@ -1,57 +1,103 @@
 using System;
 using System.Drawing;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace BrushBot
 {
-    public enum Color
-    {
-        Transparent,
-        Red,
-        Blue,
-        Green,
-        Yellow,
-        Orange,
-        Purple,
-        Black,
-        White
-    }
     public static class Handle
     {
-        public static int size = 64;
-        public static void Spawn(Expression expression)
+        public static int delay = 10;
+        public static void CheckSpawn(Expression expression)
+        {
+            if (!(expression.Interpret() is (int, int)))
+            {
+                throw new SemanticalError ($"Error: Argumento de Spawn no valido.");
+            }
+        }
+        public static void CheckColor(Expression expression)
+        {
+            if (!(expression.Interpret() is Color))
+            {
+                throw new SemanticalError ($"Error: Argumento de Color no valido.");
+            }
+        }
+        public static void CheckSize(Expression expression)
+        {
+            if (!(expression.Interpret() is int))
+            {
+                throw new SemanticalError ($"Error: Argumento de Size no valido.");
+            }
+        }
+        public static void CheckDrawLine(Expression expression)
+        {
+            if (!(expression.Interpret() is (int, (int, int))))
+            {
+                throw new SemanticalError ($"Error: Argumento de DrawLine no valido.");
+            }
+        }
+        public static void CheckDrawCircle(Expression expression)
+        {
+            if (!(expression.Interpret() is (int, (int, int))))
+            {
+                throw new SemanticalError ($"Error: Argumento de DrawCircle no valido.");
+            }
+        }
+        public static void CheckDrawRectangle(Expression expression)
+        {
+            if (!(expression.Interpret() is (int, (int, (int, (int, int))))))
+            {
+                throw new SemanticalError ($"Error: Argumento de DrawRectangle no valido.");
+            }
+        }
+        public static void CheckFill(Expression expression)
+        {
+            if (expression != null)
+            {
+                throw new SemanticalError ($"Error: Argumento de Fill no valido.");
+            }
+        }
+        public static async Task Spawn(Expression expression)
         {
             if (expression.Interpret() is (int x, int y))
             {
                 if (IsValid(x, y))
                 {
-                    Interpreter.Position = (x, y);
+                    Scope.Position = (x, y);
+                    Scope.flag = true;
+                    await Task.Delay(0);
                 }
+                else throw new RuntimeError ($"Coordenadas fuera de rango");
             }
-            else throw new RuntimeError ($"Coordenadas de Spawn fuera de rango.");
         }
-        public static void Color(Expression expression)
+        public static async Task Color(Expression expression)
         {
-            if (expression.Interpret() is Color color) Interpreter.BrushColor = color;
-            else throw new RuntimeError ($"Argumento de Color no válido.");
+            if (expression.Interpret() is Color color)
+            {
+               Scope.BrushColor = color;
+               Scope.flag = true;
+                await Task.Delay(0);
+            }
         }
-        public static void Size(Expression expression)
+        public static async Task Size(Expression expression)
         {
             if (expression.Interpret() is int size)
             {
                 if (size % 2 == 0)
                 {
-                    Interpreter.BrushSize = size - 1;
+                    Scope.BrushSize = size - 1;
+                    Scope.flag = true;
+                    await Task.Delay(0);
                 }
-                else Interpreter.BrushSize = size;
+                else Scope.BrushSize = size;
             }
-            else throw new RuntimeError ($"Argumento de Size no valido.");
         }
-        public static void DrawLine(Expression expression)
+        public static async Task DrawLine(Expression expression)
         {
-            int x = Interpreter.Position.Item1;
-            int y = Interpreter.Position.Item2;
-
+            int x = Scope.Position.Item1;
+            int y = Scope.Position.Item2;
+            Scope.Picture[x, y] = Scope.BrushColor;
+            
             if (expression.Interpret() is (int dirX, (int dirY, int distance)))
             {
                 for (int d = 0; d < distance; d++)
@@ -61,20 +107,21 @@ namespace BrushBot
 
                     if (IsValid(newx, newy))
                     {
-                        Interpreter.Picture[newx, newy] = Interpreter.BrushColor;
-                        x = newx; 
+                        Scope.Picture[newx, newy] = Scope.BrushColor;
+                        Scope.Position = (newx, newy);
+                        x = newx;
                         y = newy;
+                        Scope.flag = true;
+                        await Task.Delay(delay);
                     }
                     else throw new RuntimeError($"Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
                 }
             }
-            else
-                throw new RuntimeError("Argumento de DrawLine no válido.");
         }
-        public static void DrawCircle(Expression expression)
+        public static async Task DrawCircle(Expression expression)
         {
-            int x = Interpreter.Position.Item1;
-            int y = Interpreter.Position.Item2;
+            int x = Scope.Position.Item1;
+            int y = Scope.Position.Item2;
 
             if (expression.Interpret() is (int dirX, (int dirY, int radius)))
             {
@@ -83,7 +130,7 @@ namespace BrushBot
 
                 if (!IsValid(centerX, centerY)) throw new RuntimeError($"Centro del círculo fuera de rango: ({centerX}, {centerY})");
                 
-                Interpreter.Position = (centerX, centerY);
+               Scope.Position = (centerX, centerY);
 
                 double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
 
@@ -95,16 +142,19 @@ namespace BrushBot
 
                     if (IsValid(pixelX, pixelY))
                     {
-                        Interpreter.Picture[pixelX, pixelY] = Interpreter.BrushColor;
+                        Scope.Position = (pixelX, pixelY);
+                        Scope.Picture[pixelX, pixelY] =Scope.BrushColor;
+                        Scope.flag = true;
+                        await Task.Delay(delay);
                     }
                 }
+                Scope.Position = (centerX, centerY);
             }
-            else throw new RuntimeError("Argumento de DrawCircle no válido.");
         }
-        public static void DrawRectangle(Expression expression)
+        public static async Task DrawRectangle(Expression expression)
         {
-            int x = Interpreter.Position.Item1;
-            int y = Interpreter.Position.Item2;
+            int x = Scope.Position.Item1;
+            int y = Scope.Position.Item2;
 
             if (expression.Interpret() is (int dirX, (int dirY, (int distance, (int width, int height)))))
             {
@@ -125,55 +175,62 @@ namespace BrushBot
                             bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
                             if (isBorder && IsValid(i, j))
                             {
-                                Interpreter.Picture[i, j] = Interpreter.BrushColor;
+                                Scope.Position = (i, j);
+                                Scope.Picture[i, j] = Scope.BrushColor;
+                                Scope.flag = true;
+                                await Task.Delay(delay);
                             }
                         }
                     }
-                    Interpreter.Position = (newx, newy);
+                   Scope.Position = (newx, newy);
                 }
             }
-            else
-            {
-                throw new RuntimeError("Argumentos de DrawRectangle no válidos.");
-            }
         }
-        public static void Fill()
+        public static void Fill( )
         {
-            int x = Interpreter.Position.Item1;
-            int y = Interpreter.Position.Item2;
+            int x = Scope.Position.Item1;
+            int y = Scope.Position.Item2;
             throw new NotImplementedException();
         }
-        public static int GetActualX()
+        public static int GetActualX( )
         {
-            return Interpreter.Position.Item1;
+            return Scope.Position.Item1;
         }
-        public static int GetActualY()
+        public static int GetActualY( )
         {
-            return Interpreter.Position.Item2;
+            return Scope.Position.Item2;
         }
-        public static int GetCanvasSize()
+        public static int GetCanvasSize( )
         {
-            return size;
+            return Scope.Size;
         }
         public static bool IsBrushColor(Expression expression)
         {
             if (expression.Interpret() is Color color)
             {
-                return color == Interpreter.BrushColor;
+                return color ==Scope.BrushColor;
             }
-            else throw new RuntimeError ($"Argumento de IsBrushColor no valido.");
+            else throw new SemanticalError ($"Argumento de IsBrushColor no valido.");
         }
         public static bool IsBrushSize(Expression expression)
         {
             if (expression.Interpret() is int brush)
             {
-                return brush == Interpreter.BrushSize;
+                return brush == Scope.BrushSize;
             }
-            else throw new RuntimeError ($"Argumento de IsBrushSize no valido.");
+            else throw new SemanticalError ($"Argumento de IsBrushSize no valido.");
+        }
+        public static bool IsCanvasColor(Expression expression)
+        {
+            throw new NotImplementedException();
+        }
+        public static int GetColorCount(Expression expression)
+        {
+            throw new NotImplementedException();
         }
         private static bool IsValid(int x, int y)
         {
-            return x >= 0 && x < size && y >= 0 && y < size;
+            return x >= 0 && x < Scope.Size && y >= 0 && y < Scope.Size;
         }
     }
 }

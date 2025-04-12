@@ -9,12 +9,14 @@ namespace BrushBot
         private char CurrentChar;
         private int CurrentLn = 1;
         private int CurrentCol = 0;
+        private List<LexerError> Errors;
         public Lexer(string text)
         {
             Text = text;
             Position = 0;
-            tokens = new List<Token>();
+            tokens = new();
             CurrentChar = Text.Length > 0 ? Text[0] : '\0';
+            Errors = new();
         }
         private HashSet<string> Keywords = new HashSet<string>
         {
@@ -35,7 +37,7 @@ namespace BrushBot
         };
         private HashSet<string> Colors = new HashSet<string>
         {
-            "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Black", "White", "Transparent"
+            "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Black", "White", "Transparent", "Pink"
         };
         private void Advance()
         {
@@ -88,12 +90,17 @@ namespace BrushBot
             }
             if (CurrentChar != '"')
             {
+                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
             Advance(); // Para saltar la comilla de cierre.
             
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, CurrentCol);
-            else return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
+            else
+            {
+                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
+                return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
+            }
         }
         private Token GetWord()
         {
@@ -138,6 +145,7 @@ namespace BrushBot
                 else
                 {
                     Advance();
+                    Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
                     return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
                 }
             }
@@ -149,10 +157,11 @@ namespace BrushBot
             else
             {
                 Advance();
+                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
-        public List<Token> GetTokens()
+        public (List<Token>, List<LexerError>) GetTokens()
         {
             while (CurrentChar != '\0')
             {
@@ -170,7 +179,7 @@ namespace BrushBot
             }
             tokens.Add(new Token(TokenType.EndOfFile, "END", CurrentLn, CurrentCol));
 
-            return tokens;
+            return (tokens, Errors);
         }
     }
 }

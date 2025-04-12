@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 namespace BrushBot
 {
     public abstract class Node {}
@@ -28,7 +30,7 @@ namespace BrushBot
                 {
                     return (bool)left && (bool)right;
                 }
-                else throw new RuntimeError($"No se puede aplicar el operador '&&' entre {left} y {right}.");
+                else throw new SemanticalError($"Error: No se puede aplicar el operador '&&' entre {left} y {right}.");
             }
             else if (oper == "||")
             {
@@ -36,7 +38,7 @@ namespace BrushBot
                 {
                     return (bool)left || (bool)right;
                 }
-                else throw new RuntimeError($"No se puede aplicar el operador '||' entre {left} y {right}.");
+                else throw new SemanticalError($"Error: No se puede aplicar el operador '||' entre {left} y {right}.");
             }
             else if (oper == "==")
             {
@@ -65,19 +67,19 @@ namespace BrushBot
                         {
                             return newLeft / newRight;
                         }
-                        else throw new RuntimeError("No está definida la división por 0.");
+                        else throw new SemanticalError("Error: No está definida la división por 0.");
                     case "%":
                         if (newRight != 0)
                         {
                             return newLeft % newRight;
                         }
-                        else throw new RuntimeError("No está definida la división por 0.");
+                        else throw new SemanticalError("Error: No está definida la división por 0.");
                     case "**": return Math.Pow(newLeft, newRight);
 
-                    default: throw new RuntimeError($"Operador no válido {oper}.");
+                    default: throw new SemanticalError($"Error: Operador no válido {oper}.");
                 }
             }
-            else throw new RuntimeError($"Operación Binaria no válida.");
+            else throw new SemanticalError($"Error: Operación Binaria no válida.");
         }
     }
     public class UnaryExpression : Expression
@@ -98,15 +100,7 @@ namespace BrushBot
                 {
                     return -(int)expr;
                 }
-                else if (expr is GroupingExpression grouping)
-                {
-                    if (grouping.Left.Interpret() is int number)
-                    {
-                        return (-number, grouping.Interpret());
-                    }
-                    else throw new RuntimeError($"No se puede aplicar el operador '-' a {grouping.Left.Interpret()}.");
-                }
-                else throw new RuntimeError($"No se puede aplicar el operador '-' a {Expression}.");
+                else throw new SemanticalError($"Error: No se puede aplicar el operador '-' a {Expression}.");
             }
             else
             {
@@ -115,7 +109,7 @@ namespace BrushBot
                 {
                     return !(bool)expr;
                 }
-                else throw new RuntimeError($"No se puede aplicar el operador '!' a {Expression}.");
+                else throw new SemanticalError($"Error: No se puede aplicar el operador '!' a {Expression}.");
             }
         }
     }
@@ -173,11 +167,12 @@ namespace BrushBot
                     case "Purple" : return Color.Purple;
                     case "Black" : return Color.Black;
                     case "White" : return Color.White;
+                    case "Pink" : return Color.Pink;
 
-                    default : throw new RuntimeError ($"Color no válido.");
+                    default : throw new SemanticalError ($"Error: Color no válido.");
                 }
             }
-            else throw new RuntimeError ($"Literal no válido");
+            else throw new SemanticalError ($"Error: Literal no válido");
         }
     }
     public class Variable : Expression
@@ -189,11 +184,11 @@ namespace BrushBot
         }
         public override Object Interpret()
         {
-            if (Interpreter.Variables.ContainsKey(Token.Value))
+            if (Scope.Variables.ContainsKey(Token.Value))
             {
-                return Interpreter.Variables[Token.Value];
+                return Scope.Variables[Token.Value];
             }
-            else throw new RuntimeError($"{Token.Value} no existe en este contexto");
+            else throw new SemanticalError($"Error: {Token.Value} no existe en este contexto");
         }
     }
     public class Assignment : Node
@@ -209,7 +204,6 @@ namespace BrushBot
         {
             string Name = Variable.Value;
             Object Value = Expression.Interpret();
-
             return (Name, Value);
         }
     }
@@ -230,32 +224,60 @@ namespace BrushBot
             Keyword = keyword;
             Arguments = arguments;
         }
-        public void Execute()
+        public void CheckSemantic()
         {
             switch (Keyword.Value)
             {
                 case "Spawn" :
-                    Handle.Spawn(Arguments);
+                    Handle.CheckSpawn(Arguments);
                     break;
                 case "Color" :
-                    Handle.Color(Arguments);
+                    Handle.CheckColor(Arguments);
                     break;
                 case "Size" :
-                    Handle.Size(Arguments);
+                    Handle.CheckSize(Arguments);
                     break;
                 case "DrawLine" :
-                    Handle.DrawLine(Arguments);
+                    Handle.CheckDrawLine(Arguments);
                     break;
                 case "DrawCircle" :
-                    Handle.DrawCircle(Arguments);
+                    Handle.CheckDrawCircle(Arguments);
                     break;
                 case "DrawRectangle" :
-                    Handle.DrawRectangle(Arguments);
+                    Handle.CheckDrawRectangle(Arguments);
+                    break;
+                case "Fill" :
+                    Handle.CheckFill(Arguments);
+                    break;
+                default: throw new SemanticalError("Error: Instruccion no reconocida");;
+            }
+        }
+        public async Task Execute()
+        {
+            switch (Keyword.Value)
+            {
+                case "Spawn" :
+                    await Handle.Spawn(Arguments);
+                    break;
+                case "Color" :
+                    await Handle.Color(Arguments);
+                    break;
+                case "Size" :
+                    await Handle.Size(Arguments);
+                    break;
+                case "DrawLine" :
+                    await Handle.DrawLine(Arguments);
+                    break;
+                case "DrawCircle" :
+                    await Handle.DrawCircle(Arguments);
+                    break;
+                case "DrawRectangle" :
+                    await Handle.DrawRectangle(Arguments);
                     break;
                 case "Fill" :
                     Handle.Fill();
                     break;
-                default: throw new RuntimeError("Instruccion no reconocida");;
+                default: throw new RuntimeError("Error: Instruccion no reconocida");;
             }
         }
     }
@@ -270,5 +292,6 @@ namespace BrushBot
             Label = label;
             Expression = expression;
         }
+
     }
 }

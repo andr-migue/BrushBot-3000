@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://d1nw4oeywy18w"]
+
+[ext_resource type="Texture2D" uid="uid://betvda7urr6ci" path="res://Assets/ChatGPT Image 12 abr 2025, 01_23_59.png" id="1_3w62d"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3w62d"]
+atlas = ExtResource("1_3w62d")
+region = Rect2(0, 0, 450, 1024)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q77te"]
+atlas = ExtResource("1_3w62d")
+region = Rect2(450, 0, 450, 1024)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ypuqa"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3w62d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q77te")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="brush" type="AnimatedSprite2D"]
+scale = Vector2(0.1, 0.1)
+sprite_frames = SubResource("SpriteFrames_ypuqa")
+autoplay = "default"
+frame_progress = 0.220172

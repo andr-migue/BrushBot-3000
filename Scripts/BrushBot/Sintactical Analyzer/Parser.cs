@@ -113,7 +113,7 @@ namespace BrushBot
         }
         private bool ValidateExpression()
         {
-            if (!Match(TokenType.Keyword, null) || !Match(TokenType.Delimiter, [")", "[", "]", ","]) || !Match(TokenType.JumpLine, null) || !Match(TokenType.Unknown, null) || !Match(TokenType.EndOfFile, null))
+            if (!Match(TokenType.Keyword, null) || !Match(TokenType.Delimiter, [")", "[", "]"]) || !Match(TokenType.JumpLine, null) || !Match(TokenType.Unknown, null) || !Match(TokenType.EndOfFile, null))
             {
                 return true;
             }
@@ -226,7 +226,26 @@ namespace BrushBot
         }
         private Expression Expression()
         {
-            return And();
+            return Grouping();
+        }
+        private Expression Grouping()
+        {
+            Expression expression = And();
+            
+            if (Match(TokenType.Delimiter, [","]))
+            {
+                var elements = new List<Expression> {expression};
+                
+                do elements.Add(And());
+                while (Match(TokenType.Delimiter, [","]));
+                
+                expression = elements[elements.Count - 1];
+                for(int i = elements.Count - 2; i >= 0; i--)
+                {
+                    expression = new GroupingExpression(elements[i], expression);
+                }
+            }
+            return expression;
         }
         private Expression And()
         {
@@ -342,22 +361,6 @@ namespace BrushBot
             if (CurrentType == TokenType.Number || CurrentType == TokenType.Color || CurrentType == TokenType.Identifier || CurrentType == TokenType.Function)
             {
                 Advance();
-
-                if (CurrentToken().Value == ",")
-                {
-                    Expression left;
-                    if (PreviousToken().Type == TokenType.Identifier)
-                    {
-                        left = new Variable(PreviousToken());
-                    }
-                    else
-                    {
-                        left = new Literal(PreviousToken());
-                    }
-                    Advance();
-                    Expression right = Expression();
-                    return new GroupingExpression(left, right);
-                }
                 Token token = PreviousToken();
                 if (token.Type == TokenType.Number || token.Type == TokenType.Color)
                 {

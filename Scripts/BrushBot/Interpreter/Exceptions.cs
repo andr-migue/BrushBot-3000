@@ -9,6 +9,10 @@ namespace BrushBot
     {
         public ParserError (string message) : base (message) {}
     }
+    public class SemanticalError : Exception
+    {
+        public SemanticalError (string message) : base (message) {}
+    }
     public class RuntimeError : Exception
     {
         public RuntimeError (string message) : base (message) {}
