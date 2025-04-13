@@ -1,8 +1,5 @@
 using BrushBot;
 using Godot;
-using System;
-using System.Data;
-
 public partial class GridGenerator : TextureRect
 {
     Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.1f);
@@ -10,6 +7,14 @@ public partial class GridGenerator : TextureRect
     [Export] AnimatedSprite2D Brush;
     
     public override void _Ready(){}
+    public override void _PhysicsProcess(double delta)
+    {
+        if (Scope.animation == true)
+        {
+            Brush.Play("default");
+        }
+        else Brush.Stop();
+    }
 
     public override void _Draw()
     {
@@ -22,6 +27,7 @@ public partial class GridGenerator : TextureRect
             DrawLine(new Vector2(c, 0), new Vector2(c, Size.Y), GridColor, LineWidth);
         }
         DrawColor(size, space);
+        UpdateBrushPosition(space);
     }
 
     private void DrawColor(int size, float space)
@@ -35,6 +41,16 @@ public partial class GridGenerator : TextureRect
                 DrawRect(rect, color);
             }
         }
+    }
+    private void UpdateBrushPosition(float space)
+    {
+        (int x, int y) = Scope.Position;
+        Vector2 currentPosition = new Vector2(x, y);
+
+        float X = currentPosition.X * space + 20;
+        float Y = currentPosition.Y * space - 20;
+
+        Brush.Position = new Vector2(X, Y);
     }
     public Godot.Color CheckColor(BrushBot.Color color)
     {

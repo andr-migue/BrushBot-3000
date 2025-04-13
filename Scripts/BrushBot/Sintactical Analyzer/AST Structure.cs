@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace BrushBot
 {
@@ -275,7 +274,7 @@ namespace BrushBot
                     await Handle.DrawRectangle(Arguments);
                     break;
                 case "Fill" :
-                    Handle.Fill();
+                    await Handle.Fill();
                     break;
                 default: throw new RuntimeError("Error: Instruccion no reconocida");;
             }

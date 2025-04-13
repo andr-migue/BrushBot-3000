@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BrushBot
 {
@@ -27,6 +26,7 @@ namespace BrushBot
         public static int BrushSize;
         public static Color BrushColor;
         public static bool flag;
+        public static bool animation;
         public static void Init()
         {
             Replay();
@@ -36,6 +36,7 @@ namespace BrushBot
             BrushSize = 1;
             BrushColor = Color.Transparent;
             flag = false;
+            animation = false;
         }
         public static void Replay()
         {

@@ -46,6 +46,7 @@ namespace BrushBot
                     {
                         if (jump.Expression.Interpret() is bool)
                         {
+                            if (!Scope.Labels.ContainsKey(jump.Label.Value)) throw new SemanticalError ($"Error: Label [{jump.Label.Value}] no existe en este contexto.");
                             continue;
                         }
                         else throw new SemanticalError ($"Error: Expresion de GoTo debe ser booleana.");

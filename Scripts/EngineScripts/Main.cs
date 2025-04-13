@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using Godot;
 using BrushBot;
-using System.Threading.Tasks;
 using System.Linq;
 public partial class Main : Control
 {
@@ -11,6 +8,7 @@ public partial class Main : Control
     [Export] CodeEdit edit;
     [Export] TextEdit Terminal;
     [Export] LineEdit SizeEdit;
+    [Export] int delay = 30;
     [Export] GridGenerator grid;
     [Export] AudioStreamPlayer2D audio;
     [Export] Godot.Label CurrentBrushSize;
@@ -148,7 +146,7 @@ public partial class Main : Control
     }
     void Execute()
     {
-        Handle.delay = 10;
+        Handle.delay = delay;
         Scope.Replay();
         string code = edit.Text;
         

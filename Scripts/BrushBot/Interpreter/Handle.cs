@@ -1,13 +1,11 @@
 using System;
-using System.Drawing;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace BrushBot
 {
     public static class Handle
     {
-        public static int delay = 10;
+        public static int delay = 30;
         public static void CheckSpawn(Expression expression)
         {
             if (!(expression.Interpret() is (int, int)))
@@ -112,10 +110,12 @@ namespace BrushBot
                         x = newx;
                         y = newy;
                         Scope.flag = true;
+                        Scope.animation = true;
                         await Task.Delay(delay);
                     }
                     else throw new RuntimeError($"Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
                 }
+                Scope.animation = false;
             }
         }
         public static async Task DrawCircle(Expression expression)
@@ -145,10 +145,13 @@ namespace BrushBot
                         Scope.Position = (pixelX, pixelY);
                         Scope.Picture[pixelX, pixelY] =Scope.BrushColor;
                         Scope.flag = true;
+                        Scope.animation = true;
                         await Task.Delay(delay);
                     }
                 }
                 Scope.Position = (centerX, centerY);
+                Scope.flag = true;
+                Scope.animation = false;
             }
         }
         public static async Task DrawRectangle(Expression expression)
@@ -178,15 +181,18 @@ namespace BrushBot
                                 Scope.Position = (i, j);
                                 Scope.Picture[i, j] = Scope.BrushColor;
                                 Scope.flag = true;
+                                Scope.animation = true;
                                 await Task.Delay(delay);
                             }
                         }
                     }
                    Scope.Position = (newx, newy);
+                   Scope.flag = true;
+                   Scope.animation = false;
                 }
             }
         }
-        public static void Fill( )
+        public static async Task Fill( )
         {
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;

@@ -28,4 +28,4 @@ animations = [{
 scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_ypuqa")
 autoplay = "default"
-frame_progress = 0.220172
+frame_progress = 0.339205
