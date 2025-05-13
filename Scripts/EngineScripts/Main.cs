@@ -1,6 +1,7 @@
 using Godot;
 using BrushBot;
 using System.Linq;
+using System.Threading.Tasks;
 public partial class Main : Control
 {
     [Export] FileDialog saveDialog;
@@ -144,7 +145,7 @@ public partial class Main : Control
             Terminal.Text += "Label: " + label + "\r\n";
         }
     }
-    void Execute()
+    async Task Execute()
     {
         Handle.delay = delay;
         Scope.Replay();
@@ -162,7 +163,7 @@ public partial class Main : Control
         if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
         {
             Interpreter interpreter = new Interpreter(checknodes);
-            interpreter.Interpret();
+            await interpreter.Interpret();
         }
         else
         {

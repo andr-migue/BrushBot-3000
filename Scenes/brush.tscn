@@ -15,17 +15,21 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3w62d")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
 }, {
+"frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_q77te")
 }],
-"loop": true,
-"name": &"default",
+"loop": false,
+"name": &"move",
 "speed": 5.0
 }]
 
 [node name="brush" type="AnimatedSprite2D"]
 scale = Vector2(0.1, 0.1)
 sprite_frames = SubResource("SpriteFrames_ypuqa")
-autoplay = "default"
-frame_progress = 0.339205
+animation = &"move"

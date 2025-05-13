@@ -236,7 +236,10 @@ namespace BrushBot
             {
                 var elements = new List<Expression> {expression};
                 
-                do elements.Add(And());
+                do
+                {
+                    elements.Add(And());
+                }
                 while (Match(TokenType.Delimiter, [","]));
                 
                 expression = elements[elements.Count - 1];

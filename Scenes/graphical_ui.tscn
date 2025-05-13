@@ -91,7 +91,7 @@ loadDialog = NodePath("FileDialog - Load")
 edit = NodePath("CodeEdit")
 Terminal = NodePath("Terminal")
 SizeEdit = NodePath("Size")
-delay = 40
+delay = 35
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
 CurrentBrushSize = NodePath("HBoxContainer/Label3")
@@ -135,7 +135,8 @@ GoTo [label] (n < 10)
 
 Color(\"Green\")
 Spawn(20,20)
-DrawCircle(1,1, 10)"
+DrawCircle(1,1, 10)
+Fill()"
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_ekyth")
 highlight_all_occurrences = true
@@ -273,7 +274,6 @@ Brush = NodePath("brush")
 [node name="brush" parent="TextureRect" instance=ExtResource("12_7lov0")]
 z_index = 1
 z_as_relative = false
-autoplay = ""
 frame_progress = 0.803947
 
 [node name="FileDialog - Save" type="FileDialog" parent="."]

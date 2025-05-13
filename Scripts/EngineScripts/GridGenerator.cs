@@ -9,11 +9,9 @@ public partial class GridGenerator : TextureRect
     public override void _Ready(){}
     public override void _PhysicsProcess(double delta)
     {
-        if (Scope.animation == true)
-        {
-            Brush.Play("default");
-        }
-        else Brush.Stop();
+        if (Scope.animation == true) Brush.Play("move");
+        
+        else Brush.Play("default");
     }
 
     public override void _Draw()

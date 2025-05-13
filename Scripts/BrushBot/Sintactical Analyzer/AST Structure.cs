@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Threading.Tasks;
 namespace BrushBot
 {
@@ -39,13 +40,13 @@ namespace BrushBot
                 }
                 else throw new SemanticalError($"Error: No se puede aplicar el operador '||' entre {left} y {right}.");
             }
-            else if (oper == "==")
+            else if ((oper == "==") && (left is bool && right is bool))
             {
-                return left == right;
+                return (bool)left == (bool)right;
             }
-            else if (oper == "!=")
+            else if ((oper == "!=") && (left is bool && right is bool))
             {
-                return left != right;
+                return (bool)left != (bool)right;
             }
             else if (left is int && right is int)
             {
@@ -54,6 +55,8 @@ namespace BrushBot
                 
                 switch (oper)
                 {
+                    case "==": return newLeft == newRight;
+                    case "!=": return newLeft != newRight;
                     case "<": return newLeft < newRight;
                     case ">": return newLeft > newRight;
                     case "<=": return newLeft <= newRight;
@@ -137,7 +140,17 @@ namespace BrushBot
         }
         public override Object Interpret()
         {
-            throw new NotImplementedException();
+            switch (Name.Value)
+            {
+                case "GetActualX": return Handle.GetActualX();
+                case "GetActualY": return Handle.GetActualY();
+                case "GetCanvasSize": return Handle.GetCanvasSize();
+                case "IsBrushColor": return Handle.IsBrushColor(Arguments);
+                case "IsBrushSize": return Handle.IsBrushSize(Arguments);
+                case "IsCanvasColor": return Handle.IsCanvasColor(Arguments);
+                case "GetColorCount": return Handle.GetColorCount(Arguments);
+                default: throw new SemanticalError("Error: Function no reconocida");
+            }
         }
     }
     public class Literal : Expression
@@ -248,7 +261,7 @@ namespace BrushBot
                 case "Fill" :
                     Handle.CheckFill(Arguments);
                     break;
-                default: throw new SemanticalError("Error: Instruccion no reconocida");;
+                default: throw new SemanticalError("Error: Instruction no reconocida");
             }
         }
         public async Task Execute()

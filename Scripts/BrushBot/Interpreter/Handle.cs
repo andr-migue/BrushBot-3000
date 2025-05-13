@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace BrushBot
@@ -130,7 +132,7 @@ namespace BrushBot
 
                 if (!IsValid(centerX, centerY)) throw new RuntimeError($"Centro del círculo fuera de rango: ({centerX}, {centerY})");
                 
-               Scope.Position = (centerX, centerY);
+                Scope.Position = (centerX, centerY);
 
                 double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
 
@@ -192,21 +194,54 @@ namespace BrushBot
                 }
             }
         }
-        public static async Task Fill( )
+        public static async Task Fill()
         {
-            int x = Scope.Position.Item1;
-            int y = Scope.Position.Item2;
-            throw new NotImplementedException();
+            int i = Scope.Position.Item1;
+            int j = Scope.Position.Item2;
+            Color Current = Scope.Picture[i, j];
+            if (Current == Scope.BrushColor) return;
+
+            Queue<(int, int)> queue = new();
+            
+            queue.Enqueue((i, j));
+            Scope.Picture[i, j] = Scope.BrushColor;
+
+            int[] dirX = {1, -1, 0,  0};
+            int[] dirY = {0,  0, 1, -1};
+
+            while (queue.Count > 0)
+            {
+                var (x, y) = queue.Dequeue();
+
+                for (int k = 0; k < dirX.Length; k++)
+                {
+                    int newX = x + dirX[k];
+                    int newY = y + dirY[k];
+
+                    if (IsValid(newX, newY) && Scope.Picture[newX, newY] == Current)
+                    {
+                        Scope.Picture[newX, newY] = Scope.BrushColor;
+                        queue.Enqueue((newX, newY));
+                        Scope.flag = true;
+                        Scope.animation = true;
+                        Scope.Position = (newX, newY);
+                        await Task.Delay(delay);
+                    }
+                }
+            }
+            Scope.Position = (i, j);
+            Scope.flag = true;
+            Scope.animation = false;
         }
-        public static int GetActualX( )
+        public static int GetActualX()
         {
             return Scope.Position.Item1;
         }
-        public static int GetActualY( )
+        public static int GetActualY()
         {
             return Scope.Position.Item2;
         }
-        public static int GetCanvasSize( )
+        public static int GetCanvasSize()
         {
             return Scope.Size;
         }
@@ -214,7 +249,7 @@ namespace BrushBot
         {
             if (expression.Interpret() is Color color)
             {
-                return color ==Scope.BrushColor;
+                return color == Scope.BrushColor;
             }
             else throw new SemanticalError ($"Argumento de IsBrushColor no valido.");
         }
@@ -228,11 +263,49 @@ namespace BrushBot
         }
         public static bool IsCanvasColor(Expression expression)
         {
-            throw new NotImplementedException();
+            if (expression.Interpret() is (Color color, (int vertical, int horizontal)))
+            {
+                int x = Scope.Position.Item1;
+                int y = Scope.Position.Item2;
+                bool flag = true;
+
+                for (int i = x; i < x + horizontal; i++)
+                {
+                    for (int j = y; y < y + vertical; j++)
+                    {
+                        if (Scope.Picture[i, j] != color)
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag == false)
+                    {
+                        break;
+                    }
+                }
+                return flag;
+            }
+            else throw new SemanticalError ($"Argumento de IsBrushColor no valido.");
         }
         public static int GetColorCount(Expression expression)
         {
-            throw new NotImplementedException();
+            if (expression.Interpret() is (Color color, (int x1, (int y1, (int x2, int y2)))))
+            {
+                int count = 0;
+                for (int i = y1; i < y2; i++)
+                {
+                    for (int j = x1; j < x2; j++)
+                    {
+                        if (Scope.Picture [i, j] == color) count++;
+                    }
+                }
+                return count;
+            }
+            else
+            {
+                throw new SemanticalError ($"Argumento de GetColorCount no valido.");
+            }
         }
         private static bool IsValid(int x, int y)
         {
