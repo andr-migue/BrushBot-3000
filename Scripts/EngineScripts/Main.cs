@@ -10,7 +10,7 @@ public partial class Main : Control
     [Export] TextEdit Terminal;
     [Export] LineEdit SizeEdit;
     [Export] int delay = 30;
-    [Export] GridGenerator grid;
+    [Export] Printer grid;
     [Export] AudioStreamPlayer2D audio;
     [Export] Godot.Label CurrentBrushSize;
     [Export] Godot.Label CurrentPosition;
@@ -135,14 +135,6 @@ public partial class Main : Control
         foreach (var error in SemantErrors)
         {
             Terminal.Text += error.Message + "\r\n";
-        }
-        foreach (var variable in Scope.Variables)
-        {
-            Terminal.Text += "Variable: " + variable + "\r\n";
-        }
-        foreach (var label in Scope.Labels)
-        {
-            Terminal.Text += "Label: " + label + "\r\n";
         }
     }
     async Task Execute()

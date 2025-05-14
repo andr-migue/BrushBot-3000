@@ -10,7 +10,7 @@
 [ext_resource type="FontFile" uid="uid://ibsvww3uwbxl" path="res://Fonts/Fira Code/ttf/FiraCode-Regular.ttf" id="8_7wjfc"]
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
-[ext_resource type="Script" uid="uid://cofuij8ctruj7" path="res://Scripts/EngineScripts/GridGenerator.cs" id="10_mhwis"]
+[ext_resource type="Script" uid="uid://bml7var5rtfu0" path="res://Scripts/EngineScripts/Printer.cs" id="10_mhwis"]
 [ext_resource type="PackedScene" uid="uid://d1nw4oeywy18w" path="res://Scenes/brush.tscn" id="12_7lov0"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
@@ -124,19 +124,25 @@ theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Spawn(0,0)
+text = "Spawn(0, 0)
+Color(\"Black\")
+n <- 5
+k <- 3 + 3 * 10
+n <- k * 2
+actual-x <- GetActualX()
+i <- 0
+
+loop1
+DrawLine(1, 0, 1)
+i <- i + 1
+is-brush-color-blue <- IsBrushColor(\"Blue\")
+GoTo [loop-ends-here] (is-brush-color-blue == 1)
+GoTo [loop1] (i < 10)
+
 Color(\"Blue\")
+GoTo [loop1] (1 == 1)
 
-n <- 2
-label
-DrawLine(1,1,n)
-n <- n + 2
-GoTo [label] (n < 10)
-
-Color(\"Green\")
-Spawn(20,20)
-DrawCircle(1,1, 10)
-Fill()"
+loop-ends-here"
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_ekyth")
 highlight_all_occurrences = true
@@ -285,6 +291,7 @@ transparent = true
 dialog_hide_on_ok = true
 dialog_autowrap = true
 access = 2
+use_native_dialog = true
 
 [node name="FileDialog - Load" type="FileDialog" parent="."]
 auto_translate_mode = 1
@@ -299,6 +306,7 @@ dialog_hide_on_ok = true
 dialog_autowrap = true
 file_mode = 0
 access = 2
+use_native_dialog = true
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0

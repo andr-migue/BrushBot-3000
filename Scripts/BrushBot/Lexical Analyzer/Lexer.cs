@@ -90,7 +90,7 @@ namespace BrushBot
             }
             if (CurrentChar != '"')
             {
-                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
+                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Se espera '{"\""}'."));
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
             Advance(); // Para saltar la comilla de cierre.
@@ -98,7 +98,7 @@ namespace BrushBot
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, CurrentCol);
             else
             {
-                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
+                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Color desconocido '{result}'."));
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
@@ -145,7 +145,7 @@ namespace BrushBot
                 else
                 {
                     Advance();
-                    Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
+                    Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Identificador desconocido '{result}'."));
                     return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
                 }
             }
@@ -157,7 +157,7 @@ namespace BrushBot
             else
             {
                 Advance();
-                Errors.Add(new LexerError($"Error: Token desconocido {result} Ln {CurrentLn} Col {CurrentCol}."));
+                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Identificador desconocido '{result}'."));
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
