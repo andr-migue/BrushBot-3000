@@ -173,17 +173,62 @@ namespace BrushBot
                 }
                 if (ValidateExpression())
                 {
-                    Expression expression = Expression();
+                    List<Expression> parameters = Parameters();
 
                     if (Match(TokenType.Delimiter, [")"]))
                     {
-                        return new Instruction(keyword, expression);
+                        return new Instruction(keyword, parameters);
                     }
                     else throw Error(CurrentToken(), "Se espera ).");
                 }
                 else throw Error(CurrentToken(), "Expresión no válida.");
             }
             else throw Error(CurrentToken(), $"Se espera '(' después de la instrucción '{keyword.Value}'.");
+        }
+        private List<Expression> Parameters()
+        {
+            List<Expression> parameters = new();
+            List<ParserError> errors = new();
+
+            try
+            {
+                Expression expression = Expression();
+                parameters.Add(expression);
+            }
+            catch (ParserError error)
+            {
+                errors.Add(error);
+                SynchronizeParameter();
+            }
+            
+            while (Match(TokenType.Delimiter, [","]))
+            {
+                try
+                {
+                    Expression expression = Expression();
+                    parameters.Add(expression);
+                }
+                catch (ParserError error)
+                {
+                    errors.Add(error);
+                    SynchronizeParameter();
+                }
+            }
+
+            if (errors.Count > 0)
+            {
+                string message = "Error de Parámetros:\n";
+
+                foreach (ParserError error in errors)
+                {
+                    message += error.Message + '\n';
+                }
+                throw new ParserError(message);
+            }
+            else
+            {
+                return parameters;
+            }
         }
         private Jump GoTo(Token keyword)
         {
@@ -235,94 +280,22 @@ namespace BrushBot
             }
             else throw Error(CurrentToken(), $"Se espera '<-' después del identificador '{Identifier.Value}'.");
         }
-        private Expression Expression()
-        {
-            return Grouping();
-        }
-        private Expression Grouping()
-        {
-            List<Expression> parameters = Parameters();
-
-            if (parameters.Count == 1)
-            {
-                return parameters[0];
-            }
-
-            else return Build(parameters);
-        }
-        private List<Expression> Parameters()
-        {
-            List<Expression> parameters = new List<Expression>();
-            List<ParserError> errors = new List<ParserError>();
-
-            try
-            {
-                parameters.Add(And());
-            }
-            catch (ParserError error)
-            {
-                errors.Add(error);
-                SynchronizeParameter();
-            }
-
-            while (CurrentToken().Type == TokenType.Delimiter && CurrentToken().Value == ",")
-            {
-                Advance();
-                
-                try
-                {
-                    parameters.Add(And());
-                }
-                catch (ParserError error)
-                {
-                    errors.Add(error);
-                    SynchronizeParameter();
-                }
-            }
-
-            if (parameters.Count == 1)
-            {
-                if (errors.Count > 0)
-                {
-                    throw errors[0];
-                }
-                else return parameters;
-            }
-            else
-            {
-                if (errors.Count > 0)
-                {
-                    string errorMessage = "Errores en los parámetros:\n";
-                    foreach (ParserError error in errors)
-                    {
-                        errorMessage += $"- {error.Message}\n";
-                    }
-                    throw new ParserError(errorMessage);
-                }
-                return parameters;
-            }
-        }
         private void SynchronizeParameter()
         {
             while (!IsEndToken())
             {
-                if (CurrentToken().Type == TokenType.Delimiter && (CurrentToken().Value == "," || CurrentToken().Value == ")"))
+                if (CurrentToken().Value == "," || CurrentToken().Value == ")")
                 {
                     return;
                 }
                 Advance();
             }
         }
-        private Expression Build(List<Expression> elements)
+        private Expression Expression()
         {
-            Expression expression = elements[elements.Count - 1];
-
-            for (int i = elements.Count - 2; i >= 0; i--)
-            {
-                expression = new GroupingExpression(elements[i], expression);
-            }
-            return expression;
+            return And();
         }
+        
         private Expression And()
         {
             Expression expression = Or();
@@ -461,15 +434,15 @@ namespace BrushBot
                         }
                         if (ValidateExpression())
                         {
-                            Expression expression = Expression();
+                            List<Expression> parameters = Parameters();
 
                             if (Match(TokenType.Delimiter, [")"]))
                             {
-                                return new Function(token, expression);
+                                return new Function(token, parameters);
                             }
                             else throw Error (CurrentToken(), "Se espera ')'.");
                         }
-                        else throw Error (CurrentToken(), $"Expresión no válida de '{token.Value} de tipo {token.Type}'.");
+                        else throw Error (CurrentToken(), $"Expresión no válida '{token.Value}' de tipo '{token.Type}'.");
                     }
                     else throw Error (CurrentToken(), "Se espera '('.");
                 }

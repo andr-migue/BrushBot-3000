@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 namespace BrushBot
 {
     public abstract class Node {}
@@ -114,28 +115,14 @@ namespace BrushBot
             }
         }
     }
-    public class GroupingExpression : Expression
-    {
-        public Expression Left {get; }
-        public Expression Right {get; }
-        public GroupingExpression(Expression left, Expression right)
-        {
-            Left = left;
-            Right = right;
-        }
-        public override Object Interpret()
-        {
-            return (Left.Interpret(), Right.Interpret());
-        }
-    }
     public class Function : Expression
     {
         public Token Name {get; }
-        public Expression Arguments {get; }
-        public Function (Token name, Expression arguments)
+        public List<Expression> Parameters {get; }
+        public Function (Token name, List<Expression> parameters)
         {
             Name = name;
-            Arguments = arguments;
+            Parameters = parameters;
         }
         public override Object Interpret()
         {
@@ -144,10 +131,10 @@ namespace BrushBot
                 case "GetActualX": return Handle.GetActualX();
                 case "GetActualY": return Handle.GetActualY();
                 case "GetCanvasSize": return Handle.GetCanvasSize();
-                case "IsBrushColor": return Handle.IsBrushColor(Arguments);
-                case "IsBrushSize": return Handle.IsBrushSize(Arguments);
-                case "IsCanvasColor": return Handle.IsCanvasColor(Arguments);
-                case "GetColorCount": return Handle.GetColorCount(Arguments);
+                case "IsBrushColor": return Handle.IsBrushColor(Parameters);
+                case "IsBrushSize": return Handle.IsBrushSize(Parameters);
+                case "IsCanvasColor": return Handle.IsCanvasColor(Parameters);
+                case "GetColorCount": return Handle.GetColorCount(Parameters);
                 default: throw new SemanticalError("Error: Function no reconocida");
             }
         }
@@ -229,36 +216,36 @@ namespace BrushBot
     public class Instruction : Node
     {
         public Token Keyword {get; }
-        public Expression Arguments {get; }
-        public Instruction (Token keyword, Expression arguments)
+        public List<Expression> Parameters {get; }
+        public Instruction (Token keyword, List<Expression> parameters)
         {
             Keyword = keyword;
-            Arguments = arguments;
+            Parameters = parameters;
         }
         public void CheckSemantic()
         {
             switch (Keyword.Value)
             {
                 case "Spawn" :
-                    Handle.CheckSpawn(Arguments);
+                    Handle.CheckSpawn(Parameters);
                     break;
                 case "Color" :
-                    Handle.CheckColor(Arguments);
+                    Handle.CheckColor(Parameters);
                     break;
                 case "Size" :
-                    Handle.CheckSize(Arguments);
+                    Handle.CheckSize(Parameters);
                     break;
                 case "DrawLine" :
-                    Handle.CheckDrawLine(Arguments);
+                    Handle.CheckDrawLine(Parameters);
                     break;
                 case "DrawCircle" :
-                    Handle.CheckDrawCircle(Arguments);
+                    Handle.CheckDrawCircle(Parameters);
                     break;
                 case "DrawRectangle" :
-                    Handle.CheckDrawRectangle(Arguments);
+                    Handle.CheckDrawRectangle(Parameters);
                     break;
                 case "Fill" :
-                    Handle.CheckFill(Arguments);
+                    Handle.CheckFill(Parameters);
                     break;
                 default: throw new SemanticalError("Error: Instruction no reconocida");
             }
@@ -268,22 +255,22 @@ namespace BrushBot
             switch (Keyword.Value)
             {
                 case "Spawn" :
-                    await Handle.Spawn(Arguments);
+                    await Handle.Spawn(Parameters);
                     break;
                 case "Color" :
-                    await Handle.Color(Arguments);
+                    await Handle.Color(Parameters);
                     break;
                 case "Size" :
-                    await Handle.Size(Arguments);
+                    await Handle.Size(Parameters);
                     break;
                 case "DrawLine" :
-                    await Handle.DrawLine(Arguments);
+                    await Handle.DrawLine(Parameters);
                     break;
                 case "DrawCircle" :
-                    await Handle.DrawCircle(Arguments);
+                    await Handle.DrawCircle(Parameters);
                     break;
                 case "DrawRectangle" :
-                    await Handle.DrawRectangle(Arguments);
+                    await Handle.DrawRectangle(Parameters);
                     break;
                 case "Fill" :
                     await Handle.Fill();

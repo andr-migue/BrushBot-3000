@@ -1,195 +1,240 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 namespace BrushBot
 {
     public static class Handle
     {
         public static int delay = 30;
-        public static void CheckSpawn(Expression expression)
+        public static void CheckSpawn(List<Expression> parameters)
         {
-            if (!(expression.Interpret() is (int, int)))
+            if (parameters.Count != 2)
             {
-                throw new SemanticalError ($"Error: Argumento de Spawn no valido.");
+                throw new SemanticalError ($"Error: Spawn(int x, int y).");
             }
-        }
-        public static void CheckColor(Expression expression)
-        {
-            if (!(expression.Interpret() is Color))
+
+            foreach (Expression expression in parameters)
             {
-                throw new SemanticalError ($"Error: Argumento de Color no valido.");
-            }
-        }
-        public static void CheckSize(Expression expression)
-        {
-            if (!(expression.Interpret() is int))
-            {
-                throw new SemanticalError ($"Error: Argumento de Size no valido.");
-            }
-        }
-        public static void CheckDrawLine(Expression expression)
-        {
-            if (!(expression.Interpret() is (int, (int, int))))
-            {
-                throw new SemanticalError ($"Error: Argumento de DrawLine no valido.");
-            }
-        }
-        public static void CheckDrawCircle(Expression expression)
-        {
-            if (!(expression.Interpret() is (int, (int, int))))
-            {
-                throw new SemanticalError ($"Error: Argumento de DrawCircle no valido.");
-            }
-        }
-        public static void CheckDrawRectangle(Expression expression)
-        {
-            if (!(expression.Interpret() is (int, (int, (int, (int, int))))))
-            {
-                throw new SemanticalError ($"Error: Argumento de DrawRectangle no valido.");
-            }
-        }
-        public static void CheckFill(Expression expression)
-        {
-            if (expression != null)
-            {
-                throw new SemanticalError ($"Error: Argumento de Fill no valido.");
-            }
-        }
-        public static async Task Spawn(Expression expression)
-        {
-            if (expression.Interpret() is (int x, int y))
-            {
-                if (IsValid(x, y))
+                if (!(expression.Interpret() is int))
                 {
-                    Scope.Position = (x, y);
-                    Scope.flag = true;
-                    await Task.Delay(0);
+                    throw new SemanticalError ($"Error: Spawn(int x, int y).");
                 }
-                else throw new RuntimeError ($"Coordenadas fuera de rango");
             }
         }
-        public static async Task Color(Expression expression)
+        public static void CheckColor(List<Expression> parameters)
         {
-            if (expression.Interpret() is Color color)
+            if (parameters.Count != 1)
             {
-               Scope.BrushColor = color;
-               Scope.flag = true;
+                throw new SemanticalError ($"Error: Color(string color).");
+            }
+            if (!(parameters[0].Interpret() is Color))
+            {
+                throw new SemanticalError ($"Error: Color(string color).");
+            }
+        }
+        public static void CheckSize(List<Expression> parameters)
+        {
+            if (parameters.Count != 1)
+            {
+                throw new SemanticalError ($"Error: Size(int size).");
+            }
+            if (!(parameters[0].Interpret() is int))
+            {
+                throw new SemanticalError ($"Error: Size(int size.");
+            }
+        }
+        public static void CheckDrawLine(List<Expression> parameters)
+        {
+            if (parameters.Count != 3)
+            {
+                throw new SemanticalError ($"Error: DrawLine(int dirX, int dirY, int distance).");
+            }
+
+            foreach (Expression expression in parameters)
+            {
+                if (!(expression.Interpret() is int))
+                {
+                    throw new SemanticalError ($"Error: DrawLine(int dirX, int dirY, int distance).");
+                }
+            }
+        }
+        public static void CheckDrawCircle(List<Expression> parameters)
+        {
+            if (parameters.Count != 3)
+            {
+                throw new SemanticalError ($"Error: DrawCircle(int dirX, int dirY, int radius).");
+            }
+
+            foreach (Expression expression in parameters)
+            {
+                if (!(expression.Interpret() is int))
+                {
+                    throw new SemanticalError ($"Error: DrawCircle(int dirX, int dirY, int radius).");
+                }
+            }
+        }
+        public static void CheckDrawRectangle(List<Expression> parameters)
+        {
+            if (parameters.Count != 5)
+            {
+                throw new SemanticalError ($"Error: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+            }
+
+            foreach (Expression expression in parameters)
+            {
+                if (!(expression.Interpret() is int))
+                {
+                    throw new SemanticalError ($"Error: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                }
+            }
+        }
+        public static void CheckFill(List<Expression> parameters)
+        {
+            if (parameters != null)
+            {
+                throw new SemanticalError ($"Error: Fill().");
+            }
+        }
+        public static async Task Spawn(List<Expression> parameters)
+        {
+            int x = (int)parameters[0].Interpret();
+            int y = (int)parameters[1].Interpret();
+
+            if (IsValid(x, y))
+            {
+                Scope.Position = (x, y);
+                Scope.flag = true;
                 await Task.Delay(0);
             }
+            else throw new RuntimeError ($"Coordenadas fuera de rango");
         }
-        public static async Task Size(Expression expression)
+        public static async Task Color(List<Expression> parameters)
         {
-            if (expression.Interpret() is int size)
-            {
-                if (size % 2 == 0)
-                {
-                    Scope.BrushSize = size - 1;
-                    Scope.flag = true;
-                    await Task.Delay(0);
-                }
-                else Scope.BrushSize = size;
-            }
+            Color color = (Color)parameters[0].Interpret();
+
+            Scope.BrushColor = color;
+            Scope.flag = true;
+            await Task.Delay(0);
         }
-        public static async Task DrawLine(Expression expression)
+        public static async Task Size(List<Expression> parameters)
+        {
+            int size = (int)parameters[0].Interpret();
+
+            if (size % 2 == 0)
+            {
+                Scope.BrushSize = size - 1;
+                Scope.flag = true;
+                await Task.Delay(0);
+            }
+            else Scope.BrushSize = size;
+        }
+        public static async Task DrawLine(List<Expression> parameters)
         {
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;
             Scope.Picture[x, y] = Scope.BrushColor;
             
-            if (expression.Interpret() is (int dirX, (int dirY, int distance)))
-            {
-                for (int d = 0; d < distance; d++)
-                {
-                    int newx = x + dirX;
-                    int newy = y + dirY;
+            int dirX = (int)parameters[0].Interpret();
+            int dirY = (int)parameters[1].Interpret();
+            int distance = (int)parameters[2].Interpret();
 
-                    if (IsValid(newx, newy))
-                    {
-                        Scope.Picture[newx, newy] = Scope.BrushColor;
-                        Scope.Position = (newx, newy);
-                        x = newx;
-                        y = newy;
-                        Scope.flag = true;
-                        Scope.animation = true;
-                        await Task.Delay(delay);
-                    }
-                    else throw new RuntimeError($"Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
+            for (int d = 0; d < distance; d++)
+            {
+                int newx = x + dirX;
+                int newy = y + dirY;
+
+                if (IsValid(newx, newy))
+                {
+                    Scope.Picture[newx, newy] = Scope.BrushColor;
+                    Scope.Position = (newx, newy);
+                    x = newx;
+                    y = newy;
+                    Scope.flag = true;
+                    Scope.animation = true;
+                    await Task.Delay(delay);
                 }
-                Scope.animation = false;
+                else throw new RuntimeError($"Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
             }
+            Scope.animation = false;
         }
-        public static async Task DrawCircle(Expression expression)
+        public static async Task DrawCircle(List<Expression> parameters)
         {
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;
 
-            if (expression.Interpret() is (int dirX, (int dirY, int radius)))
-            {
-                int centerX = x + dirX;
-                int centerY = y + dirY;
+            int dirX = (int)parameters[0].Interpret();
+            int dirY = (int)parameters[1].Interpret();
+            int radius = (int)parameters[2].Interpret();
 
-                if (!IsValid(centerX, centerY)) throw new RuntimeError($"Centro del círculo fuera de rango: ({centerX}, {centerY})");
+            int centerX = x + dirX;
+            int centerY = y + dirY;
+
+            if (!IsValid(centerX, centerY)) throw new RuntimeError($"Centro del círculo fuera de rango: ({centerX}, {centerY})");
                 
-                Scope.Position = (centerX, centerY);
+            Scope.Position = (centerX, centerY);
 
-                double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
+            double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
 
-                for (double a = 0; a < 360; a += step)
+            for (double a = 0; a < 360; a += step)
+            {
+                double radians = a * Math.PI / 180;
+                int pixelX = (int)Math.Round(centerX + radius * Math.Cos(radians));
+                int pixelY = (int)Math.Round(centerY + radius * Math.Sin(radians));
+
+                if (IsValid(pixelX, pixelY))
                 {
-                    double radians = a * Math.PI / 180;
-                    int pixelX = (int)Math.Round(centerX + radius * Math.Cos(radians));
-                    int pixelY = (int)Math.Round(centerY + radius * Math.Sin(radians));
-
-                    if (IsValid(pixelX, pixelY))
-                    {
-                        Scope.Position = (pixelX, pixelY);
-                        Scope.Picture[pixelX, pixelY] =Scope.BrushColor;
-                        Scope.flag = true;
-                        Scope.animation = true;
-                        await Task.Delay(delay);
-                    }
+                    Scope.Position = (pixelX, pixelY);
+                    Scope.Picture[pixelX, pixelY] =Scope.BrushColor;
+                    Scope.flag = true;
+                    Scope.animation = true;
+                    await Task.Delay(delay);
                 }
-                Scope.Position = (centerX, centerY);
-                Scope.flag = true;
-                Scope.animation = false;
             }
+            Scope.Position = (centerX, centerY);
+            Scope.flag = true;
+            Scope.animation = false;
         }
-        public static async Task DrawRectangle(Expression expression)
+        public static async Task DrawRectangle(List<Expression> parameters)
         {
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;
 
-            if (expression.Interpret() is (int dirX, (int dirY, (int distance, (int width, int height)))))
-            {
-                int newx = x + dirX * distance;
-                int newy = y + dirY * distance;
+            int dirX = (int)parameters[0].Interpret();
+            int dirY = (int)parameters[1].Interpret();
+            int distance = (int)parameters[2].Interpret();
+            int width = (int)parameters[3].Interpret();
+            int height = (int)parameters[4].Interpret();
 
-                if (!IsValid(newx, newy)) throw new RuntimeError($"Centro del rectángulo fuera de rango: ({newx}, {newy})");
-                else
+            int newx = x + dirX * distance;
+            int newy = y + dirY * distance;
+
+            if (!IsValid(newx, newy)) throw new RuntimeError($"Centro del rectángulo fuera de rango: ({newx}, {newy})");
+            else
+            {
+                int topLeftX = newx - width / 2;
+                int topLeftY = newy - height / 2;
+                int bottomRightX = topLeftX + width;
+                int bottomRightY = topLeftY + height;
+                for (int i = topLeftX; i < bottomRightX; i++)
                 {
-                    int topLeftX = newx - width / 2;
-                    int topLeftY = newy - height / 2;
-                    int bottomRightX = topLeftX + width;
-                    int bottomRightY = topLeftY + height;
-                    for (int i = topLeftX; i < bottomRightX; i++)
+                    for (int j = topLeftY; j < bottomRightY; j++)
                     {
-                        for (int j = topLeftY; j < bottomRightY; j++)
+                        bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
+                        if (isBorder && IsValid(i, j))
                         {
-                            bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
-                            if (isBorder && IsValid(i, j))
-                            {
-                                Scope.Position = (i, j);
-                                Scope.Picture[i, j] = Scope.BrushColor;
-                                Scope.flag = true;
-                                Scope.animation = true;
-                                await Task.Delay(delay);
-                            }
+                            Scope.Position = (i, j);
+                            Scope.Picture[i, j] = Scope.BrushColor;
+                            Scope.flag = true;
+                            Scope.animation = true;
+                            await Task.Delay(delay);
                         }
                     }
-                   Scope.Position = (newx, newy);
-                   Scope.flag = true;
-                   Scope.animation = false;
                 }
+               Scope.Position = (newx, newy);
+               Scope.flag = true;
+               Scope.animation = false;
             }
         }
         public static async Task Fill()
