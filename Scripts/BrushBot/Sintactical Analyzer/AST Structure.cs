@@ -6,7 +6,7 @@ namespace BrushBot
     public abstract class Node {}
     public abstract class Expression : Node
     {
-        public abstract Object Interpret();
+        public abstract Object Evaluate();
     }
     public class BinaryExpression : Expression
     {
@@ -19,34 +19,30 @@ namespace BrushBot
             Operator = oper;
             Right = right;
         }
-        public override Object Interpret()
+        public override Object Evaluate()
         {
-            Object left = Left.Interpret();
-            Object right = Right.Interpret();
+            Object left = Left.Evaluate();
+            Object right = Right.Evaluate();
             string oper = Operator.Value;
-            if (oper == "&&")
+
+            if (oper == "&&" || oper == "||")
             {
-                if (left is bool && right is bool)
+                return HandleBool(left, right, oper);
+            }
+            else if (oper == "==" || oper == "!=")
+            {
+                if (left is int && right is int)
                 {
-                    return (bool)left && (bool)right;
+                    int newLeft = (int)left;
+                    int newRight = (int)right;
+
+                    return oper == "==" ? newLeft == newRight : newLeft != newRight;
                 }
-                else throw new SemanticalError($"Error: No se puede aplicar el operador '&&' entre {left} y {right}.");
-            }
-            else if (oper == "||")
-            {
-                if (left is bool && right is bool)
+                else if (left is bool || right is bool)
                 {
-                    return (bool)left || (bool)right;
+                    return HandleBool(left, right, oper);
                 }
-                else throw new SemanticalError($"Error: No se puede aplicar el operador '||' entre {left} y {right}.");
-            }
-            else if ((oper == "==") && (left is bool && right is bool))
-            {
-                return (bool)left == (bool)right;
-            }
-            else if ((oper == "!=") && (left is bool && right is bool))
-            {
-                return (bool)left != (bool)right;
+                else throw new SemanticalError($"Error: Operandos {left} y {right} no son comparables.");
             }
             else if (left is int && right is int)
             {
@@ -83,6 +79,26 @@ namespace BrushBot
             }
             else throw new SemanticalError($"Error: Operación Binaria no válida.");
         }
+        private bool ToBool(Object value)
+        {
+            if (value is bool b) return b;
+            if (value is int n) return n != 0;
+            throw new SemanticalError ($"Error: No se puede convertir {value} a booleano.");
+        }
+        private Object HandleBool(Object left, Object right, string oper)
+        {
+            bool leftBool = ToBool(left);
+            bool rightBool = ToBool(right);
+
+            switch (oper)
+            {
+                case "&&": return leftBool && rightBool;
+                case "||": return leftBool || rightBool;
+                case "==": return leftBool == rightBool;
+                case "!=": return leftBool != rightBool;
+                default: throw new SemanticalError($"Error: Operador booleano no valido {oper}.");
+            }
+        }
     }
     public class UnaryExpression : Expression
     {
@@ -93,11 +109,11 @@ namespace BrushBot
             Operator = oper;
             Expression = expression;
         }
-        public override Object Interpret()
+        public override Object Evaluate()
         {
             if (Operator.Value == "-")
             {
-                Object expr = Expression.Interpret();
+                Object expr = Expression.Evaluate();
                 if (expr is int)
                 {
                     return -(int)expr;
@@ -106,7 +122,7 @@ namespace BrushBot
             }
             else
             {
-                Object expr = Expression.Interpret();
+                Object expr = Expression.Evaluate();
                 if (expr is bool)
                 {
                     return !(bool)expr;
@@ -124,13 +140,13 @@ namespace BrushBot
             Name = name;
             Parameters = parameters;
         }
-        public override Object Interpret()
+        public override Object Evaluate()
         {
             switch (Name.Value)
             {
-                case "GetActualX": return Handle.GetActualX();
-                case "GetActualY": return Handle.GetActualY();
-                case "GetCanvasSize": return Handle.GetCanvasSize();
+                case "GetActualX": return Handle.GetActualX(Parameters);
+                case "GetActualY": return Handle.GetActualY(Parameters);
+                case "GetCanvasSize": return Handle.GetCanvasSize(Parameters);
                 case "IsBrushColor": return Handle.IsBrushColor(Parameters);
                 case "IsBrushSize": return Handle.IsBrushSize(Parameters);
                 case "IsCanvasColor": return Handle.IsCanvasColor(Parameters);
@@ -146,7 +162,7 @@ namespace BrushBot
         {
             Token = token;
         }
-        public override Object Interpret()
+        public override Object Evaluate()
         {
             if (Token.Type == TokenType.Number)
             {
@@ -180,7 +196,7 @@ namespace BrushBot
         {
             Token = token;
         }
-        public override Object Interpret()
+        public override Object Evaluate()
         {
             if (Scope.Variables.ContainsKey(Token.Value))
             {
@@ -201,7 +217,7 @@ namespace BrushBot
         public (string, Object) Assign()
         {
             string Name = Variable.Value;
-            Object Value = Expression.Interpret();
+            Object Value = Expression.Evaluate();
             return (Name, Value);
         }
     }

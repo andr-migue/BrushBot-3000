@@ -154,8 +154,8 @@ public partial class Main : Control
 
         if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
         {
-            Interpreter interpreter = new Interpreter(checknodes);
-            await interpreter.Interpret();
+            Evaluateer Evaluateer = new Evaluateer(checknodes);
+            await Evaluateer.Evaluate();
         }
         else
         {

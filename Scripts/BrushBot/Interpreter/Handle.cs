@@ -17,9 +17,9 @@ namespace BrushBot
 
             foreach (Expression expression in parameters)
             {
-                if (!(expression.Interpret() is int))
+                if (!(expression.Evaluate() is int))
                 {
-                    throw new SemanticalError ($"Error: Spawn(int x, int y).");
+                    throw new SemanticalError ($"Error de tipado: Spawn(int x, int y).");
                 }
             }
         }
@@ -29,9 +29,9 @@ namespace BrushBot
             {
                 throw new SemanticalError ($"Error: Color(string color).");
             }
-            if (!(parameters[0].Interpret() is Color))
+            if (!(parameters[0].Evaluate() is Color))
             {
-                throw new SemanticalError ($"Error: Color(string color).");
+                throw new SemanticalError ($"Error de tipado: Color(string color).");
             }
         }
         public static void CheckSize(List<Expression> parameters)
@@ -40,9 +40,9 @@ namespace BrushBot
             {
                 throw new SemanticalError ($"Error: Size(int size).");
             }
-            if (!(parameters[0].Interpret() is int))
+            if (!(parameters[0].Evaluate() is int))
             {
-                throw new SemanticalError ($"Error: Size(int size.");
+                throw new SemanticalError ($"Error de tipado: Size(int size.");
             }
         }
         public static void CheckDrawLine(List<Expression> parameters)
@@ -54,9 +54,9 @@ namespace BrushBot
 
             foreach (Expression expression in parameters)
             {
-                if (!(expression.Interpret() is int))
+                if (!(expression.Evaluate() is int))
                 {
-                    throw new SemanticalError ($"Error: DrawLine(int dirX, int dirY, int distance).");
+                    throw new SemanticalError ($"Error de tipado: DrawLine(int dirX, int dirY, int distance).");
                 }
             }
         }
@@ -69,9 +69,9 @@ namespace BrushBot
 
             foreach (Expression expression in parameters)
             {
-                if (!(expression.Interpret() is int))
+                if (!(expression.Evaluate() is int))
                 {
-                    throw new SemanticalError ($"Error: DrawCircle(int dirX, int dirY, int radius).");
+                    throw new SemanticalError ($"Error de tipado: DrawCircle(int dirX, int dirY, int radius).");
                 }
             }
         }
@@ -84,9 +84,9 @@ namespace BrushBot
 
             foreach (Expression expression in parameters)
             {
-                if (!(expression.Interpret() is int))
+                if (!(expression.Evaluate() is int))
                 {
-                    throw new SemanticalError ($"Error: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                    throw new SemanticalError ($"Error de tipado: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
                 }
             }
         }
@@ -99,8 +99,8 @@ namespace BrushBot
         }
         public static async Task Spawn(List<Expression> parameters)
         {
-            int x = (int)parameters[0].Interpret();
-            int y = (int)parameters[1].Interpret();
+            int x = (int)parameters[0].Evaluate();
+            int y = (int)parameters[1].Evaluate();
 
             if (IsValid(x, y))
             {
@@ -108,11 +108,11 @@ namespace BrushBot
                 Scope.flag = true;
                 await Task.Delay(0);
             }
-            else throw new RuntimeError ($"Coordenadas fuera de rango");
+            else throw new RuntimeError ($"Error: Coordenadas de Spawn() fuera de rango");
         }
         public static async Task Color(List<Expression> parameters)
         {
-            Color color = (Color)parameters[0].Interpret();
+            Color color = (Color)parameters[0].Evaluate();
 
             Scope.BrushColor = color;
             Scope.flag = true;
@@ -120,7 +120,7 @@ namespace BrushBot
         }
         public static async Task Size(List<Expression> parameters)
         {
-            int size = (int)parameters[0].Interpret();
+            int size = (int)parameters[0].Evaluate();
 
             if (size % 2 == 0)
             {
@@ -136,9 +136,9 @@ namespace BrushBot
             int y = Scope.Position.Item2;
             Scope.Picture[x, y] = Scope.BrushColor;
             
-            int dirX = (int)parameters[0].Interpret();
-            int dirY = (int)parameters[1].Interpret();
-            int distance = (int)parameters[2].Interpret();
+            int dirX = (int)parameters[0].Evaluate();
+            int dirY = (int)parameters[1].Evaluate();
+            int distance = (int)parameters[2].Evaluate();
 
             for (int d = 0; d < distance; d++)
             {
@@ -155,7 +155,7 @@ namespace BrushBot
                     Scope.animation = true;
                     await Task.Delay(delay);
                 }
-                else throw new RuntimeError($"Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
+                else throw new RuntimeError($"Error: Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
             }
             Scope.animation = false;
         }
@@ -164,14 +164,14 @@ namespace BrushBot
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;
 
-            int dirX = (int)parameters[0].Interpret();
-            int dirY = (int)parameters[1].Interpret();
-            int radius = (int)parameters[2].Interpret();
+            int dirX = (int)parameters[0].Evaluate();
+            int dirY = (int)parameters[1].Evaluate();
+            int radius = (int)parameters[2].Evaluate();
 
             int centerX = x + dirX;
             int centerY = y + dirY;
 
-            if (!IsValid(centerX, centerY)) throw new RuntimeError($"Centro del círculo fuera de rango: ({centerX}, {centerY})");
+            if (!IsValid(centerX, centerY)) throw new RuntimeError($"Error: Centro del círculo fuera de rango: ({centerX}, {centerY})");
                 
             Scope.Position = (centerX, centerY);
 
@@ -201,16 +201,16 @@ namespace BrushBot
             int x = Scope.Position.Item1;
             int y = Scope.Position.Item2;
 
-            int dirX = (int)parameters[0].Interpret();
-            int dirY = (int)parameters[1].Interpret();
-            int distance = (int)parameters[2].Interpret();
-            int width = (int)parameters[3].Interpret();
-            int height = (int)parameters[4].Interpret();
+            int dirX = (int)parameters[0].Evaluate();
+            int dirY = (int)parameters[1].Evaluate();
+            int distance = (int)parameters[2].Evaluate();
+            int width = (int)parameters[3].Evaluate();
+            int height = (int)parameters[4].Evaluate();
 
             int newx = x + dirX * distance;
             int newy = y + dirY * distance;
 
-            if (!IsValid(newx, newy)) throw new RuntimeError($"Centro del rectángulo fuera de rango: ({newx}, {newy})");
+            if (!IsValid(newx, newy)) throw new RuntimeError($"Error: Centro del rectángulo fuera de rango: ({newx}, {newy})");
             else
             {
                 int topLeftX = newx - width / 2;
@@ -276,37 +276,63 @@ namespace BrushBot
             Scope.flag = true;
             Scope.animation = false;
         }
-        public static int GetActualX()
+        public static int GetActualX(List<Expression> parameters)
         {
-            return Scope.Position.Item1;
+            if (parameters == null)
+            {
+                return Scope.Position.Item1;
+            }
+            else throw new SemanticalError("Error: GetActualX() no recibe parametros.");
         }
-        public static int GetActualY()
+        public static int GetActualY(List<Expression> parameters)
         {
-            return Scope.Position.Item2;
+            if (parameters == null)
+            {
+                return Scope.Position.Item2;
+            }
+            else throw new SemanticalError("Error: GetActualY() no recibe parametros.");
         }
-        public static int GetCanvasSize()
+        public static int GetCanvasSize(List<Expression> parameters)
         {
-            return Scope.Size;
+            if (parameters == null)
+            {
+                return Scope.Size;
+            }
+            else throw new SemanticalError("Error: GetCanvasSize() no recibe parametros.");
         }
-        public static bool IsBrushColor(Expression expression)
+        public static bool IsBrushColor(List<Expression> parameters)
         {
-            if (expression.Interpret() is Color color)
+            if (parameters.Count != 1)
+            {
+                throw new SemanticalError("Error: IsBrushColor() recibe solo un parametro.");
+            }
+            else if (parameters[0].Evaluate() is Color color)
             {
                 return color == Scope.BrushColor;
             }
-            else throw new SemanticalError ($"Argumento de IsBrushColor no valido.");
+            else throw new SemanticalError ("Error de tipado: IsBrushColor(string color).");
         }
-        public static bool IsBrushSize(Expression expression)
+        public static bool IsBrushSize(List<Expression> parameters)
         {
-            if (expression.Interpret() is int brush)
+            if (parameters.Count != 1)
+            {
+                throw new SemanticalError("Error: IsBrushSize() recibe solo un parametro.");
+            }
+            else if (parameters[0].Evaluate() is int brush)
             {
                 return brush == Scope.BrushSize;
             }
-            else throw new SemanticalError ($"Argumento de IsBrushSize no valido.");
+            else throw new SemanticalError ("Error de tipado: IsBrushSize(int size).");
         }
-        public static bool IsCanvasColor(Expression expression)
+        public static bool IsCanvasColor(List<Expression> parameters)
         {
-            if (expression.Interpret() is (Color color, (int vertical, int horizontal)))
+            if (parameters.Count != 3)
+            {
+                throw new SemanticalError("Error: IsCanvasColor() recibe tres parametros.");
+            }
+            else if (parameters[0].Evaluate() is Color color &&
+                     parameters[1].Evaluate() is int vertical &&
+                     parameters[2].Evaluate() is int horizontal)
             {
                 int x = Scope.Position.Item1;
                 int y = Scope.Position.Item2;
@@ -329,11 +355,19 @@ namespace BrushBot
                 }
                 return flag;
             }
-            else throw new SemanticalError ($"Argumento de IsBrushColor no valido.");
+            else throw new SemanticalError ("Error de tipado: IsCanvasColor(string color, int vertical, int horizontal).");
         }
-        public static int GetColorCount(Expression expression)
+        public static int GetColorCount(List<Expression> parameters)
         {
-            if (expression.Interpret() is (Color color, (int x1, (int y1, (int x2, int y2)))))
+            if (parameters.Count != 5)
+            {
+                throw new SemanticalError("Error: GetColorCount() recibe cinco parametros");
+            }
+            else if (parameters[0].Evaluate() is Color color &&
+                     parameters[1].Evaluate() is int x1 &&
+                     parameters[2].Evaluate() is int y1 &&
+                     parameters[3].Evaluate() is int x2 &&
+                     parameters[4].Evaluate() is int y2)
             {
                 int count = 0;
                 for (int i = y1; i < y2; i++)
@@ -347,7 +381,7 @@ namespace BrushBot
             }
             else
             {
-                throw new SemanticalError ($"Argumento de GetColorCount no valido.");
+                throw new SemanticalError ("Error de tipado: GetColorCount(string color, int x1, int y1, int x2, int y2).");
             }
         }
         private static bool IsValid(int x, int y)

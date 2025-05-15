@@ -44,7 +44,7 @@ namespace BrushBot
                     }
                     else if (Nodes[i] is Jump jump)
                     {
-                        if (jump.Expression.Interpret() is bool)
+                        if (jump.Expression.Evaluate() is bool)
                         {
                             if (!Scope.Labels.ContainsKey(jump.Label.Value)) throw new SemanticalError ($"Error: Label [{jump.Label.Value}] no existe en este contexto.");
                             continue;

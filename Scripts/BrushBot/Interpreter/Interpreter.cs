@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace BrushBot
 {
-    public class Interpreter
+    public class Evaluateer
     {
         List<Node> Nodes;
         List<RuntimeError> Errors;
-        public Interpreter (List<Node> nodes)
+        public Evaluateer (List<Node> nodes)
         {
             Nodes = nodes;
             Errors = new();
         }
-        public async Task Interpret()
+        public async Task Evaluate()
         {
             try
             {
@@ -33,7 +33,7 @@ namespace BrushBot
                     }
                     else if (Nodes[i] is Jump jump)
                     {
-                        if (jump.Expression.Interpret() is true)
+                        if (jump.Expression.Evaluate() is true)
                         {
                             if (Scope.Labels.ContainsKey(jump.Label.Value))
                             {

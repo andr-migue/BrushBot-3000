@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://bujh2qfwudnhv"]
+[gd_scene load_steps=17 format=3 uid="uid://bujh2qfwudnhv"]
 
 [ext_resource type="Script" uid="uid://de40id7bw1g6m" path="res://Scripts/EngineScripts/Main.cs" id="1_7lov0"]
 [ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
 [ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="3_j80mx"]
 [ext_resource type="Texture2D" uid="uid://blt0uvq3pt5lw" path="res://Assets/sync.png" id="5_ion1r"]
+[ext_resource type="Script" uid="uid://cngpl0rg3lw0f" path="res://Scripts/EngineScripts/CodeCompletion.cs" id="5_mhwis"]
 [ext_resource type="Texture2D" uid="uid://d1xmt7leqg06x" path="res://Assets/error.png" id="6_7lov0"]
 [ext_resource type="Texture2D" uid="uid://bmrifp745rdrm" path="res://Assets/next.png" id="6_cot47"]
 [ext_resource type="FontFile" uid="uid://ibsvww3uwbxl" path="res://Fonts/Fira Code/ttf/FiraCode-Regular.ttf" id="8_7wjfc"]
@@ -124,25 +125,20 @@ theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Spawn(0, 0)
-Color(\"Black\")
-n <- 5
-k <- 3 + 3 * 10
-n <- k * 2
-actual-x <- GetActualX()
-i <- 0
-
-loop1
-DrawLine(1, 0, 1)
-i <- i + 1
-is-brush-color-blue <- IsBrushColor(\"Blue\")
-GoTo [loop-ends-here] (is-brush-color-blue == 1)
-GoTo [loop1] (i < 10)
-
+text = "Spawn(0,0)
 Color(\"Blue\")
-GoTo [loop1] (1 == 1)
 
-loop-ends-here"
+n <- 2
+label
+DrawLine(1,1,n)
+n <- n + 2
+i <- IsBrushColor(\"Blue\")
+GoTo [label] (n < 10)
+n <- \"Green\"
+Color(n)
+Spawn(20,20)
+DrawCircle(1,1, 10)
+Fill()"
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_ekyth")
 highlight_all_occurrences = true
@@ -159,6 +155,7 @@ indent_use_spaces = true
 indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
+script = ExtResource("5_mhwis")
 
 [node name="Doc" type="CodeEdit" parent="."]
 layout_mode = 1
@@ -256,7 +253,7 @@ autoplay = true
 [node name="Terminal" type="TextEdit" parent="."]
 layout_mode = 0
 offset_left = 703.0
-offset_top = 1216.0
+offset_top = 1264.0
 offset_right = 1857.0
 offset_bottom = 1539.0
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0)
@@ -314,6 +311,14 @@ offset_right = 2560.0
 offset_bottom = 64.0
 color = Color(0.168627, 0.168627, 0.168627, 0.952941)
 
+[node name="ColorRect5" type="ColorRect" parent="."]
+layout_mode = 0
+offset_left = 704.0
+offset_top = 1216.0
+offset_right = 1856.0
+offset_bottom = 1264.0
+color = Color(0.109804, 0.109804, 0.109804, 0.827451)
+
 [node name="ColorRect2" type="ColorRect" parent="."]
 layout_mode = 0
 offset_top = 1536.0
@@ -348,9 +353,9 @@ text = "Developed by Miguel Andrés Cazorla Zamora"
 
 [node name="Label2" type="Label" parent="."]
 layout_mode = 0
-offset_left = 1752.0
+offset_left = 712.0
 offset_top = 1224.0
-offset_right = 1844.0
+offset_right = 804.0
 offset_bottom = 1256.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25

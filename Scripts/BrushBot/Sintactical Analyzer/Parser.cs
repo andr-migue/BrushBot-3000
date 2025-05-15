@@ -179,7 +179,7 @@ namespace BrushBot
                     {
                         return new Instruction(keyword, parameters);
                     }
-                    else throw Error(CurrentToken(), "Se espera ).");
+                    else throw Error(CurrentToken(), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
                 }
                 else throw Error(CurrentToken(), "Expresión no válida.");
             }
@@ -217,7 +217,7 @@ namespace BrushBot
 
             if (errors.Count > 0)
             {
-                string message = "Error de Parámetros:\n";
+                string message = "Errores Sintacticos en los Parametros:\n";
 
                 foreach (ParserError error in errors)
                 {
@@ -407,7 +407,7 @@ namespace BrushBot
                         return expression;
                     }
                 }
-                else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{CurrentToken().Value}' de tipo {CurrentToken().Type}.");
+                else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
             }
 
             TokenType CurrentType = CurrentToken().Type;
@@ -440,7 +440,7 @@ namespace BrushBot
                             {
                                 return new Function(token, parameters);
                             }
-                            else throw Error (CurrentToken(), "Se espera ')'.");
+                            else throw Error(CurrentToken(), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
                         }
                         else throw Error (CurrentToken(), $"Expresión no válida '{token.Value}' de tipo '{token.Type}'.");
                     }
@@ -448,7 +448,7 @@ namespace BrushBot
                 }
                 else throw Error(CurrentToken(), "Expresión no válida.");
             }
-            else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{CurrentToken().Value}' de tipo {CurrentToken().Type}.");
+            else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
         }
     }
 }
