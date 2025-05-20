@@ -9,7 +9,7 @@ namespace BrushBot
         private char CurrentChar;
         private int CurrentLn = 1;
         private int CurrentCol = 0;
-        private List<CodeError> Errors;
+        private List<InterpreterError> Errors;
         public Lexer(string text)
         {
             Text = text;
@@ -165,7 +165,7 @@ namespace BrushBot
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
-        public (List<Token>, List<CodeError>) GetTokens()
+        public (List<Token>, List<InterpreterError>) GetTokens()
         {
             while (CurrentChar != '\0')
             {

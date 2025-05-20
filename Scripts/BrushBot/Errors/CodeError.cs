@@ -2,7 +2,7 @@ using System;
 
 namespace BrushBot
 {
-	public class CodeError : Exception
+	public class CodeError : InterpreterError
 	{
 		public ErrorType Type { get; private set; }
 		public (int, int) Location { get; private set; } // (int Ln, int Col)
@@ -26,6 +26,9 @@ namespace BrushBot
 		Expected,
 		Invalid,
 		Null,
-		Unknown
+		Unknown,
+		Runtime,
+		Typing,
+		Count
 	}
 }

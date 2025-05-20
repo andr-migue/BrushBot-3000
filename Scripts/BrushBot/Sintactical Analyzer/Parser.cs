@@ -10,10 +10,10 @@ namespace BrushBot
         {
             Tokens = tokens;
         }
-        public (List<Node>, List<CodeError>, List<Object>) Parse()
+        public (List<Node>, List<InterpreterError>, List<Object>) Parse()
         {
             List<Node> nodes = new();
-            List<CodeError> Errors = new();
+            List<InterpreterError> Errors = new();
             List<Object> result = new();
 
             while (!IsEndToken())
@@ -31,6 +31,12 @@ namespace BrushBot
                     SkipJumpLine();
                 }
                 catch (CodeError error)
+                {
+                    Errors.Add(error);
+                    result.Add(error);
+                    Synchronize();
+                }
+                catch (ParameterError error)
                 {
                     Errors.Add(error);
                     result.Add(error);
@@ -213,13 +219,13 @@ namespace BrushBot
 
             if (errors.Count > 0)
             {
-                string message = "Errores Sintacticos en los Parametros:\n";
+                string message = "Errores Sintácticos en los Parámetros:\n";
 
                 foreach (CodeError error in errors)
                 {
                     message += error.Message + '\n';
                 }
-                throw new CodeError (message);
+                throw new ParameterError (message);
             }
             else
             {
@@ -246,17 +252,17 @@ namespace BrushBot
                                 {
                                     return new Jump((keyword.Ln, keyword.Col), keyword, Label, expression);
                                 }
-                                else throw Error(CurrentToken(), "Se espera ).");
+                                else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "Se espera ).");
                             }
-                            else throw Error(CurrentToken(), "Expresión no válida.");
+                            else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expresión no válida.");
                         }
-                        else throw Error(CurrentToken(), "Se espera (.");
+                        else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "Se espera (.");
                     }
-                    else throw Error(CurrentToken(), $"Se espera ].");
+                    else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se espera ].");
                 }
-                else throw Error(CurrentToken(), "Se espera un Label.");
+                else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "Se espera un Label.");
             }
-            else throw Error(CurrentToken(), $"Se esperaba '[', pero se encontró '{CurrentToken().Value}'.");
+            else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se esperaba '[', pero se encontró '{CurrentToken().Value}'.");
         }
         private Node Identifier(Token Identifier)
         {
@@ -268,13 +274,13 @@ namespace BrushBot
 
                     if (CurrentToken().Type != TokenType.JumpLine && CurrentToken().Type != TokenType.EndOfFile)
                     {
-                        throw Error(CurrentToken(), "Tokens inesperados después de la expresión de asignación.");
+                        throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Tokens inesperados después de la expresión de asignación.");
                     }
                     return new Assignment((Identifier.Ln, Identifier.Col), Identifier, expression);
                 }
-                else throw Error(CurrentToken(), $"Expresión no válida en la asignación a '{Identifier.Value}'.");
+                else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expresión no válida en la asignación a '{Identifier.Value}'.");
             }
-            else throw Error(CurrentToken(), $"Se espera '<-' después del identificador '{Identifier.Value}'.");
+            else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se espera '<-' después del identificador '{Identifier.Value}'.");
         }
         private void SynchronizeParameter()
         {
@@ -396,14 +402,14 @@ namespace BrushBot
 
                     if (!Match(TokenType.Delimiter, [")"]))
                     {
-                        throw Error(CurrentToken(), "Se espera ')'.");
+                        throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "Se espera ')'.");
                     }
                     else
                     {
                         return expression;
                     }
                 }
-                else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
+                else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
             }
 
             TokenType CurrentType = CurrentToken().Type;
@@ -436,15 +442,15 @@ namespace BrushBot
                             {
                                 return new Function((token.Ln, token.Col), token, parameters);
                             }
-                            else throw Error(CurrentToken(), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
+                            else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
                         }
-                        else throw Error (CurrentToken(), $"Expresión no válida '{token.Value}' de tipo '{token.Type}'.");
+                        else throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expresión no válida '{token.Value}' de tipo '{token.Type}'.");
                     }
-                    else throw Error (CurrentToken(), "Se espera '('.");
+                    else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "Se espera '('.");
                 }
-                else throw Error(CurrentToken(), "Expresión no válida.");
+                else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expresión no válida.");
             }
-            else throw Error(CurrentToken(), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
+            else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expresión no válida. Token inesperado: '{PreviousToken().Value}' de tipo {PreviousToken().Type}.");
         }
     }
 }

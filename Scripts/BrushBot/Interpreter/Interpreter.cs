@@ -6,7 +6,7 @@ namespace BrushBot
     public class Evaluateer
     {
         List<Node> Nodes;
-        List<RuntimeError> Errors;
+        List<InterpreterError> Errors;
         public Evaluateer (List<Node> nodes)
         {
             Nodes = nodes;
@@ -43,10 +43,10 @@ namespace BrushBot
                         else continue;
                     }
                     else if (Nodes[i] is Label) continue;
-                    else throw new RuntimeError ($"Sentencia no válida.");
+                    else throw new CodeError (ErrorType.Runtime, Nodes[i].Location, $"Sentencia no válida.");
                 }
             }
-            catch (RuntimeError error)
+            catch (InterpreterError error)
             {
                 Errors.Add(error);
             }
