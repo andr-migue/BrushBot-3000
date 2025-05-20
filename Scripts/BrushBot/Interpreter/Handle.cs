@@ -40,21 +40,21 @@ namespace BrushBot
             }
             if (!(parameters[0].Evaluate() is int))
             {
-                throw new CodeError ($"Error de tipado: Size(int size).");
+                throw new CodeError (ErrorType.Typing, parameters[0].Location, $"Size(int size).");
             }
         }
         public static void CheckDrawLine(List<Expression> parameters)
         {
             if (parameters.Count != 3)
             {
-                throw new CodeError ($"Error: DrawLine(int dirX, int dirY, int distance).");
+                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawLine(int dirX, int dirY, int distance).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError ($"Error de tipado: DrawLine(int dirX, int dirY, int distance).");
+                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawLine(int dirX, int dirY, int distance).");
                 }
             }
         }
@@ -62,14 +62,14 @@ namespace BrushBot
         {
             if (parameters.Count != 3)
             {
-                throw new CodeError ($"Error: DrawCircle(int dirX, int dirY, int radius).");
+                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawCircle(int dirX, int dirY, int radius).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError ($"Error de tipado: DrawCircle(int dirX, int dirY, int radius).");
+                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawCircle(int dirX, int dirY, int radius).");
                 }
             }
         }
@@ -77,14 +77,14 @@ namespace BrushBot
         {
             if (parameters.Count != 5)
             {
-                throw new CodeError ($"Error: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError ($"Error de tipado: DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace BrushBot
         {
             if (parameters != null)
             {
-                throw new CodeError ($"Error: Fill().");
+                throw new CodeError (ErrorType.Typing, parameters[0].Location, $"Fill().");
             }
         }
         public static async Task Spawn(List<Expression> parameters)
@@ -106,7 +106,7 @@ namespace BrushBot
                 Scope.flag = true;
                 await Task.Delay(0);
             }
-            else throw new CodeError ($"Error: Coordenadas de Spawn() fuera de rango");
+            else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Spawn({x}, {y})");
         }
         public static async Task Color(List<Expression> parameters)
         {
@@ -153,7 +153,7 @@ namespace BrushBot
                     Scope.animation = true;
                     await Task.Delay(delay);
                 }
-                else throw new CodeError($"Error: Coordenadas de DrawLine fuera de rango: ({newx}, {newy})");
+                else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"DrawLine({newx}, {newy})");
             }
             Scope.animation = false;
         }
@@ -169,8 +169,8 @@ namespace BrushBot
             int centerX = x + dirX;
             int centerY = y + dirY;
 
-            if (!IsValid(centerX, centerY)) throw new CodeError($"Error: Centro del círculo fuera de rango: ({centerX}, {centerY})");
-                
+            if (!IsValid(centerX, centerY)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Centro del círculo fuera de rango ({centerX}, {centerY})");
+            
             Scope.Position = (centerX, centerY);
 
             double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
@@ -208,13 +208,14 @@ namespace BrushBot
             int newx = x + dirX * distance;
             int newy = y + dirY * distance;
 
-            if (!IsValid(newx, newy)) throw new CodeError($"Error: Centro del rectángulo fuera de rango: ({newx}, {newy})");
+            if (!IsValid(newx, newy)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Centro del rectángulo fuera de rango ({newx}, {newy})");
             else
             {
                 int topLeftX = newx - width / 2;
                 int topLeftY = newy - height / 2;
                 int bottomRightX = topLeftX + width;
                 int bottomRightY = topLeftY + height;
+
                 for (int i = topLeftX; i < bottomRightX; i++)
                 {
                     for (int j = topLeftY; j < bottomRightY; j++)
@@ -280,7 +281,7 @@ namespace BrushBot
             {
                 return Scope.Position.Item1;
             }
-            else throw new CodeError("Error: GetActualX() no recibe parametros.");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetActualX().");
         }
         public static int GetActualY(List<Expression> parameters)
         {
@@ -288,7 +289,7 @@ namespace BrushBot
             {
                 return Scope.Position.Item2;
             }
-            else throw new CodeError("Error: GetActualY() no recibe parametros.");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetActualY().");
         }
         public static int GetCanvasSize(List<Expression> parameters)
         {
@@ -296,74 +297,86 @@ namespace BrushBot
             {
                 return Scope.Size;
             }
-            else throw new CodeError("Error: GetCanvasSize() no recibe parametros.");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetCanvasSize().");
         }
         public static bool IsBrushColor(List<Expression> parameters)
         {
             if (parameters.Count != 1)
             {
-                throw new CodeError("Error: IsBrushColor() recibe solo un parametro.");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "IsBrushColor(string color).");
             }
             else if (parameters[0].Evaluate() is Color color)
             {
                 return color == Scope.BrushColor;
             }
-            else throw new CodeError ("Error de tipado: IsBrushColor(string color).");
+            else throw new CodeError (ErrorType.Typing, parameters[0].Location, "IsBrushColor(string color).");
         }
         public static bool IsBrushSize(List<Expression> parameters)
         {
             if (parameters.Count != 1)
             {
-                throw new CodeError("Error: IsBrushSize() recibe solo un parametro.");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "IsBrushSize(int size).");
             }
             else if (parameters[0].Evaluate() is int brush)
             {
                 return brush == Scope.BrushSize;
             }
-            else throw new CodeError ("Error de tipado: IsBrushSize(int size).");
+            else throw new CodeError (ErrorType.Typing, parameters[0].Location, "IsBrushSize(int size).");
         }
         public static bool IsCanvasColor(List<Expression> parameters)
         {
             if (parameters.Count != 3)
             {
-                throw new CodeError("Error: IsCanvasColor() recibe tres parametros.");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "IsCanvasColor(string color, int vertical, int horizontal).");
             }
-            else if (parameters[0].Evaluate() is Color color &&
-                     parameters[1].Evaluate() is int vertical &&
-                     parameters[2].Evaluate() is int horizontal)
+            else if (parameters[0].Evaluate() is Color color)
             {
-                int x = Scope.Position.Item1;
-                int y = Scope.Position.Item2;
-                bool flag = true;
-
-                for (int i = x; i < x + horizontal; i++)
+                if (parameters[1].Evaluate() is int vertical)
                 {
-                    for (int j = y; y < y + vertical; j++)
+                    if (parameters[2].Evaluate() is int horizontal)
                     {
-                        if (Scope.Picture[i, j] != color)
+                        int x = Scope.Position.Item1;
+                        int y = Scope.Position.Item2;
+                        bool flag = true;
+
+                        for (int i = x; i < x + horizontal; i++)
                         {
-                            flag = false;
-                            break;
+                            for (int j = y; y < y + vertical; j++)
+                            {
+                                if (Scope.Picture[i, j] != color)
+                                {
+                                    flag = false;
+                                    break;
+                                }
+                            }
+                            if (flag == false)
+                            {
+                                break;
+                            }
                         }
+                        return flag;
                     }
-                    if (flag == false)
-                    {
-                        break;
-                    }
+                    else throw new CodeError(ErrorType.Typing, parameters[2].Location, "IsCanvasColor(string color, int vertical, int horizontal).");
                 }
-                return flag;
+                else throw new CodeError(ErrorType.Typing, parameters[1].Location, "IsCanvasColor(string color, int vertical, int horizontal).");
             }
-            else throw new CodeError ("Error de tipado: IsCanvasColor(string color, int vertical, int horizontal).");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "IsCanvasColor(string color, int vertical, int horizontal).");
         }
         public static int GetColorCount(List<Expression> parameters)
         {
             if (parameters.Count != 5)
             {
-                throw new CodeError("Error: GetColorCount() recibe cinco parametros");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2)");
             }
-            else if (parameters[0].Evaluate() is Color color &&
-                     parameters[1].Evaluate() is int x1 &&
-                     parameters[2].Evaluate() is int y1 &&
+            else if (parameters[0].Evaluate() is Color color)
+            {
+                if (parameters[1].Evaluate() is int x1)
+                {
+                    if (parameters[2].Evaluate() is int y1)
+                }
+            }
+                      &&
+                      &&
                      parameters[3].Evaluate() is int x2 &&
                      parameters[4].Evaluate() is int y2)
             {

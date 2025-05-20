@@ -17,7 +17,7 @@ namespace BrushBot
 		{
 			get
 			{
-				return $"Error: {Type} Ln {Location.Item1} Col {Location.Item2}: {customMessage}";
+				return $"Error Ln {Location.Item1}, Col {Location.Item2}, {Type}: {customMessage}";
 			}
 		}
 	}
@@ -27,8 +27,8 @@ namespace BrushBot
 		Invalid,
 		Null,
 		Unknown,
-		Runtime,
 		Typing,
-		Count
+		Count,
+		IndexOutOfRange
 	}
 }

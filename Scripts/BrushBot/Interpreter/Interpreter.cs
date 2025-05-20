@@ -43,7 +43,7 @@ namespace BrushBot
                         else continue;
                     }
                     else if (Nodes[i] is Label) continue;
-                    else throw new CodeError (ErrorType.Runtime, Nodes[i].Location, $"Sentencia no válida.");
+                    else throw new CodeError (ErrorType.Invalid, Nodes[i].Location, $"Sentencia no válida.");
                 }
             }
             catch (InterpreterError error)
