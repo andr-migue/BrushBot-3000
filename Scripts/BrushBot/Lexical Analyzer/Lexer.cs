@@ -9,7 +9,7 @@ namespace BrushBot
         private char CurrentChar;
         private int CurrentLn = 1;
         private int CurrentCol = 0;
-        private List<LexerError> Errors;
+        private List<CodeError> Errors;
         public Lexer(string text)
         {
             Text = text;
@@ -90,7 +90,8 @@ namespace BrushBot
             }
             if (CurrentChar != '"')
             {
-                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Se espera '{"\""}'."));
+                Errors.Add(new CodeError(ErrorType.Expected, (CurrentLn, CurrentCol), $"Se espera '{"\""}'."));
+
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
             Advance(); // Para saltar la comilla de cierre.
@@ -98,7 +99,8 @@ namespace BrushBot
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, CurrentCol);
             else
             {
-                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Color desconocido '{result}'."));
+                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Color desconocido '{result}'."));
+
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
@@ -145,7 +147,8 @@ namespace BrushBot
                 else
                 {
                     Advance();
-                    Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Identificador desconocido '{result}'."));
+                    Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Identificador desconocido '{result}'."));
+
                     return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
                 }
             }
@@ -157,11 +160,12 @@ namespace BrushBot
             else
             {
                 Advance();
-                Errors.Add(new LexerError($"Error: Ln {CurrentLn} Col {CurrentCol} Identificador desconocido '{result}'."));
+                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Identificador desconocido '{result}'."));
+
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
         }
-        public (List<Token>, List<LexerError>) GetTokens()
+        public (List<Token>, List<CodeError>) GetTokens()
         {
             while (CurrentChar != '\0')
             {

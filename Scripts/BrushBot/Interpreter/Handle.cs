@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 namespace BrushBot
 {
@@ -42,7 +40,7 @@ namespace BrushBot
             }
             if (!(parameters[0].Evaluate() is int))
             {
-                throw new SemanticalError ($"Error de tipado: Size(int size.");
+                throw new SemanticalError ($"Error de tipado: Size(int size).");
             }
         }
         public static void CheckDrawLine(List<Expression> parameters)

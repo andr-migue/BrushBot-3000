@@ -10,10 +10,10 @@ namespace BrushBot
         {
             Tokens = tokens;
         }
-        public (List<Node>, List<ParserError>, List<Object>) Parse()
+        public (List<Node>, List<CodeError>, List<Object>) Parse()
         {
             List<Node> nodes = new();
-            List<ParserError> Errors = new();
+            List<CodeError> Errors = new();
             List<Object> result = new();
 
             while (!IsEndToken())
@@ -30,7 +30,7 @@ namespace BrushBot
                     result.Add(node);
                     SkipJumpLine();
                 }
-                catch (ParserError error)
+                catch (CodeError error)
                 {
                     Errors.Add(error);
                     result.Add(error);
@@ -50,10 +50,6 @@ namespace BrushBot
                 }
                 Advance();
             }
-        }
-        private ParserError Error(Token token, string message)
-        {
-            return new ParserError($"Error: Ln {token.Ln} Col {token.Col} {message}");
         }
         private bool UnknownToken()
         {
@@ -137,7 +133,7 @@ namespace BrushBot
 
                 if (Match(TokenType.JumpLine, null) || Match(TokenType.EndOfFile, null))
                 {
-                    return new Label(token);
+                    return new Label((token.Ln, token.Col), token);
                 }
                 else
                 {
@@ -146,11 +142,11 @@ namespace BrushBot
             }
             else if (Match(TokenType.Function, null))
             {
-                throw Error (PreviousToken(), "Funciones no pueden comenzar una sentencia.");
+                throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Funciones no pueden comenzar una sentencia.");
             }
             else
             {
-                throw Error(CurrentToken(), $"Sentencia no válida. Token inesperado: '{CurrentToken().Value}' de tipo {CurrentToken().Type}.");
+                throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Token inesperado '{CurrentToken().Value}' de tipo {CurrentToken().Type}.");
             }
         }
         private Node Instruction()
@@ -169,7 +165,7 @@ namespace BrushBot
             {
                 if (Match(TokenType.Delimiter, [")"]))
                 {
-                    return new Instruction(keyword, null);
+                    return new Instruction((keyword.Ln, keyword.Col), keyword, null);
                 }
                 if (ValidateExpression())
                 {
@@ -177,25 +173,25 @@ namespace BrushBot
 
                     if (Match(TokenType.Delimiter, [")"]))
                     {
-                        return new Instruction(keyword, parameters);
+                        return new Instruction((keyword.Ln, keyword.Col), keyword, parameters);
                     }
-                    else throw Error(CurrentToken(), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
+                    else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
                 }
-                else throw Error(CurrentToken(), "Expresión no válida.");
+                else throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expresión no válida.");
             }
-            else throw Error(CurrentToken(), $"Se espera '(' después de la instrucción '{keyword.Value}'.");
+            else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"Se espera '(' después de la instrucción '{keyword.Value}'.");
         }
         private List<Expression> Parameters()
         {
             List<Expression> parameters = new();
-            List<ParserError> errors = new();
+            List<CodeError> errors = new();
 
             try
             {
                 Expression expression = Expression();
                 parameters.Add(expression);
             }
-            catch (ParserError error)
+            catch (CodeError error)
             {
                 errors.Add(error);
                 SynchronizeParameter();
@@ -208,7 +204,7 @@ namespace BrushBot
                     Expression expression = Expression();
                     parameters.Add(expression);
                 }
-                catch (ParserError error)
+                catch (CodeError error)
                 {
                     errors.Add(error);
                     SynchronizeParameter();
@@ -219,11 +215,11 @@ namespace BrushBot
             {
                 string message = "Errores Sintacticos en los Parametros:\n";
 
-                foreach (ParserError error in errors)
+                foreach (CodeError error in errors)
                 {
                     message += error.Message + '\n';
                 }
-                throw new ParserError(message);
+                throw new CodeError (message);
             }
             else
             {
@@ -248,7 +244,7 @@ namespace BrushBot
 
                                 if (Match(TokenType.Delimiter, [")"]))
                                 {
-                                    return new Jump(keyword, Label, expression);
+                                    return new Jump((keyword.Ln, keyword.Col), keyword, Label, expression);
                                 }
                                 else throw Error(CurrentToken(), "Se espera ).");
                             }
@@ -274,7 +270,7 @@ namespace BrushBot
                     {
                         throw Error(CurrentToken(), "Tokens inesperados después de la expresión de asignación.");
                     }
-                    return new Assignment(Identifier, expression);
+                    return new Assignment((Identifier.Ln, Identifier.Col), Identifier, expression);
                 }
                 else throw Error(CurrentToken(), $"Expresión no válida en la asignación a '{Identifier.Value}'.");
             }
@@ -304,7 +300,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Or();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -316,7 +312,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Equality();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -328,7 +324,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Comparison();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -340,7 +336,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Term();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -352,7 +348,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Factor();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -364,7 +360,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Pow();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -376,7 +372,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression right = Unary();
-                expression = new BinaryExpression(expression, Operator, right);
+                expression = new BinaryExpression((Operator.Ln, Operator.Col), expression, Operator, right);
             }
             return expression;
         }
@@ -386,7 +382,7 @@ namespace BrushBot
             {
                 Token Operator = PreviousToken();
                 Expression expression = Unary();
-                return new UnaryExpression(Operator, expression);
+                return new UnaryExpression((Operator.Ln, Operator.Col), Operator, expression);
             }
             return Primary();
         }
@@ -418,11 +414,11 @@ namespace BrushBot
                 Token token = PreviousToken();
                 if (token.Type == TokenType.Number || token.Type == TokenType.Color)
                 {
-                    return new Literal(token);
+                    return new Literal((token.Ln, token.Col), token);
                 }
                 else if (token.Type == TokenType.Identifier)
                 {
-                    return new Variable(token);
+                    return new Variable((token.Ln, token.Col), token);
                 }
                 else if (token.Type == TokenType.Function)
                 {
@@ -430,7 +426,7 @@ namespace BrushBot
                     {
                         if (Match(TokenType.Delimiter, [")"]))
                         {
-                            return new Function(token, null);
+                            return new Function((token.Ln, token.Col), token, null);
                         }
                         if (ValidateExpression())
                         {
@@ -438,7 +434,7 @@ namespace BrushBot
 
                             if (Match(TokenType.Delimiter, [")"]))
                             {
-                                return new Function(token, parameters);
+                                return new Function((token.Ln, token.Col), token, parameters);
                             }
                             else throw Error(CurrentToken(), $"Se espera ')', pero se encontró '{CurrentToken().Value}'.");
                         }

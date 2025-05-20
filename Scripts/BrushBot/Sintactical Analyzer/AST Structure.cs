@@ -3,17 +3,25 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 namespace BrushBot
 {
-    public abstract class Node {}
+    public abstract class Node
+    {
+        public (int, int) Location;
+        public Node((int, int) location)
+        {
+            Location = location;
+        }
+    }
     public abstract class Expression : Node
     {
-        public abstract Object Evaluate();
+		public Expression((int, int) location) : base(location) {}
+		public abstract Object Evaluate();
     }
     public class BinaryExpression : Expression
     {
         public Expression Left {get; }
         public Token Operator {get; }
         public Expression Right {get; }
-        public BinaryExpression(Expression left, Token oper, Expression right)
+        public BinaryExpression((int, int) location, Expression left, Token oper, Expression right) : base(location)
         {
             Left = left;
             Operator = oper;
@@ -104,7 +112,7 @@ namespace BrushBot
     {
         public Token Operator {get; }
         public Expression Expression {get; }
-        public UnaryExpression(Token oper, Expression expression)
+        public UnaryExpression((int , int) location, Token oper, Expression expression) : base(location)
         {
             Operator = oper;
             Expression = expression;
@@ -135,7 +143,7 @@ namespace BrushBot
     {
         public Token Name {get; }
         public List<Expression> Parameters {get; }
-        public Function (Token name, List<Expression> parameters)
+        public Function ((int, int) location, Token name, List<Expression> parameters) : base (location)
         {
             Name = name;
             Parameters = parameters;
@@ -158,7 +166,7 @@ namespace BrushBot
     public class Literal : Expression
     {
         public Token Token;
-        public Literal(Token token)
+        public Literal((int, int) location, Token token) : base(location)
         {
             Token = token;
         }
@@ -192,7 +200,7 @@ namespace BrushBot
     public class Variable : Expression
     {
         public Token Token;
-        public Variable(Token token)
+        public Variable((int , int) location, Token token) : base (location)
         {
             Token = token;
         }
@@ -209,7 +217,7 @@ namespace BrushBot
     {
         public Token Variable {get; }
         public Expression Expression {get; }
-        public Assignment (Token variable, Expression expression)
+        public Assignment ((int , int) location, Token variable, Expression expression) : base(location)
         {
             Variable = variable;
             Expression = expression;
@@ -224,7 +232,7 @@ namespace BrushBot
     public class Label : Node
     {
         public Token Token {get; }
-        public Label (Token token)
+        public Label ((int , int) location, Token token) : base (location)
         {
             Token = token;
         }
@@ -233,7 +241,7 @@ namespace BrushBot
     {
         public Token Keyword {get; }
         public List<Expression> Parameters {get; }
-        public Instruction (Token keyword, List<Expression> parameters)
+        public Instruction ((int, int) location, Token keyword, List<Expression> parameters) : base(location)
         {
             Keyword = keyword;
             Parameters = parameters;
@@ -300,7 +308,7 @@ namespace BrushBot
         public Token GoTo {get; }
         public Token Label {get; }
         public Expression Expression {get; }
-        public Jump(Token go, Token label, Expression expression)
+        public Jump((int, int) location, Token go, Token label, Expression expression) : base(location)
         {
             GoTo = go;
             Label = label;
