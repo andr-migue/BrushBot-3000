@@ -46,7 +46,7 @@ namespace BrushBot
                     {
                         if (jump.Expression.Evaluate() is bool)
                         {
-                            if (!Scope.Labels.ContainsKey(jump.Label.Value)) throw new CodeError (ErrorType.Invalid, jump.Location, $"Label [{jump.Label.Value}] no existe en este contexto.");
+                            if (!Scope.Labels.ContainsKey(jump.Label.Value)) throw new CodeError (ErrorType.OutOfContext, jump.Location, $"Label [{jump.Label.Value}] no existe en este contexto.");
                             continue;
                         }
                         else throw new CodeError (ErrorType.Invalid, jump.Location,$"Expresión de GoTo debe ser booleana.");

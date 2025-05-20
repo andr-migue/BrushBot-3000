@@ -373,27 +373,30 @@ namespace BrushBot
                 if (parameters[1].Evaluate() is int x1)
                 {
                     if (parameters[2].Evaluate() is int y1)
-                }
-            }
-                      &&
-                      &&
-                     parameters[3].Evaluate() is int x2 &&
-                     parameters[4].Evaluate() is int y2)
-            {
-                int count = 0;
-                for (int i = y1; i < y2; i++)
-                {
-                    for (int j = x1; j < x2; j++)
                     {
-                        if (Scope.Picture [i, j] == color) count++;
+                        if (parameters[3].Evaluate() is int x2)
+                        {
+                            if (parameters[4].Evaluate() is int y2)
+                            {
+                                int count = 0;
+                                for (int i = y1; i < y2; i++)
+                                {
+                                    for (int j = x1; j < x2; j++)
+                                    {
+                                        if (Scope.Picture[i, j] == color) count++;
+                                    }
+                                }
+                                return count;
+                            }
+                            else throw new CodeError(ErrorType.Typing, parameters[4].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
+                        }
+                        else throw new CodeError(ErrorType.Typing, parameters[3].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
                     }
+                    else throw new CodeError(ErrorType.Typing, parameters[2].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
                 }
-                return count;
+                else throw new CodeError (ErrorType.Typing, parameters[1].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
             }
-            else
-            {
-                throw new CodeError ("Error de tipado: GetColorCount(string color, int x1, int y1, int x2, int y2).");
-            }
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
         }
         private static bool IsValid(int x, int y)
         {

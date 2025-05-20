@@ -25,10 +25,10 @@ namespace BrushBot
 	{
 		Expected,
 		Invalid,
-		Null,
 		Unknown,
 		Typing,
 		Count,
-		IndexOutOfRange
+		IndexOutOfRange,
+		OutOfContext
 	}
 }
