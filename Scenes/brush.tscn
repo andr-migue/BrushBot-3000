@@ -4,7 +4,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3w62d"]
 atlas = ExtResource("1_3w62d")
-region = Rect2(0, 0, 450, 1024)
+region = Rect2(5, 0, 450, 1024)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_q77te"]
 atlas = ExtResource("1_3w62d")

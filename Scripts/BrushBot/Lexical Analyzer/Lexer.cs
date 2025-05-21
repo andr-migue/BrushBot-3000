@@ -8,7 +8,7 @@ namespace BrushBot
         private List<Token> tokens;
         private char CurrentChar;
         private int CurrentLn = 1;
-        private int CurrentCol = 0;
+        private int CurrentCol = 1;
         private List<InterpreterError> Errors;
         public Lexer(string text)
         {
@@ -59,30 +59,32 @@ namespace BrushBot
             {
                 Advance();
                 Advance();
-                CurrentCol = 0;
+                CurrentCol = 1;
                 return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
             }
             else // Mac o Unix
             {
                 Advance();
-                CurrentCol = 0;
+                CurrentCol = 1;
                 return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
             }
         }
         private Token GetNumber()
         {
             string result = "";
+            int ActualCol = CurrentCol;
             while (CurrentChar != '\0' && char.IsDigit(CurrentChar))
             {
                 result += CurrentChar;
                 Advance();
             }
-            return new Token(TokenType.Number, result, CurrentLn, CurrentCol);
+            return new Token(TokenType.Number, result, CurrentLn, ActualCol);
         }
         private Token GetColor()
         {
             Advance(); // Para saltar la comilla de apertura.
             string result = "";
+            int ActualCol = CurrentCol;
             while (CurrentChar != '\0' && CurrentChar != '"' && char.IsLetter(CurrentChar))
             {
                 result += CurrentChar;
@@ -90,23 +92,24 @@ namespace BrushBot
             }
             if (CurrentChar != '"')
             {
-                Errors.Add(new CodeError(ErrorType.Expected, (CurrentLn, CurrentCol), $"Se espera '{"\""}'."));
+                Errors.Add(new CodeError(ErrorType.Expected, (CurrentLn, CurrentCol), $"{"\""}."));
 
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
             Advance(); // Para saltar la comilla de cierre.
             
-            if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, CurrentCol);
+            if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, ActualCol);
             else
             {
-                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Color desconocido '{result}'."));
+                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, ActualCol), $"{result}."));
 
-                return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Unknown, result, CurrentLn, ActualCol);
             }
         }
         private Token GetWord()
         {
             string result = "";
+            int ActualCol = CurrentCol;
 
             while (CurrentChar != '\0' && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '_' || CurrentChar == '-'))
             {
@@ -116,53 +119,56 @@ namespace BrushBot
 
             if (Keywords.Contains(result))
             {
-                return new Token(TokenType.Keyword, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Keyword, result, CurrentLn, ActualCol);
             }
 
             else if (Functions.Contains(result))
             {
-                return new Token(TokenType.Function, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Function, result, CurrentLn, ActualCol);
             }
 
-            else return new Token(TokenType.Identifier, result, CurrentLn, CurrentCol);
+            else return new Token(TokenType.Identifier, result, CurrentLn, ActualCol);
         }
         private Token GetOperatorOrDelimiter()
         {
             string result = "";
             result += CurrentChar;
+            int ActualCol = CurrentCol;
+
             if (Operators.Contains(result) || result == "=")
             {
                 string next = result + Peek();
 
-                if (Operators.Contains(next)){
+                if (Operators.Contains(next))
+                {
                     Advance();
                     Advance();
-                    return new Token(TokenType.Operator, next, CurrentLn, CurrentCol);
+                    return new Token(TokenType.Operator, next, CurrentLn, ActualCol);
                 }
                 else if (Operators.Contains(result))
                 {
                     Advance();
-                    return new Token(TokenType.Operator, result, CurrentLn, CurrentCol);
+                    return new Token(TokenType.Operator, result, CurrentLn, ActualCol);
                 }
                 else
                 {
                     Advance();
-                    Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Identificador desconocido '{result}'."));
+                    Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, ActualCol), $"{result}."));
 
-                    return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
+                    return new Token(TokenType.Unknown, result, CurrentLn, ActualCol);
                 }
             }
             else if (Delimiters.Contains(result))
             {
                 Advance();
-                return new Token(TokenType.Delimiter, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Delimiter, result, CurrentLn, ActualCol);
             }
             else
             {
                 Advance();
-                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, CurrentCol), $"Identificador desconocido '{result}'."));
+                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, ActualCol), $"{result}."));
 
-                return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
+                return new Token(TokenType.Unknown, result, CurrentLn, ActualCol);
             }
         }
         public (List<Token>, List<InterpreterError>) GetTokens()

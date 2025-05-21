@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://de40id7bw1g6m" path="res://Scripts/EngineScripts/Main.cs" id="1_7lov0"]
 [ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
-[ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="3_j80mx"]
 [ext_resource type="Texture2D" uid="uid://blt0uvq3pt5lw" path="res://Assets/sync.png" id="5_ion1r"]
 [ext_resource type="Script" uid="uid://cngpl0rg3lw0f" path="res://Scripts/EngineScripts/CodeCompletion.cs" id="5_mhwis"]
 [ext_resource type="Texture2D" uid="uid://d1xmt7leqg06x" path="res://Assets/error.png" id="6_7lov0"]
@@ -12,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
 [ext_resource type="Script" uid="uid://bml7var5rtfu0" path="res://Scripts/EngineScripts/Printer.cs" id="10_mhwis"]
+[ext_resource type="Texture2D" uid="uid://fiy6rusa16om" path="res://Assets/tacho-de-reciclaje.png" id="11_jb07f"]
 [ext_resource type="PackedScene" uid="uid://d1nw4oeywy18w" path="res://Scenes/brush.tscn" id="12_7lov0"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_ekyth"]
@@ -127,7 +127,7 @@ theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Spawn(0,0)
 Color(\"Blue\")
-
+Size(7)
 n <- 2
 label
 DrawLine(1,1,n)
@@ -270,14 +270,13 @@ offset_left = 704.0
 offset_top = 64.0
 offset_right = 1856.0
 offset_bottom = 1216.0
-texture = ExtResource("3_j80mx")
 script = ExtResource("10_mhwis")
 Brush = NodePath("brush")
 
 [node name="brush" parent="TextureRect" instance=ExtResource("12_7lov0")]
 z_index = 1
 z_as_relative = false
-frame_progress = 0.803947
+animation = &"default"
 
 [node name="FileDialog - Save" type="FileDialog" parent="."]
 transparent_bg = true
@@ -371,6 +370,18 @@ theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Play"
 icon = ExtResource("3_ekyth")
+flat = true
+expand_icon = true
+
+[node name="RefreshTerminal" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1811.0
+offset_top = 1220.0
+offset_right = 1851.0
+offset_bottom = 1260.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+icon = ExtResource("11_jb07f")
 flat = true
 expand_icon = true
 
@@ -505,6 +516,7 @@ text = "Position: "
 [connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
 [connection signal="file_selected" from="FileDialog - Load" to="." method="LoadFile"]
 [connection signal="pressed" from="Play" to="." method="PressPlay"]
+[connection signal="pressed" from="RefreshTerminal" to="." method="RefreshTerminal"]
 [connection signal="pressed" from="Skip" to="." method="PressSkip"]
 [connection signal="pressed" from="Reset" to="." method="PressReset"]
 [connection signal="pressed" from="SaveFile" to="." method="PressSaveFile"]

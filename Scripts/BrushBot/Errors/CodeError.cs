@@ -1,5 +1,3 @@
-using System;
-
 namespace BrushBot
 {
 	public class CodeError : InterpreterError
@@ -29,6 +27,8 @@ namespace BrushBot
 		Typing,
 		Count,
 		IndexOutOfRange,
-		OutOfContext
+		OutOfContext,
+		Undefined,
+		StackOverflow
 	}
 }

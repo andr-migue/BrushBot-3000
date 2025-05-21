@@ -19,11 +19,11 @@ namespace BrushBot
                 {
                     if (Nodes[i] is Label label) 
                     {
-                        if (Scope.Labels.ContainsKey(label.Token.Value))
+                        if (Context.Labels.ContainsKey(label.Token.Value))
                         {
-                            throw new CodeError(ErrorType.Invalid, label.Location,$"Ya exite un label con este nombre {label.Token.Value}");
+                            throw new CodeError(ErrorType.Invalid, label.Location,$"{label.Token.Value} Already exists a label with that name");
                         }
-                        else Scope.Labels.Add(label.Token.Value, i);
+                        else Context.Labels.Add(label.Token.Value, i);
                     }
                     else continue;
                 }
@@ -32,11 +32,11 @@ namespace BrushBot
                     if (Nodes[i] is Assignment assignment)
                     {
                         (string Name, Object Value) = assignment.Assign();
-                        if (Scope.Variables.ContainsKey(Name))
+                        if (Context.Variables.ContainsKey(Name))
                         {
-                            Scope.Variables[Name] = Value;
+                            Context.Variables[Name] = Value;
                         }
-                        else Scope.Variables.Add(Name, Value);
+                        else Context.Variables.Add(Name, Value);
                     }
                     else if (Nodes[i] is Instruction instruction)
                     {
@@ -46,10 +46,10 @@ namespace BrushBot
                     {
                         if (jump.Expression.Evaluate() is bool)
                         {
-                            if (!Scope.Labels.ContainsKey(jump.Label.Value)) throw new CodeError (ErrorType.OutOfContext, jump.Location, $"Label [{jump.Label.Value}] no existe en este contexto.");
+                            if (!Context.Labels.ContainsKey(jump.Label.Value)) throw new CodeError (ErrorType.OutOfContext, jump.Location, $"Label {jump.Label.Value}.");
                             continue;
                         }
-                        else throw new CodeError (ErrorType.Invalid, jump.Location,$"Expresión de GoTo debe ser booleana.");
+                        else throw new CodeError (ErrorType.Invalid, jump.Location,$"Expression of GoTo must be boolean.");
                     }
                 }
             }

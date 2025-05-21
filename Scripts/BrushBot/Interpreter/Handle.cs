@@ -10,14 +10,14 @@ namespace BrushBot
         {
             if (parameters.Count != 2)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"Spawn(int x, int y).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Spawn(int x, int y).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError (ErrorType.Typing, expression.Location, $"Spawn(int x, int y).");
+                    throw new CodeError(ErrorType.Typing, expression.Location, $"Spawn(int x, int y).");
                 }
             }
         }
@@ -25,36 +25,36 @@ namespace BrushBot
         {
             if (parameters.Count != 1)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"Color(string color).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Color(string color).");
             }
             else if (!(parameters[0].Evaluate() is Color))
             {
-                throw new CodeError (ErrorType.Typing, parameters[0].Location, $"Color(string color).");
+                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Color(string color).");
             }
         }
         public static void CheckSize(List<Expression> parameters)
         {
             if (parameters.Count != 1)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"Size(int size).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Size(int size).");
             }
             if (!(parameters[0].Evaluate() is int))
             {
-                throw new CodeError (ErrorType.Typing, parameters[0].Location, $"Size(int size).");
+                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Size(int size).");
             }
         }
         public static void CheckDrawLine(List<Expression> parameters)
         {
             if (parameters.Count != 3)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawLine(int dirX, int dirY, int distance).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"DrawLine(int dirX, int dirY, int distance).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawLine(int dirX, int dirY, int distance).");
+                    throw new CodeError(ErrorType.Typing, expression.Location, $"DrawLine(int dirX, int dirY, int distance).");
                 }
             }
         }
@@ -62,14 +62,14 @@ namespace BrushBot
         {
             if (parameters.Count != 3)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawCircle(int dirX, int dirY, int radius).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"DrawCircle(int dirX, int dirY, int radius).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawCircle(int dirX, int dirY, int radius).");
+                    throw new CodeError(ErrorType.Typing, expression.Location, $"DrawCircle(int dirX, int dirY, int radius).");
                 }
             }
         }
@@ -77,14 +77,14 @@ namespace BrushBot
         {
             if (parameters.Count != 5)
             {
-                throw new CodeError (ErrorType.Count, parameters[0].Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate() is int))
                 {
-                    throw new CodeError (ErrorType.Typing, expression.Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
+                    throw new CodeError(ErrorType.Typing, expression.Location, $"DrawRectangle(int dirX, int dirY, int distance, int width, int height).");
                 }
             }
         }
@@ -92,7 +92,7 @@ namespace BrushBot
         {
             if (parameters != null)
             {
-                throw new CodeError (ErrorType.Typing, parameters[0].Location, $"Fill().");
+                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Fill().");
             }
         }
         public static async Task Spawn(List<Expression> parameters)
@@ -102,8 +102,8 @@ namespace BrushBot
 
             if (IsValid(x, y))
             {
-                Scope.Position = (x, y);
-                Scope.flag = true;
+                Context.Position = (x, y);
+                Context.flag = true;
                 await Task.Delay(0);
             }
             else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Spawn({x}, {y})");
@@ -112,8 +112,8 @@ namespace BrushBot
         {
             Color color = (Color)parameters[0].Evaluate();
 
-            Scope.BrushColor = color;
-            Scope.flag = true;
+            Context.BrushColor = color;
+            Context.flag = true;
             await Task.Delay(0);
         }
         public static async Task Size(List<Expression> parameters)
@@ -122,18 +122,19 @@ namespace BrushBot
 
             if (size % 2 == 0)
             {
-                Scope.BrushSize = size - 1;
-                Scope.flag = true;
+                Context.BrushSize = size - 1;
+                Context.flag = true;
                 await Task.Delay(0);
             }
-            else Scope.BrushSize = size;
+            else Context.BrushSize = size;
         }
         public static async Task DrawLine(List<Expression> parameters)
         {
-            int x = Scope.Position.Item1;
-            int y = Scope.Position.Item2;
-            Scope.Picture[x, y] = Scope.BrushColor;
-            
+            int x = Context.Position.Item1;
+            int y = Context.Position.Item2;
+            Paint(x, y);
+            await Task.Delay(delay);
+
             int dirX = (int)parameters[0].Evaluate();
             int dirY = (int)parameters[1].Evaluate();
             int distance = (int)parameters[2].Evaluate();
@@ -145,33 +146,32 @@ namespace BrushBot
 
                 if (IsValid(newx, newy))
                 {
-                    Scope.Picture[newx, newy] = Scope.BrushColor;
-                    Scope.Position = (newx, newy);
+                    Paint(newx, newy);
+                    Context.Position = (newx, newy);
                     x = newx;
                     y = newy;
-                    Scope.flag = true;
-                    Scope.animation = true;
+                    Context.animation = true;
                     await Task.Delay(delay);
                 }
                 else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"DrawLine({newx}, {newy})");
             }
-            Scope.animation = false;
+            Context.animation = false;
         }
         public static async Task DrawCircle(List<Expression> parameters)
         {
-            int x = Scope.Position.Item1;
-            int y = Scope.Position.Item2;
+            int x = Context.Position.Item1;
+            int y = Context.Position.Item2;
 
             int dirX = (int)parameters[0].Evaluate();
             int dirY = (int)parameters[1].Evaluate();
             int radius = (int)parameters[2].Evaluate();
 
-            int centerX = x + dirX;
-            int centerY = y + dirY;
+            int centerX = x + dirX * radius;
+            int centerY = y + dirY * radius;
 
-            if (!IsValid(centerX, centerY)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Centro del círculo fuera de rango ({centerX}, {centerY})");
-            
-            Scope.Position = (centerX, centerY);
+            if (!IsValid(centerX, centerY)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Center of circle ({centerX}, {centerY})");
+
+            Context.Position = (centerX, centerY);
 
             double step = Math.Max(1, 360.0 / (2 * Math.PI * radius));
 
@@ -183,21 +183,20 @@ namespace BrushBot
 
                 if (IsValid(pixelX, pixelY))
                 {
-                    Scope.Position = (pixelX, pixelY);
-                    Scope.Picture[pixelX, pixelY] =Scope.BrushColor;
-                    Scope.flag = true;
-                    Scope.animation = true;
+                    Paint(pixelX, pixelY);
+                    Context.Position = (pixelX, pixelY);
+                    Context.animation = true;
                     await Task.Delay(delay);
                 }
             }
-            Scope.Position = (centerX, centerY);
-            Scope.flag = true;
-            Scope.animation = false;
+            Context.Position = (centerX, centerY);
+            Context.flag = true;
+            Context.animation = false;
         }
         public static async Task DrawRectangle(List<Expression> parameters)
         {
-            int x = Scope.Position.Item1;
-            int y = Scope.Position.Item2;
+            int x = Context.Position.Item1;
+            int y = Context.Position.Item2;
 
             int dirX = (int)parameters[0].Evaluate();
             int dirY = (int)parameters[1].Evaluate();
@@ -208,7 +207,7 @@ namespace BrushBot
             int newx = x + dirX * distance;
             int newy = y + dirY * distance;
 
-            if (!IsValid(newx, newy)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Centro del rectángulo fuera de rango ({newx}, {newy})");
+            if (!IsValid(newx, newy)) throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Center of rectangle ({newx}, {newy})");
             else
             {
                 int topLeftX = newx - width / 2;
@@ -223,33 +222,32 @@ namespace BrushBot
                         bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
                         if (isBorder && IsValid(i, j))
                         {
-                            Scope.Position = (i, j);
-                            Scope.Picture[i, j] = Scope.BrushColor;
-                            Scope.flag = true;
-                            Scope.animation = true;
+                            Context.Position = (i, j);
+                            Paint(i, j);
+                            Context.animation = true;
                             await Task.Delay(delay);
                         }
                     }
                 }
-               Scope.Position = (newx, newy);
-               Scope.flag = true;
-               Scope.animation = false;
+                Context.Position = (newx, newy);
+                Context.flag = true;
+                Context.animation = false;
             }
         }
         public static async Task Fill()
         {
-            int i = Scope.Position.Item1;
-            int j = Scope.Position.Item2;
-            Color Current = Scope.Picture[i, j];
-            if (Current == Scope.BrushColor) return;
+            int i = Context.Position.Item1;
+            int j = Context.Position.Item2;
+            Color Current = Context.Picture[i, j];
+            if (Current == Context.BrushColor) return;
 
             Queue<(int, int)> queue = new();
-            
-            queue.Enqueue((i, j));
-            Scope.Picture[i, j] = Scope.BrushColor;
 
-            int[] dirX = {1, -1, 0,  0};
-            int[] dirY = {0,  0, 1, -1};
+            queue.Enqueue((i, j));
+            Context.Picture[i, j] = Context.BrushColor;
+
+            int[] dirX = { 1, -1, 0, 0 };
+            int[] dirY = { 0, 0, 1, -1 };
 
             while (queue.Count > 0)
             {
@@ -260,26 +258,26 @@ namespace BrushBot
                     int newX = x + dirX[k];
                     int newY = y + dirY[k];
 
-                    if (IsValid(newX, newY) && Scope.Picture[newX, newY] == Current)
+                    if (IsValid(newX, newY) && Context.Picture[newX, newY] == Current)
                     {
-                        Scope.Picture[newX, newY] = Scope.BrushColor;
+                        Context.Picture[newX, newY] = Context.BrushColor;
                         queue.Enqueue((newX, newY));
-                        Scope.flag = true;
-                        Scope.animation = true;
-                        Scope.Position = (newX, newY);
+                        Context.flag = true;
+                        Context.animation = true;
+                        Context.Position = (newX, newY);
                         await Task.Delay(delay);
                     }
                 }
             }
-            Scope.Position = (i, j);
-            Scope.flag = true;
-            Scope.animation = false;
+            Context.Position = (i, j);
+            Context.flag = true;
+            Context.animation = false;
         }
         public static int GetActualX(List<Expression> parameters)
         {
             if (parameters == null)
             {
-                return Scope.Position.Item1;
+                return Context.Position.Item1;
             }
             else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetActualX().");
         }
@@ -287,7 +285,7 @@ namespace BrushBot
         {
             if (parameters == null)
             {
-                return Scope.Position.Item2;
+                return Context.Position.Item2;
             }
             else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetActualY().");
         }
@@ -295,7 +293,7 @@ namespace BrushBot
         {
             if (parameters == null)
             {
-                return Scope.Size;
+                return Context.Size;
             }
             else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetCanvasSize().");
         }
@@ -307,9 +305,9 @@ namespace BrushBot
             }
             else if (parameters[0].Evaluate() is Color color)
             {
-                return color == Scope.BrushColor;
+                return color == Context.BrushColor;
             }
-            else throw new CodeError (ErrorType.Typing, parameters[0].Location, "IsBrushColor(string color).");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "IsBrushColor(string color).");
         }
         public static bool IsBrushSize(List<Expression> parameters)
         {
@@ -319,9 +317,9 @@ namespace BrushBot
             }
             else if (parameters[0].Evaluate() is int brush)
             {
-                return brush == Scope.BrushSize;
+                return brush == Context.BrushSize;
             }
-            else throw new CodeError (ErrorType.Typing, parameters[0].Location, "IsBrushSize(int size).");
+            else throw new CodeError(ErrorType.Typing, parameters[0].Location, "IsBrushSize(int size).");
         }
         public static bool IsCanvasColor(List<Expression> parameters)
         {
@@ -335,15 +333,15 @@ namespace BrushBot
                 {
                     if (parameters[2].Evaluate() is int horizontal)
                     {
-                        int x = Scope.Position.Item1;
-                        int y = Scope.Position.Item2;
+                        int x = Context.Position.Item1;
+                        int y = Context.Position.Item2;
                         bool flag = true;
 
                         for (int i = x; i < x + horizontal; i++)
                         {
                             for (int j = y; y < y + vertical; j++)
                             {
-                                if (Scope.Picture[i, j] != color)
+                                if (Context.Picture[i, j] != color)
                                 {
                                     flag = false;
                                     break;
@@ -383,7 +381,7 @@ namespace BrushBot
                                 {
                                     for (int j = x1; j < x2; j++)
                                     {
-                                        if (Scope.Picture[i, j] == color) count++;
+                                        if (Context.Picture[i, j] == color) count++;
                                     }
                                 }
                                 return count;
@@ -394,13 +392,50 @@ namespace BrushBot
                     }
                     else throw new CodeError(ErrorType.Typing, parameters[2].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
                 }
-                else throw new CodeError (ErrorType.Typing, parameters[1].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
+                else throw new CodeError(ErrorType.Typing, parameters[1].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
             }
             else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
         }
         private static bool IsValid(int x, int y)
         {
-            return x >= 0 && x < Scope.Size && y >= 0 && y < Scope.Size;
+            return x >= 0 && x < Context.Size && y >= 0 && y < Context.Size;
+        }
+        private static void Paint(int x, int y)
+        {
+            int offset = Context.BrushSize / 2;
+
+            for (int i = -offset; i <= offset; i++)
+            {
+                for (int j = -offset; j <= offset; j++)
+                {
+                    int newX = x + i;
+                    int newY = y + j;
+
+                    if (IsValid(newX, newY))
+                    {
+                        Context.Picture[newX, newY] = Context.BrushColor;
+                    }
+                }
+            }
+            Context.flag = true;
+        }
+        public static Godot.Color CheckColor(BrushBot.Color color)
+        {
+            switch (color)
+            {
+                case  BrushBot.Color.Transparent: return new Godot.Color(1, 1, 1, 0);
+                case  BrushBot.Color.Red: return new Godot.Color(1, 0, 0);
+                case  BrushBot.Color.Blue: return new Godot.Color(0, 0, 1);
+                case  BrushBot.Color.Green: return new Godot.Color(0, 1, 0);
+                case  BrushBot.Color.Yellow: return new Godot.Color(1, 1, 0);
+                case  BrushBot.Color.Orange: return new Godot.Color(1, 0.647f, 0);
+                case  BrushBot.Color.Purple: return new Godot.Color(0.627f, 0.125f, 0.941f);
+                case  BrushBot.Color.Black: return new Godot.Color(0, 0, 0);
+                case  BrushBot.Color.White: return new Godot.Color(1, 1, 1);
+                case  BrushBot.Color.Pink : return new Godot.Color(1, 0.314f, 0.863f);
+
+                default: return new Godot.Color(1, 1, 1, 0);
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ namespace BrushBot
                 {
                     return HandleBool(left, right, oper);
                 }
-                else throw new CodeError(ErrorType.Invalid, Location,$"Operandos {left} y {right} no son comparables.");
+                else throw new CodeError(ErrorType.Invalid, Location,$"{left} and {right} are not comparables.");
             }
             else if (left is int && right is int)
             {
@@ -73,25 +73,25 @@ namespace BrushBot
                         {
                             return newLeft / newRight;
                         }
-                        else throw new CodeError(ErrorType.Invalid, Location, "No está definida la división por 0.");
+                        else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
                     case "%":
                         if (newRight != 0)
                         {
                             return newLeft % newRight;
                         }
-                        else throw new CodeError(ErrorType.Invalid, Location, "No está definida la división por 0.");
+                        else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
                     case "**": return Math.Pow(newLeft, newRight);
 
                     default: throw new CodeError(ErrorType.Invalid, Location, $"{oper}.");
                 }
             }
-            else throw new CodeError(ErrorType.Invalid, Location, $"Operación Binaria no válida.");
+            else throw new CodeError(ErrorType.Invalid, Location, $"{Operator.Value}.");
         }
         private bool ToBool(Object value)
         {
             if (value is bool b) return b;
             if (value is int n) return n != 0;
-            throw new CodeError (ErrorType.Invalid, Location, $"No se puede convertir {value} a booleano.");
+            throw new CodeError (ErrorType.Invalid, Location, $"Imposible convert {value} to boolean.");
         }
         private Object HandleBool(Object left, Object right, string oper)
         {
@@ -104,7 +104,7 @@ namespace BrushBot
                 case "||": return leftBool || rightBool;
                 case "==": return leftBool == rightBool;
                 case "!=": return leftBool != rightBool;
-                default: throw new CodeError(ErrorType.Invalid, Location,$"Operador booleano no válido {oper}.");
+                default: throw new CodeError(ErrorType.Invalid, Location,$"{oper}.");
             }
         }
     }
@@ -126,7 +126,7 @@ namespace BrushBot
                 {
                     return -(int)expr;
                 }
-                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '-' a {Expression}.");
+                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '-' a {Expression.Evaluate()}.");
             }
             else
             {
@@ -135,7 +135,7 @@ namespace BrushBot
                 {
                     return !(bool)expr;
                 }
-                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '!' a {Expression}.");
+                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '!' a {Expression.Evaluate()}.");
             }
         }
     }
@@ -159,7 +159,7 @@ namespace BrushBot
                 case "IsBrushSize": return Handle.IsBrushSize(Parameters);
                 case "IsCanvasColor": return Handle.IsCanvasColor(Parameters);
                 case "GetColorCount": return Handle.GetColorCount(Parameters);
-                default: throw new CodeError(ErrorType.Invalid, Location, "Función no reconocida");
+                default: throw new CodeError(ErrorType.Invalid, Location, $"{Name.Value}");
             }
         }
     }
@@ -191,10 +191,10 @@ namespace BrushBot
                     case "White" : return Color.White;
                     case "Pink" : return Color.Pink;
 
-                    default : throw new CodeError (ErrorType.Invalid, Location, $"Color no válido.");
+                    default : throw new CodeError (ErrorType.Invalid, Location, $"{Token.Value}.");
                 }
             }
-            else throw new CodeError (ErrorType.Invalid, Location, $"Literal no válido");
+            else throw new CodeError (ErrorType.Invalid, Location, $"{Token.Value}");
         }
     }
     public class Variable : Expression
@@ -206,11 +206,11 @@ namespace BrushBot
         }
         public override Object Evaluate()
         {
-            if (Scope.Variables.ContainsKey(Token.Value))
+            if (Context.Variables.ContainsKey(Token.Value))
             {
-                return Scope.Variables[Token.Value];
+                return Context.Variables[Token.Value];
             }
-            else throw new CodeError(ErrorType.OutOfContext, Location, $"Variable [{Token.Value}] no existe en este contexto");
+            else throw new CodeError(ErrorType.OutOfContext, Location, $"Variable {Token.Value}");
         }
     }
     public class Assignment : Node
@@ -271,7 +271,7 @@ namespace BrushBot
                 case "Fill" :
                     Handle.CheckFill(Parameters);
                     break;
-                default: throw new CodeError(ErrorType.Invalid, Location, "Instrucción no reconocida");
+                default: throw new CodeError(ErrorType.Invalid, Location, $"{Keyword.Value}");
             }
         }
         public async Task Execute()
@@ -299,7 +299,7 @@ namespace BrushBot
                 case "Fill" :
                     await Handle.Fill();
                     break;
-                default: throw new CodeError(ErrorType.Invalid, Location, "Instrucción no reconocida");;
+                default: throw new CodeError(ErrorType.Invalid, Location, $"{Keyword.Value}");;
             }
         }
     }

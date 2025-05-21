@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace BrushBot
 {
-    public class Evaluateer
+    public class Interpreter
     {
         List<Node> Nodes;
-        List<InterpreterError> Errors;
-        public Evaluateer (List<Node> nodes)
+        Dictionary<string, int> visitLabels;
+        const int max = 3000;
+        public Interpreter(List<Node> nodes)
         {
             Nodes = nodes;
-            Errors = new();
+            visitLabels = new();
         }
         public async Task Evaluate()
         {
@@ -21,11 +22,11 @@ namespace BrushBot
                     if (Nodes[i] is Assignment assignment)
                     {
                         (string Name, Object Value) = assignment.Assign();
-                        if (Scope.Variables.ContainsKey(Name))
+                        if (Context.Variables.ContainsKey(Name))
                         {
-                            Scope.Variables[Name] = Value;
+                            Context.Variables[Name] = Value;
                         }
-                        else Scope.Variables.Add(Name, Value);
+                        else Context.Variables.Add(Name, Value);
                     }
                     else if (Nodes[i] is Instruction instruction)
                     {
@@ -35,20 +36,34 @@ namespace BrushBot
                     {
                         if (jump.Expression.Evaluate() is true)
                         {
-                            if (Scope.Labels.ContainsKey(jump.Label.Value))
+                            string label = jump.Label.Value;
+
+                            if (Context.Labels.ContainsKey(label))
                             {
-                                i = Scope.Labels[jump.Label.Value];
+                                if (!visitLabels.ContainsKey(label))
+                                {
+                                    visitLabels[label] = 0;
+                                }
+                                visitLabels[label]++;
+
+                                if (visitLabels[label] > max)
+                                {
+                                    throw new CodeError(ErrorType.StackOverflow, jump.Location, $"Label {label} has been visited more than {max} times");
+                                }
+
+                                i = Context.Labels[jump.Label.Value];
                             }
                         }
                         else continue;
                     }
                     else if (Nodes[i] is Label) continue;
-                    else throw new CodeError (ErrorType.Invalid, Nodes[i].Location, $"Sentencia no válida.");
+                    else throw new CodeError(ErrorType.Invalid, Nodes[i].Location, $"Sentence.");
                 }
             }
             catch (InterpreterError error)
             {
-                Errors.Add(error);
+                Context.possibleRuntimeError = error;
+                Context.runtimeError = true;
             }
         }
     }

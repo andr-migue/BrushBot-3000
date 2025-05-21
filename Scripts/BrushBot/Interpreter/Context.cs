@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BrushBot
 {
-    public static class Scope
+    public static class Context
     {
         public static Dictionary<string, int> Labels;
         public static Dictionary<string, Object> Variables;
@@ -14,6 +14,8 @@ namespace BrushBot
         public static Color BrushColor;
         public static bool flag;
         public static bool animation;
+        public static bool runtimeError;
+        public static InterpreterError possibleRuntimeError;
         public static void Init()
         {
             Replay();
@@ -24,11 +26,14 @@ namespace BrushBot
             BrushColor = Color.Transparent;
             flag = false;
             animation = false;
+            runtimeError = false;
+            possibleRuntimeError = null;
         }
         public static void Replay()
         {
             Labels = new();
             Variables = new();
+            possibleRuntimeError = null;
         }
     }
 }

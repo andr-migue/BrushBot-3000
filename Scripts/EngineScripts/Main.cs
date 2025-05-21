@@ -17,23 +17,28 @@ public partial class Main : Control
     [Export] ColorRect colorRect;
     public override void _Ready()
     {
-        Scope.Init();
-        SizeEdit.Text = Scope.Size + "";
-        colorRect.Color = CheckColor(Scope.BrushColor);
-        CurrentBrushSize.Text = $"Brush Size: {Scope.BrushSize}  ";
-        CurrentPosition.Text = $"Position: {Scope.Position}";
+        Context.Init();
+        SizeEdit.Text = Context.Size + "";
+        colorRect.Color = Handle.CheckColor(Context.BrushColor);
+        CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
+        CurrentPosition.Text = $"Position: {Context.Position}";
 
         Analysis();
     }
     public override void _PhysicsProcess(double delta)
     {
-        if (Scope.flag == true)
+        if (Context.flag == true)
         {
-            colorRect.Color = CheckColor(Scope.BrushColor);
-            CurrentBrushSize.Text = $"Brush Size: {Scope.BrushSize}  ";
-            CurrentPosition.Text = $"Position: {Scope.Position}";
+            colorRect.Color = Handle.CheckColor(Context.BrushColor);
+            CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
+            CurrentPosition.Text = $"Position: {Context.Position}";
             grid.QueueRedraw();
-            Scope.flag = false;
+            Context.flag = false;
+        }
+        if (Context.runtimeError)
+        {
+            Terminal.Text += Context.possibleRuntimeError.Message + "\r\n";
+            Context.runtimeError = false;
         }
     }
 
@@ -41,6 +46,10 @@ public partial class Main : Control
     void PressPlay()
     {
         Execute();
+    }
+    void RefreshTerminal()
+    {
+        Terminal.Text = "";
     }
     void PressSkip()
     {
@@ -52,7 +61,7 @@ public partial class Main : Control
     }
     void PressReset()
     {
-        Scope.Picture = new BrushBot.Color[Scope.Size, Scope.Size];
+        Context.Picture = new BrushBot.Color[Context.Size, Context.Size];
         grid.QueueRedraw();
     }
     void PressExit()
@@ -92,12 +101,12 @@ public partial class Main : Control
         if (IsNumber(text))
         {
             int size = int.Parse(text);
-            Scope.Size = size;
-            Scope.Picture = new BrushBot.Color[size, size];
+            Context.Size = size;
+            Context.Picture = new BrushBot.Color[size, size];
         }
         else
         {
-            SizeEdit.Text = Scope.Size + "";
+            SizeEdit.Text = Context.Size + "";
         }
         grid.QueueRedraw();
     }
@@ -111,7 +120,7 @@ public partial class Main : Control
     }
     void Analysis()
     {
-        Scope.Replay();
+        Context.Replay();
         string code = edit.Text;
         
         Lexer lexer = new Lexer(code);
@@ -140,7 +149,7 @@ public partial class Main : Control
     async Task Execute()
     {
         Handle.delay = delay;
-        Scope.Replay();
+        Context.Replay();
         string code = edit.Text;
         
         Lexer lexer = new Lexer(code);
@@ -154,30 +163,12 @@ public partial class Main : Control
 
         if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
         {
-            Evaluateer Evaluateer = new Evaluateer(checknodes);
-            await Evaluateer.Evaluate();
+            Interpreter Interpreter = new Interpreter(checknodes);
+            await Interpreter.Evaluate();
         }
         else
         {
             Terminal.Text += "Error: No se puede ejecutar sin resolver los errores" + "\r\n";
-        }
-    }
-    public Godot.Color CheckColor(BrushBot.Color color)
-    {
-        switch (color)
-        {
-            case  BrushBot.Color.Transparent: return new Godot.Color(255, 255, 255, 0);
-            case  BrushBot.Color.Red: return new Godot.Color(255, 0, 0);
-            case  BrushBot.Color.Blue: return new Godot.Color(0, 0, 255);
-            case  BrushBot.Color.Green: return new Godot.Color(0, 255, 0);
-            case  BrushBot.Color.Yellow: return new Godot.Color(255, 255, 0);
-            case  BrushBot.Color.Orange: return new Godot.Color(255, 165, 0);
-            case  BrushBot.Color.Purple: return new Godot.Color(160, 32, 240);
-            case  BrushBot.Color.Black: return new Godot.Color(0, 0, 0);
-            case  BrushBot.Color.White: return new Godot.Color(255, 255, 255);
-            case  BrushBot.Color.Pink : return new Godot.Color(255, 80, 220);
-
-            default: return new Godot.Color(255, 255, 255, 0);
         }
     }
     #endregion
