@@ -5,17 +5,22 @@ public partial class Printer : TextureRect
     Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.1f);
     [Export] float LineWidth = 1.0f;
     [Export] AnimatedSprite2D Brush;
+    private Context Context;
+    public void Init(Context context)
+    {
+        Context = context;
+    }
     public override void _PhysicsProcess(double delta)
     {
-        if (Context.animation == true) Brush.Play("move");
-        
+        if (Context.Animation == true) Brush.Play("move");
+
         else Brush.Play("default");
     }
     public override void _Draw()
     {
         int size = Context.Size;
         float space = Size.X / size;
-        
+
         DrawColor(size, space);
         UpdateBrushPosition(space);
         for (int i = 1; i < size; i++)

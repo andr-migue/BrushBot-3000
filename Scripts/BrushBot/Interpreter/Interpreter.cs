@@ -6,14 +6,11 @@ namespace BrushBot
     public class Interpreter
     {
         List<Node> Nodes;
-        Dictionary<string, int> visitLabels;
-        const int max = 3000;
         public Interpreter(List<Node> nodes)
         {
             Nodes = nodes;
-            visitLabels = new();
         }
-        public async Task Evaluate()
+        public async Task Interpret(Context context)
         {
             try
             {
@@ -21,49 +18,42 @@ namespace BrushBot
                 {
                     if (Nodes[i] is Assignment assignment)
                     {
-                        (string Name, Object Value) = assignment.Assign();
-                        if (Context.Variables.ContainsKey(Name))
+                        (string Name, Object Value) = assignment.Assign(context);
+                        if (context.Scope.Variables.ContainsKey(Name))
                         {
-                            Context.Variables[Name] = Value;
+                            context.Scope.Variables[Name] = Value;
                         }
-                        else Context.Variables.Add(Name, Value);
+                        else context.Scope.Variables.Add(Name, Value);
                     }
+
                     else if (Nodes[i] is Instruction instruction)
                     {
-                        await instruction.Execute();
+                        await instruction.Execute(context);
                     }
+
                     else if (Nodes[i] is Jump jump)
                     {
-                        if (jump.Expression.Evaluate() is true)
+                        if (jump.Expression.Evaluate(context) is true)
                         {
                             string label = jump.Label.Value;
 
-                            if (Context.Labels.ContainsKey(label))
+                            if (context.Labels.ContainsKey(label))
                             {
-                                if (!visitLabels.ContainsKey(label))
-                                {
-                                    visitLabels[label] = 0;
-                                }
-                                visitLabels[label]++;
-
-                                if (visitLabels[label] > max)
-                                {
-                                    throw new CodeError(ErrorType.StackOverflow, jump.Location, $"Label {label} has been visited more than {max} times");
-                                }
-
-                                i = Context.Labels[jump.Label.Value];
+                                i = context.Labels[jump.Label.Value];
                             }
                         }
                         else continue;
                     }
+
                     else if (Nodes[i] is Label) continue;
+
                     else throw new CodeError(ErrorType.Invalid, Nodes[i].Location, $"Sentence.");
                 }
             }
             catch (InterpreterError error)
             {
-                Context.possibleRuntimeError = error;
-                Context.runtimeError = true;
+                context.PossibleRuntimeError = error;
+                context.RuntimeError = true;
             }
         }
     }

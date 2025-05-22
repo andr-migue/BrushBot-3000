@@ -9,36 +9,40 @@ public partial class Main : Control
     [Export] CodeEdit edit;
     [Export] TextEdit Terminal;
     [Export] LineEdit SizeEdit;
-    [Export] int delay = 30;
+    [Export] int Delay = 30;
     [Export] Printer grid;
     [Export] AudioStreamPlayer2D audio;
     [Export] Godot.Label CurrentBrushSize;
     [Export] Godot.Label CurrentPosition;
     [Export] ColorRect colorRect;
+    private Context Context;
     public override void _Ready()
     {
-        Context.Init();
+        Context = new Context(64);
+
         SizeEdit.Text = Context.Size + "";
         colorRect.Color = Handle.CheckColor(Context.BrushColor);
         CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
         CurrentPosition.Text = $"Position: {Context.Position}";
 
+        grid.Init(Context);
+
         Analysis();
     }
     public override void _PhysicsProcess(double delta)
     {
-        if (Context.flag == true)
+        if (Context.Flag == true)
         {
             colorRect.Color = Handle.CheckColor(Context.BrushColor);
             CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
             CurrentPosition.Text = $"Position: {Context.Position}";
             grid.QueueRedraw();
-            Context.flag = false;
+            Context.Flag = false;
         }
-        if (Context.runtimeError)
+        if (Context.RuntimeError)
         {
-            Terminal.Text += Context.possibleRuntimeError.Message + "\r\n";
-            Context.runtimeError = false;
+            Terminal.Text += Context.PossibleRuntimeError.Message + "\r\n";
+            Context.RuntimeError = false;
         }
     }
 
@@ -120,7 +124,7 @@ public partial class Main : Control
     }
     void Analysis()
     {
-        Context.Replay();
+        Context.Reset();
         string code = edit.Text;
         
         Lexer lexer = new Lexer(code);
@@ -129,8 +133,8 @@ public partial class Main : Control
         Parser parser = new Parser(tokens);
         var (nodes, ParseErrors, result) = parser.Parse();
 
-        Semanter semanter = new Semanter(nodes);
-        var (checknodes, SemantErrors) = semanter.Semant();
+        Semanter semanter = new Semanter(nodes, Context);
+        var (checknodes, SemantErrors, context) = semanter.Semant();
         
         Terminal.Text = "\0";
         foreach (var error in LexerErrors)
@@ -148,8 +152,9 @@ public partial class Main : Control
     }
     async Task Execute()
     {
-        Handle.delay = delay;
-        Context.Replay();
+        Handle.delay = Delay;
+        Context.Reset();
+
         string code = edit.Text;
         
         Lexer lexer = new Lexer(code);
@@ -158,17 +163,20 @@ public partial class Main : Control
         Parser parser = new Parser(tokens);
         var (nodes, ParseErrors, result) = parser.Parse();
         
-        Semanter semanter = new Semanter(nodes);
-        var (checknodes, SemantErrors) = semanter.Semant();
+        Semanter semanter = new Semanter(nodes, Context);
+        var (checknodes, SemantErrors, context) = semanter.Semant();
+
+        Context = context;
+        Context.Scope.Variables = new();
 
         if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
         {
             Interpreter Interpreter = new Interpreter(checknodes);
-            await Interpreter.Evaluate();
+            await Interpreter.Interpret(Context);
         }
         else
         {
-            Terminal.Text += "Error: No se puede ejecutar sin resolver los errores" + "\r\n";
+            Terminal.Text += "Error: Can't execute without solve the errors." + "\r\n";
         }
     }
     #endregion

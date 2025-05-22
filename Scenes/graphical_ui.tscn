@@ -4,9 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://soety70f5kwx" path="res://Assets/ChatGPT Image 1 abr 2025, 04_03_32.png" id="2_j80mx"]
 [ext_resource type="Texture2D" uid="uid://cs6gwscpjke4a" path="res://Assets/play.png" id="3_ekyth"]
 [ext_resource type="Texture2D" uid="uid://blt0uvq3pt5lw" path="res://Assets/sync.png" id="5_ion1r"]
-[ext_resource type="Script" uid="uid://cngpl0rg3lw0f" path="res://Scripts/EngineScripts/CodeCompletion.cs" id="5_mhwis"]
 [ext_resource type="Texture2D" uid="uid://d1xmt7leqg06x" path="res://Assets/error.png" id="6_7lov0"]
 [ext_resource type="Texture2D" uid="uid://bmrifp745rdrm" path="res://Assets/next.png" id="6_cot47"]
+[ext_resource type="Texture2D" uid="uid://bcp1xl5dh7leu" path="res://Assets/descarga (1).jpeg" id="7_jb07f"]
 [ext_resource type="FontFile" uid="uid://ibsvww3uwbxl" path="res://Fonts/Fira Code/ttf/FiraCode-Regular.ttf" id="8_7wjfc"]
 [ext_resource type="Texture2D" uid="uid://cjnvtxymyvwve" path="res://Assets/ChatGPT Image 30 mar 2025, 21_49_40 (2).png" id="9_63pmv"]
 [ext_resource type="AudioStream" uid="uid://jqc35b4xbcty" path="res://Soundtrack/1 Hora de Música Renacentista Laúd para Estudiar, Concentración - Renaissance Lute Music for Focu.mp3" id="10_7wjfc"]
@@ -92,7 +92,6 @@ loadDialog = NodePath("FileDialog - Load")
 edit = NodePath("CodeEdit")
 Terminal = NodePath("Terminal")
 SizeEdit = NodePath("Size")
-delay = 35
 grid = NodePath("TextureRect")
 audio = NodePath("AudioStreamPlayer2D")
 CurrentBrushSize = NodePath("HBoxContainer/Label3")
@@ -136,7 +135,6 @@ i <- IsBrushColor(\"Blue\")
 GoTo [label] (n < 10)
 n <- \"Green\"
 Color(n)
-Spawn(20,20)
 DrawCircle(1,1, 10)
 Fill()"
 scroll_smooth = true
@@ -155,7 +153,6 @@ indent_use_spaces = true
 indent_automatic = true
 auto_brace_completion_enabled = true
 auto_brace_completion_highlight_matching = true
-script = ExtResource("5_mhwis")
 
 [node name="Doc" type="CodeEdit" parent="."]
 layout_mode = 1
@@ -270,6 +267,7 @@ offset_left = 704.0
 offset_top = 64.0
 offset_right = 1856.0
 offset_bottom = 1216.0
+texture = ExtResource("7_jb07f")
 script = ExtResource("10_mhwis")
 Brush = NodePath("brush")
 
