@@ -167,7 +167,6 @@ public partial class Main : Control
         var (checknodes, SemantErrors, context) = semanter.Semant();
 
         Context = context;
-        Context.Scope.Variables = new();
 
         if (!LexerErrors.Any() && !ParseErrors.Any() && !SemantErrors.Any())
         {

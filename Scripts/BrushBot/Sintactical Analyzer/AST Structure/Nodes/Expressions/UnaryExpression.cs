@@ -20,7 +20,7 @@ namespace BrushBot
                 {
                     return -(int)expr;
                 }
-                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '-' a {Expression.Evaluate(context)}.");
+                else throw new CodeError(ErrorType.Invalid, Location, $"Can't apply the operator '-' to {Expression.Evaluate(context)}.");
             }
             else
             {
@@ -29,7 +29,7 @@ namespace BrushBot
                 {
                     return !(bool)expr;
                 }
-                else throw new CodeError(ErrorType.Invalid, Location, $"No se puede aplicar el operador '!' a {Expression.Evaluate(context)}.");
+                else throw new CodeError(ErrorType.Invalid, Location, $"Can't apply the operator '!' to {Expression.Evaluate(context)}.");
             }
         }
     }

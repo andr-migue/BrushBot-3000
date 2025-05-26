@@ -20,7 +20,7 @@ namespace BrushBot
         }
         private HashSet<string> Keywords = new HashSet<string>
         {
-            "Spawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle"
+            "Spawn", "ReSpawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle"
         };
         private HashSet<string> Functions = new HashSet<string>
         {
@@ -60,13 +60,13 @@ namespace BrushBot
                 Advance();
                 Advance();
                 CurrentCol = 1;
-                return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
+                return new Token(TokenType.JumpLine, "JumpLine", ActualLn, ActualCol);
             }
             else // Mac o Unix
             {
                 Advance();
                 CurrentCol = 1;
-                return new Token(TokenType.JumpLine, " ", ActualLn, ActualCol);
+                return new Token(TokenType.JumpLine, "JumpLine", ActualLn, ActualCol);
             }
         }
         private Token GetNumber()
@@ -97,7 +97,7 @@ namespace BrushBot
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
             Advance(); // Para saltar la comilla de cierre.
-            
+
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, ActualCol);
             else
             {
@@ -176,15 +176,15 @@ namespace BrushBot
             while (CurrentChar != '\0')
             {
                 if (CurrentChar == '\r' || CurrentChar == '\n') tokens.Add(GetJumpLine());
-                
+
                 else if (char.IsWhiteSpace(CurrentChar)) Advance();
-                
+
                 else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
-                
+
                 else if (CurrentChar == '"') tokens.Add(GetColor());
-                
+
                 else if (char.IsLetter(CurrentChar)) tokens.Add(GetWord());
-                
+
                 else tokens.Add(GetOperatorOrDelimiter());
             }
             tokens.Add(new Token(TokenType.EndOfFile, "END", CurrentLn, CurrentCol));

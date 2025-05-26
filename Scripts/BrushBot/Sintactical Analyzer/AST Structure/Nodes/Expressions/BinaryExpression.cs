@@ -38,10 +38,10 @@ namespace BrushBot
                 }
                 else throw new CodeError(ErrorType.Invalid, Location,$"{left} and {right} are not comparables.");
             }
-            else if (left is int && right is int)
+            else
             {
-                int newLeft = (int)left;
-                int newRight = (int)right;
+                int newLeft = ToInt(left);
+                int newRight = ToInt(right);
                 
                 switch (oper)
                 {
@@ -71,13 +71,27 @@ namespace BrushBot
                     default: throw new CodeError(ErrorType.Invalid, Location, $"{oper}.");
                 }
             }
-            else throw new CodeError(ErrorType.Invalid, Location, $"{Operator.Value}.");
         }
         private bool ToBool(Object value)
         {
             if (value is bool b) return b;
+
             if (value is int n) return n != 0;
-            throw new CodeError (ErrorType.Invalid, Location, $"Can't convert {value} to boolean.");
+
+            throw new CodeError(ErrorType.Invalid, Location, $"Can't convert {value} to boolean.");
+        }
+        private int ToInt(Object value)
+        {
+            if (value is int) return (int)value;
+
+            if (value is bool)
+            {
+                if (value is true) return 1;
+
+                else return 0;
+            }
+
+            throw new CodeError (ErrorType.Invalid, Location, $"Can't convert {value} to integer.");
         }
         private Object HandleBool(Object left, Object right, string oper)
         {
@@ -90,7 +104,7 @@ namespace BrushBot
                 case "||": return leftBool || rightBool;
                 case "==": return leftBool == rightBool;
                 case "!=": return leftBool != rightBool;
-                default: throw new CodeError(ErrorType.Invalid, Location,$"{oper}.");
+                default: throw new CodeError(ErrorType.Invalid, Location, $"{oper}.");
             }
         }
     }

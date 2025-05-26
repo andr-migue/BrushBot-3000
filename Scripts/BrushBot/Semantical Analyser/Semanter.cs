@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System;
-using System.Net;
+
 namespace BrushBot
 {
     public class Semanter
@@ -84,7 +84,7 @@ namespace BrushBot
                     {
                         instruction.CheckSemantic(context);
                     }
-                    
+
                     else if (Nodes[i] is Jump jump)
                     {
                         if (jump.Expression.Evaluate(context) is bool)
@@ -103,6 +103,7 @@ namespace BrushBot
                 }
             }
 
+            context.Scope.Variables = new();
             return (Nodes, Errors, context);
         }
     }

@@ -148,11 +148,11 @@ namespace BrushBot
             }
             else if (Match(TokenType.Function, null))
             {
-                throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Funciones no pueden comenzar una sentencia.");
+                throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Function can't start a sentence.");
             }
             else
             {
-                throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"{CurrentToken().Value}.");
+                throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"{CurrentToken().Value}.");
             }
         }
         private Node Instruction()
@@ -164,6 +164,7 @@ namespace BrushBot
                 return GoTo(Keyword);
             }
             else return GetInstruction(Keyword);
+
         }
         private Instruction GetInstruction(Token keyword)
         {
@@ -181,11 +182,11 @@ namespace BrushBot
                     {
                         return new Instruction((keyword.Ln, keyword.Col), keyword, parameters);
                     }
-                    else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $").");
+                    else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $").");
                 }
-                else throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expression.");
+                else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expression.");
             }
-            else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"(.");
+            else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"(.");
         }
         private List<Expression> Parameters()
         {
@@ -202,7 +203,7 @@ namespace BrushBot
                 errors.Add(error);
                 SynchronizeParameter();
             }
-            
+
             while (Match(TokenType.Delimiter, [","]))
             {
                 try
@@ -225,7 +226,7 @@ namespace BrushBot
                 {
                     message += error.Message + '\n';
                 }
-                throw new ParameterError (message);
+                throw new ParameterError(message);
             }
             else
             {
@@ -297,7 +298,7 @@ namespace BrushBot
         {
             return And();
         }
-        
+
         private Expression And()
         {
             Expression expression = Or();
@@ -444,9 +445,9 @@ namespace BrushBot
                             }
                             else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $").");
                         }
-                        else throw new CodeError (ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expression.");
+                        else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expression.");
                     }
-                    else throw new CodeError (ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "(.");
+                    else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "(.");
                 }
                 else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), "Expression.");
             }

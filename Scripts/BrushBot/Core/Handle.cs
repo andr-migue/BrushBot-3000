@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 namespace BrushBot
 {
     public static class Handle
@@ -236,6 +237,11 @@ namespace BrushBot
         }
         public static async Task Fill(Context context)
         {
+            if (context.BrushColor == BrushBot.Color.Transparent)
+            {
+                return;
+            }
+
             int i = context.Position.Item1;
             int j = context.Position.Item2;
             Color Current = context.Picture[i, j];
@@ -402,11 +408,17 @@ namespace BrushBot
         }
         private static void Paint(int x, int y, Context context)
         {
-            int offset = context.BrushSize / 2;
-
-            for (int i = -offset; i <= offset; i++)
+            if (context.BrushColor == BrushBot.Color.Transparent)
             {
-                for (int j = -offset; j <= offset; j++)
+                context.Flag = true;
+                return;
+            }
+
+            int limit = context.BrushSize / 2;
+
+            for (int i = -limit; i <= limit; i++)
+            {
+                for (int j = -limit; j <= limit; j++)
                 {
                     int newX = x + i;
                     int newY = y + j;
@@ -423,16 +435,16 @@ namespace BrushBot
         {
             switch (color)
             {
-                case  BrushBot.Color.Transparent: return new Godot.Color(1, 1, 1, 0);
-                case  BrushBot.Color.Red: return new Godot.Color(1, 0, 0);
-                case  BrushBot.Color.Blue: return new Godot.Color(0, 0, 1);
-                case  BrushBot.Color.Green: return new Godot.Color(0, 1, 0);
-                case  BrushBot.Color.Yellow: return new Godot.Color(1, 1, 0);
-                case  BrushBot.Color.Orange: return new Godot.Color(1, 0.647f, 0);
-                case  BrushBot.Color.Purple: return new Godot.Color(0.627f, 0.125f, 0.941f);
-                case  BrushBot.Color.Black: return new Godot.Color(0, 0, 0);
-                case  BrushBot.Color.White: return new Godot.Color(1, 1, 1);
-                case  BrushBot.Color.Pink : return new Godot.Color(1, 0.314f, 0.863f);
+                case BrushBot.Color.Transparent: return new Godot.Color(1, 1, 1, 0);
+                case BrushBot.Color.Red: return new Godot.Color(1, 0, 0);
+                case BrushBot.Color.Blue: return new Godot.Color(0, 0, 1);
+                case BrushBot.Color.Green: return new Godot.Color(0, 1, 0);
+                case BrushBot.Color.Yellow: return new Godot.Color(1, 1, 0);
+                case BrushBot.Color.Orange: return new Godot.Color(1, 0.647f, 0);
+                case BrushBot.Color.Purple: return new Godot.Color(0.627f, 0.125f, 0.941f);
+                case BrushBot.Color.Black: return new Godot.Color(0, 0, 0);
+                case BrushBot.Color.White: return new Godot.Color(1, 1, 1);
+                case BrushBot.Color.Pink: return new Godot.Color(1, 0.314f, 0.863f);
 
                 default: return new Godot.Color(1, 1, 1, 0);
             }
