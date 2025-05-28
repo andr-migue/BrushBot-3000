@@ -16,6 +16,7 @@ namespace BrushBot
         {
             switch (Name.Value)
             {
+                case "ARGB" : return Handle.ARGB(Parameters, context);
                 case "GetActualX": return Handle.GetActualX(Parameters, context);
                 case "GetActualY": return Handle.GetActualY(Parameters, context);
                 case "GetCanvasSize": return Handle.GetCanvasSize(Parameters, context);

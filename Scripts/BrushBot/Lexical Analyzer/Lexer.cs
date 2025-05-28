@@ -25,7 +25,7 @@ namespace BrushBot
         private HashSet<string> Functions = new HashSet<string>
         {
             "GetActualX", "GetActualY", "GetCanvasSize", "GetColorCount", "IsBrushColor", "IsBrushSize",
-            "IsCanvasColor"
+            "IsCanvasColor", "ARGB"
         };
         private HashSet<string> Operators = new HashSet<string>
         {
@@ -84,22 +84,26 @@ namespace BrushBot
             }
             return new Token(TokenType.Number, result, CurrentLn, ActualCol);
         }
-        private Token GetColor()
+        private Token GetString()
         {
             Advance(); // Para saltar la comilla de apertura.
+
             string result = "";
             int ActualCol = CurrentCol;
-            while (CurrentChar != '\0' && CurrentChar != '"' && char.IsLetter(CurrentChar))
+
+            while (CurrentChar != '\0' && CurrentChar != '"' && char.IsLetter(CurrentChar) || CurrentChar == ' ')
             {
                 result += CurrentChar;
                 Advance();
             }
+
             if (CurrentChar != '"')
             {
                 Errors.Add(new CodeError(ErrorType.Expected, (CurrentLn, CurrentCol), $"{"\""}."));
 
                 return new Token(TokenType.Unknown, result, CurrentLn, CurrentCol);
             }
+            
             Advance(); // Para saltar la comilla de cierre.
 
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, ActualCol);
@@ -188,7 +192,7 @@ namespace BrushBot
 
                 else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
 
-                else if (CurrentChar == '"') tokens.Add(GetColor());
+                else if (CurrentChar == '"') tokens.Add(GetString());
 
                 else if (char.IsLetter(CurrentChar)) tokens.Add(GetWord());
 

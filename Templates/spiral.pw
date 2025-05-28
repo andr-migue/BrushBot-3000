@@ -1,0 +1,11 @@
+Spawn(32, 32)
+Color("Yellow")
+Size(1)
+
+n <- 0
+
+Miguel
+n <- n + 2
+Print("Hola Elio")
+DrawCircle(0, 0, n)
+GoTo [Miguel] (n < 10)

@@ -108,7 +108,8 @@ public partial class Main : Control
         script.Close();
         Analysis();
     }
-    void ChangeSize(string text) {
+    void ChangeSize(string text)
+    {
         if (IsNumber(text))
         {
             int size = int.Parse(text);
@@ -121,10 +122,12 @@ public partial class Main : Control
         }
         grid.QueueRedraw();
     }
-    private bool IsNumber(string text) {
+    private bool IsNumber(string text)
+    {
         // Verificar si el texto ingresado es un número.
         if (string.IsNullOrEmpty(text)) return false;
-        for (int i = 0; i < text.Length; i++) {
+        for (int i = 0; i < text.Length; i++)
+        {
             if (char.IsDigit(text[i])) return true;
         }
         return false;
@@ -133,16 +136,16 @@ public partial class Main : Control
     {
         Context.Reset();
         string code = edit.Text;
-        
+
         Lexer lexer = new Lexer(code);
         var (tokens, LexerErrors) = lexer.GetTokens();
-        
+
         Parser parser = new Parser(tokens);
         var (nodes, ParseErrors, result) = parser.Parse();
 
         Semanter semanter = new Semanter(nodes, Context);
         var (checknodes, SemantErrors, context) = semanter.Semant();
-        
+
         Terminal.Text = "\0";
         foreach (var error in LexerErrors)
         {
@@ -163,13 +166,13 @@ public partial class Main : Control
         Context.Reset();
 
         string code = edit.Text;
-        
+
         Lexer lexer = new Lexer(code);
         var (tokens, LexerErrors) = lexer.GetTokens();
-        
+
         Parser parser = new Parser(tokens);
         var (nodes, ParseErrors, result) = parser.Parse();
-        
+
         Semanter semanter = new Semanter(nodes, Context);
         var (checknodes, SemantErrors, context) = semanter.Semant();
 

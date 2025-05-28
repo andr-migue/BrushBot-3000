@@ -297,6 +297,35 @@ namespace BrushBot
             context.Flag = true;
             context.Animation = false;
         }
+        public static Godot.Color ARGB(List<Expression> parameters, Context context)
+        {
+            if (parameters.Count != 4)
+            {
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "ARGB(int alpha, int red, int green, int blue).");
+            }
+
+            foreach (Expression expression in parameters)
+            {
+                if (!(expression.Evaluate(context) is int))
+                {
+                    throw new CodeError(ErrorType.Typing, expression.Location, "ARGB(int alpha, int red, int green, int blue).");
+                }
+
+                int current = (int)expression.Evaluate(context);
+
+                if (!(current >= 0 && current < 255))
+                {
+                    throw new CodeError(ErrorType.Invalid, expression.Location, $"{current} must be in range 0 to 254.");
+                }
+            }
+
+            float A = (int)parameters[0].Evaluate(context) / 254;
+            float R = (int)parameters[1].Evaluate(context) / 254;
+            float G = (int)parameters[2].Evaluate(context) / 254;
+            float B = (int)parameters[3].Evaluate(context) / 254;
+
+            return new Godot.Color(A, R, G, B);
+        }
         public static int GetActualX(List<Expression> parameters, Context context)
         {
             if (parameters == null)

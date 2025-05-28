@@ -81,7 +81,7 @@ namespace BrushBot
         }
         private void SkipJumpLine()
         {
-            while (Match(TokenType.JumpLine, null)) {}
+            while (Match(TokenType.JumpLine, null)) { }
         }
         private bool Match(TokenType type, string[] values)
         {
