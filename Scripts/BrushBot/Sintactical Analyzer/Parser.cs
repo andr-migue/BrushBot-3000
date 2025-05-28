@@ -28,6 +28,12 @@ namespace BrushBot
                     Node node = Node();
                     nodes.Add(node);
                     result.Add(node);
+
+                    if (!IsEndToken() && CurrentToken().Type != TokenType.JumpLine && !(node is Label))
+                    {
+                        throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), "JumpLine after statement.");
+                    }
+
                     SkipJumpLine();
                 }
                 catch (CodeError error)
@@ -279,7 +285,7 @@ namespace BrushBot
                     }
                     return new Assignment((Identifier.Ln, Identifier.Col), Identifier, expression);
                 }
-                else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expression in assignment.");
+                else throw new CodeError(ErrorType.Undefined, (CurrentToken().Ln, CurrentToken().Col), $"Expression in assignment.");
             }
             else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"<-.");
         }
@@ -415,11 +421,11 @@ namespace BrushBot
 
             TokenType CurrentType = CurrentToken().Type;
 
-            if (CurrentType == TokenType.Number || CurrentType == TokenType.Color || CurrentType == TokenType.Identifier || CurrentType == TokenType.Function)
+            if (CurrentType == TokenType.Number || CurrentType == TokenType.Color || CurrentType == TokenType.Boolean || CurrentType == TokenType.String || CurrentType == TokenType.Identifier || CurrentType == TokenType.Function)
             {
                 Advance();
                 Token token = PreviousToken();
-                if (token.Type == TokenType.Number || token.Type == TokenType.Color)
+                if (token.Type == TokenType.Number || token.Type == TokenType.Color || CurrentType == TokenType.Boolean || CurrentType == TokenType.String)
                 {
                     return new Literal((token.Ln, token.Col), token);
                 }

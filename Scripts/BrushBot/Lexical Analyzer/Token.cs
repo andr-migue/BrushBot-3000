@@ -7,6 +7,8 @@ namespace BrushBot
         Identifier,
         Number,
         Color,
+        String,
+        Boolean,
         Operator,
         Delimiter,
         JumpLine,

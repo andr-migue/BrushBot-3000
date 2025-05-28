@@ -20,7 +20,7 @@ namespace BrushBot
         }
         private HashSet<string> Keywords = new HashSet<string>
         {
-            "Spawn", "ReSpawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle"
+            "Spawn", "Respawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle", "Print"
         };
         private HashSet<string> Functions = new HashSet<string>
         {
@@ -38,6 +38,10 @@ namespace BrushBot
         private HashSet<string> Colors = new HashSet<string>
         {
             "Red", "Blue", "Green", "Yellow", "Orange", "Purple", "Black", "White", "Transparent", "Pink"
+        };
+        private HashSet<string> Booleans = new HashSet<string>
+        {
+            "true", "false"
         };
         private void Advance()
         {
@@ -101,9 +105,7 @@ namespace BrushBot
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, ActualCol);
             else
             {
-                Errors.Add(new CodeError(ErrorType.Unknown, (CurrentLn, ActualCol), $"{result}."));
-
-                return new Token(TokenType.Unknown, result, CurrentLn, ActualCol);
+                return new Token(TokenType.String, result, CurrentLn, ActualCol);
             }
         }
         private Token GetWord()
@@ -111,7 +113,7 @@ namespace BrushBot
             string result = "";
             int ActualCol = CurrentCol;
 
-            while (CurrentChar != '\0' && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '_' || CurrentChar == '-'))
+            while (CurrentChar != '\0' && (char.IsLetterOrDigit(CurrentChar) || CurrentChar == '_'))
             {
                 result += CurrentChar;
                 Advance();
@@ -125,6 +127,11 @@ namespace BrushBot
             else if (Functions.Contains(result))
             {
                 return new Token(TokenType.Function, result, CurrentLn, ActualCol);
+            }
+
+            else if (Booleans.Contains(result))
+            {
+                return new Token(TokenType.Boolean, result, CurrentLn, ActualCol);
             }
 
             else return new Token(TokenType.Identifier, result, CurrentLn, ActualCol);

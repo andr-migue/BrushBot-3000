@@ -19,7 +19,7 @@ namespace BrushBot
                 case "Spawn" :
                     Handle.CheckSpawn(Parameters, context);
                     break;
-                case "ReSpawn" :
+                case "Respawn" :
                     Handle.CheckSpawn(Parameters, context);
                     break;
                 case "Color":
@@ -50,7 +50,7 @@ namespace BrushBot
                 case "Spawn" :
                     await Handle.Spawn(Parameters, context);
                     break;
-                case "ReSpawn" :
+                case "Respawn" :
                     await Handle.Spawn(Parameters, context);
                     break;
                 case "Color":

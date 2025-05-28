@@ -26,6 +26,7 @@ keyword_colors = {
 "class": "#c678dd",
 "double": "#c678dd",
 "else": "#c678dd",
+"false": "#c678dd",
 "for": "#c678dd",
 "if": "#c678dd",
 "int": "#c678dd",
@@ -34,6 +35,7 @@ keyword_colors = {
 "private": "#c678dd",
 "public": "#c678dd",
 "string": "#c678dd",
+"true": "#c678dd",
 "void": "#c678dd",
 "while": "#c678dd"
 }
@@ -140,43 +142,43 @@ DrawCircle(0, 0, 10)
 Fill()
 Color(\"Orange\")
 Size(1)
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(0, -1, 14)
 DrawCircle(0, -1, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(1, -1, 14)
 DrawCircle(1, -1, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(1, 0, 14)
 DrawCircle(1, 0, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(1, 1, 14)
 DrawCircle(1, 1, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(0, 1, 14)
 DrawCircle(0, 1, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(-1, 1, 14)
 DrawCircle(-1, 1, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(-1, 0, 14)
 DrawCircle(-1, 0, 3)
 Fill()
-ReSpawn(32, 32)
+Respawn(32, 32)
 DrawLine(-1, -1, 14)
 DrawCircle(-1, -1, 3)
 Fill()
-ReSpawn(32, 42)
+Respawn(32, 42)
 Color(\"Green\")
 Size(5)
 DrawLine(0, 1, 18)
-ReSpawn(32, 48)
+Respawn(32, 48)
 DrawLine(1, 1, 6)
 DrawLine(-1, 0, 6)
 DrawLine(1, -1, 6)
