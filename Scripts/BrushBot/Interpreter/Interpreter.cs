@@ -52,7 +52,7 @@ namespace BrushBot
             }
             catch (InterpreterError error)
             {
-                context.PossibleRuntimeError = error;
+                context.Message = error.Message;
                 context.RuntimeError = true;
             }
         }

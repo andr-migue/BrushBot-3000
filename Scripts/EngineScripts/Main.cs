@@ -39,10 +39,17 @@ public partial class Main : Control
             grid.QueueRedraw();
             Context.Flag = false;
         }
+
         if (Context.RuntimeError)
         {
-            Terminal.Text += Context.PossibleRuntimeError.Message + "\r\n";
+            Terminal.Text += Context.Message + "\r\n";
             Context.RuntimeError = false;
+        }
+
+        if (Context.Print)
+        {
+            Terminal.Text += Context.Message + "\r\n";
+            Context.Print = false;
         }
     }
 

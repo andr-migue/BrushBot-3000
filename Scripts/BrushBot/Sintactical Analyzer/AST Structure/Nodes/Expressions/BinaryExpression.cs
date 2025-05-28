@@ -2,11 +2,11 @@ using System;
 
 namespace BrushBot
 {
-	public class BinaryExpression : Expression
+    public class BinaryExpression : Expression
     {
-        public Expression Left {get; }
-        public Token Operator {get; }
-        public Expression Right {get; }
+        public Expression Left { get; }
+        public Token Operator { get; }
+        public Expression Right { get; }
         public BinaryExpression((int, int) location, Expression left, Token oper, Expression right) : base(location)
         {
             Left = left;
@@ -36,39 +36,59 @@ namespace BrushBot
                 {
                     return HandleBool(left, right, oper);
                 }
-                else throw new CodeError(ErrorType.Invalid, Location,$"{left} and {right} are not comparables.");
+                else if (left is string || right is string)
+                {
+                    string newLeft = left.ToString();
+                    string newRight = right.ToString();
+
+                    return oper == "==" ? newLeft == newRight : newLeft != newRight;
+                }
+                else throw new CodeError(ErrorType.Invalid, Location, $"{left} and {right} are not comparables.");
             }
             else
             {
-                int newLeft = ToInt(left);
-                int newRight = ToInt(right);
-                
-                switch (oper)
+                if (!(left is string || right is string))
                 {
-                    case "==": return newLeft == newRight;
-                    case "!=": return newLeft != newRight;
-                    case "<": return newLeft < newRight;
-                    case ">": return newLeft > newRight;
-                    case "<=": return newLeft <= newRight;
-                    case ">=": return newLeft >= newRight;
-                    case "+": return newLeft + newRight;
-                    case "-": return newLeft - newRight;
-                    case "*": return newLeft * newRight;
-                    case "/":
-                        if (newRight != 0)
-                        {
-                            return newLeft / newRight;
-                        }
-                        else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
-                    case "%":
-                        if (newRight != 0)
-                        {
-                            return newLeft % newRight;
-                        }
-                        else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
-                    case "**": return Math.Pow(newLeft, newRight);
+                    int newLeft = ToInt(left);
+                    int newRight = ToInt(right);
 
-                    default: throw new CodeError(ErrorType.Invalid, Location, $"{oper}.");
+                    switch (oper)
+                    {
+                        case "<": return newLeft < newRight;
+                        case ">": return newLeft > newRight;
+                        case "<=": return newLeft <= newRight;
+                        case ">=": return newLeft >= newRight;
+                        case "+": return newLeft + newRight;
+                        case "-": return newLeft - newRight;
+                        case "*": return newLeft * newRight;
+                        case "/":
+                            if (newRight != 0)
+                            {
+                                return newLeft / newRight;
+                            }
+                            else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
+                        case "%":
+                            if (newRight != 0)
+                            {
+                                return newLeft % newRight;
+                            }
+                            else throw new CodeError(ErrorType.Undefined, Location, "Division by 0.");
+                        case "**": return Math.Pow(newLeft, newRight);
+
+                        default: throw new CodeError(ErrorType.Invalid, Location, $"Can't apply the operator {oper} to {left} and {right}.");
+                    }
+                }
+                else
+                {
+                    string newLeft = left.ToString();
+                    string newRight = right.ToString();
+
+                    switch (oper)
+                    {
+                        case "+": return newLeft + newRight;
+
+                        default: throw new CodeError(ErrorType.Invalid, Location, $"Can't apply the operator {oper} to {left} and {right}.");
+                    }
                 }
             }
         }
@@ -91,7 +111,7 @@ namespace BrushBot
                 else return 0;
             }
 
-            throw new CodeError (ErrorType.Invalid, Location, $"Can't convert {value} to integer.");
+            throw new CodeError(ErrorType.Invalid, Location, $"Can't convert {value} to integer.");
         }
         private Object HandleBool(Object left, Object right, string oper)
         {

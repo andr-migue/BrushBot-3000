@@ -22,6 +22,18 @@ namespace BrushBot
                 }
             }
         }
+        public static void CheckPrint(List<Expression> parameters, Context context)
+        {
+            if (parameters.Count != 1)
+            {
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Print(string message).");
+            }
+
+            if (!(parameters[0].Evaluate(context) is string))
+            {
+                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Print(string message).");
+            }
+        }
         public static void CheckColor(List<Expression> parameters, Context context)
         {
             if (parameters.Count != 1)
@@ -108,6 +120,12 @@ namespace BrushBot
                 await Task.Delay(0);
             }
             else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"Spawn({x}, {y})");
+        }
+        public static async Task Print(List<Expression> parameters, Context context)
+        {
+            context.Message = (string)parameters[0].Evaluate(context);
+            context.Print = true;
+            await Task.Delay(delay);
         }
         public static async Task Color(List<Expression> parameters, Context context)
         {

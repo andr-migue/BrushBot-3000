@@ -12,7 +12,8 @@ namespace BrushBot
 		public bool Flag { get; set; }
 		public bool Animation { get; set; }
 		public bool RuntimeError { get; set; }
-		public InterpreterError PossibleRuntimeError { get; set; }
+		public bool Print { get; set; }
+		public string Message { get; set; }
 		public Dictionary<string, int> Labels { get; set; }
 		public Scope Scope { get; set; }
 		public Context(int size)
@@ -25,14 +26,15 @@ namespace BrushBot
 			Flag = false;
 			Animation = false;
 			RuntimeError = false;
-			PossibleRuntimeError = null;
+			Print = false;
+			Message = null;
 			Labels = new();
 			Scope = new();
 		}
 		public void Reset()
         {
             RuntimeError = false;
-            PossibleRuntimeError = null;
+            Message = null;
             Labels.Clear();
             Scope = new Scope();
         }
