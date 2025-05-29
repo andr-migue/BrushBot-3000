@@ -52,6 +52,7 @@ member_variable_color = Color(0.878431, 0.423529, 0.458824, 1)
 keyword_colors = {
 "<-": "#e06c75",
 "GoTo": "#c678dd",
+"Warning!": "#e9d502",
 "bool": "#c678dd",
 "class": "#c678dd",
 "double": "#c678dd",
@@ -168,68 +169,120 @@ theme_override_colors/current_line_color = Color(0, 0, 0, 0.235294)
 theme_override_colors/background_color = Color(0.168627, 0.168627, 0.168627, 0.156863)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
-text = "Documentación:
+text = "Documentación
 
 Instrucciones:
+--------------
 Spawn(x, y)
-Inicializa a BrushBot en la posición (x, y) del canvas. Solo puede aparecer una vez al principio del programa. Si las coordenadas están fuera del canvas, se produce un error de ejecución.
+Inicializa a BrushBot en la posición (x, y) del canvas.
+- Debe ser la primera instrucción del programa y solo puede aparecer una vez.
+- Si las coordenadas están fuera del canvas, se produce un error de ejecución.
 
 Color(\"Color\")
-Cambia el color del pincel a uno de los siguientes: Red, Blue, Green, Yellow, Orange, Purple, Black, White, Transparent. Si el color es Transparent, el pincel no pinta y actúa como borrador.
+Cambia el color del pincel a un Color Predefinido o a uno creado con RGBA(r, g, b, a).
+- Colores Predefinidos:
+Red 
+Blue
+Green
+Yellow 
+Orange 
+Purple
+Black
+White 
+Pink
+Transparent
+
+- Si el color es Transparent, el pincel no pinta.
+Warning! : El color transparente creado mediante RGBA(0, 0, 0, 0) no actúa de
+la misma manera que el Color Predefinido Transparent.
 
 Size(k)
-Cambia el tamaño del pincel a k. Si k es un número par, se usa el impar menor más cercano. El tamaño inicial del pincel es 1.
+Cambia el tamaño del pincel a k.
+- Si k es par, se usa el impar menor más cercano.
+- El tamaño inicial del pincel es 1.
 
 DrawLine(dirX, dirY, distance)
-Dibuja una línea desde la posición actual de BrushBot en la dirección (dirX, dirY), avanzando una cantidad de píxeles igual a distance. BrushBot termina en el último píxel de la línea. Las direcciones válidas son combinaciones de -1, 0 y 1.
+Dibuja una línea desde la posición actual de BrushBot en la dirección (dirX, dirY), avanzando una cantidad de píxeles igual a distance.
+- BrushBot termina en el último píxel de la línea.
 
 DrawCircle(dirX, dirY, radius)
-Dibuja un círculo de radio radius en la dirección (dirX, dirY) desde la posición actual. BrushBot termina en el centro del círculo. Solo se dibuja la circunferencia, no el radio.
+Dibuja una circunferencia de radio radius en la dirección (dirX, dirY) desde la posición actual.
+- BrushBot termina en el centro del círculo.
 
 DrawRectangle(dirX, dirY, distance, width, height)
-Dibuja un rectángulo cuyo centro se encuentra a una distancia distance en la dirección (dirX, dirY) desde la posición actual. BrushBot termina en el centro del rectángulo.
+Dibuja un rectángulo cuyo centro se encuentra a una distancia distance en la dirección (dirX, dirY) desde la posición actual.
+- width y height son las dimensiones del rectángulo.
+- BrushBot termina en el centro del rectángulo.
 
 Fill()
 Rellena con el color actual del pincel todos los píxeles conectados que tengan el mismo color que la posición actual de BrushBot.
 
+Print(\"mensaje\")
+Muestra el mensaje en la consola de salida.
+
 Asignación de variable:
+-----------------------
 variable <- expresión
-Asigna a una variable el valor de una expresión aritmética o booleana. Los nombres de las variables pueden contener letras, números y guiones, pero no pueden comenzar con un número ni con un guion.
+Asigna a una variable el valor de una expresión aritmética, booleana, string, color o función.
+- Los nombres de las variables pueden contener letras, números y guiones bajos, pero no pueden comenzar con un número ni con un guión.
 
 Expresiones aritméticas:
-Son combinaciones de números, variables numéricas, operaciones (+, -, *, /, %, **) o llamadas a funciones.
+------------------------
+Combinaciones de números, variables numéricas, operaciones (+, -, *, /, %, **) o llamadas a funciones.
 
 Expresiones booleanas:
-Se forman mediante comparaciones (==, >=, <=, >, <) y conectores lógicos (&&, ||). El operador || tiene mayor precedencia que &&.
+----------------------
+Se forman mediante comparaciones (==, !=, >=, <=, >, <) , conectores lógicos (&&, ||, !) y las palabras reservadas true y false.
+El operador || tiene mayor precedencia que &&.
 
 Funciones disponibles:
+----------------------
 GetActualX()
-Devuelve el valor de la coordenada X actual de BrushBot.
+Devuelve la coordenada X actual de BrushBot.
 
 GetActualY()
-Devuelve el valor de la coordenada Y actual de BrushBot.
+Devuelve la coordenada Y actual de BrushBot.
 
 GetCanvasSize()
-Devuelve el tamaño del canvas (ancho y alto iguales).
+Devuelve el tamaño del canvas.
 
 GetColorCount(\"Color\", x1, y1, x2, y2)
-Devuelve la cantidad de píxeles del color especificado dentro del rectángulo definido por (x1, y1) y (x2, y2). Si alguna esquina está fuera del canvas, retorna 0.
+Devuelve la cantidad de píxeles del color especificado dentro del rectángulo definido por (x1, y1) y (x2, y2).
+Si alguna esquina está fuera del canvas, retorna 0.
 
 IsBrushColor(\"Color\")
-Devuelve 1 si el color actual del pincel es igual al especificado, 0 en otro caso.
+Devuelve true si el color actual del pincel es igual al especificado, false en otro caso.
 
 IsBrushSize(size)
-Devuelve 1 si el tamaño actual del pincel es igual al especificado, 0 en otro caso.
+Devuelve true si el tamaño actual del pincel es igual al especificado, false en otro caso.
 
 IsCanvasColor(\"Color\", vertical, horizontal)
-Devuelve 1 si el píxel desplazado vertical y horizontalmente desde la posición actual tiene el color especificado. Si está fuera del canvas, devuelve 0.
+Devuelve true si el píxel desplazado vertical y horizontalmente desde la posición actual tiene el color especificado.
+Si está fuera del canvas, devuelve false.
 
+RGBA(r, g, b, a)
+Crea un color personalizado con valores entre 0 y 254 para cada canal.
+Ejemplo: Color(RGBA(254,0,0,127)) para rojo semitransparente.
+
+Etiquetas y Saltos:
+-------------------
 Etiquetas:
-Una etiqueta es una palabra que marca una posición en el código a la que se puede saltar. No producen ninguna acción al ejecutarse. Se nombran siguiendo las mismas reglas de las variables.
+Una etiqueta es una palabra sola en una línea, que marca una posición en el código a la que se puede saltar con GoTo.
+Se nombran siguiendo las mismas reglas de las variables.
 
 Saltos condicionales:
 GoTo [etiqueta] (condición)
-Si la condición es verdadera, el programa salta a la etiqueta especificada. Si es falsa, continúa en la siguiente línea. Los corchetes [] y paréntesis () son obligatorios."
+Si la condición es verdadera, el programa salta a la etiqueta especificada.
+Si es falsa, continúa en la siguiente línea.
+Los corchetes [] y paréntesis () son obligatorios.
+
+Notas adicionales:
+------------------
+- Puedes usar variables en cualquier parámetro de instrucciones o funciones.
+- Los strings que no sean colores válidos serán tratados como texto normal.
+- Los valores booleanos son true y false pero se pueden usar en expresiones aritméticas y serán tratados como 1 y 0 respectivamente.
+- Las funciones pueden usarse en expresiones y asignaciones."
+wrap_mode = 1
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_j80mx")
 highlight_all_occurrences = true
@@ -283,6 +336,7 @@ transparent = true
 dialog_hide_on_ok = true
 dialog_autowrap = true
 access = 2
+filters = PackedStringArray("*.pw")
 use_native_dialog = true
 
 [node name="FileDialog - Load" type="FileDialog" parent="."]
@@ -298,6 +352,7 @@ dialog_hide_on_ok = true
 dialog_autowrap = true
 file_mode = 0
 access = 2
+filters = PackedStringArray("*.pw")
 use_native_dialog = true
 
 [node name="ColorRect" type="ColorRect" parent="."]

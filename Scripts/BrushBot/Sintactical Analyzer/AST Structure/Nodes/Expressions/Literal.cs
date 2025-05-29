@@ -19,16 +19,16 @@ namespace BrushBot
             {
                 switch (Token.Value)
                 {
-                    case "Transparent": return Color.Transparent;
-                    case "Red": return Color.Red;
-                    case "Blue": return Color.Blue;
-                    case "Green": return Color.Green;
-                    case "Yellow": return Color.Yellow;
-                    case "Orange": return Color.Orange;
-                    case "Purple": return Color.Purple;
-                    case "Black": return Color.Black;
-                    case "White": return Color.White;
-                    case "Pink": return Color.Pink;
+                    case "Transparent": return new Color(PredefColor.Transparent);
+                    case "Red": return new Color(PredefColor.Red);
+                    case "Blue": return new Color(PredefColor.Blue);
+                    case "Green": return new Color(PredefColor.Green);
+                    case "Yellow": return new Color(PredefColor.Yellow);
+                    case "Orange": return new Color(PredefColor.Orange);
+                    case "Purple": return new Color(PredefColor.Purple);
+                    case "Black": return new Color(PredefColor.Black);
+                    case "White": return new Color(PredefColor.White);
+                    case "Pink": return new Color(PredefColor.Pink);
 
                     default: throw new CodeError(ErrorType.Invalid, Location, $"{Token.Value}.");
                 }

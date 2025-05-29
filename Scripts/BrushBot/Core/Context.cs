@@ -20,9 +20,10 @@ namespace BrushBot
 		{
 			Size = size;
 			Picture = new Color[size, size];
+			InitPicture();
 			Position = (0, 0);
 			BrushSize = 1;
-			BrushColor = Color.Transparent;
+			BrushColor = new Color(PredefColor.Transparent);
 			Flag = false;
 			Animation = false;
 			RuntimeError = false;
@@ -32,11 +33,22 @@ namespace BrushBot
 			Scope = new();
 		}
 		public void Reset()
-        {
-            RuntimeError = false;
-            Message = null;
-            Labels.Clear();
-            Scope = new Scope();
-        }
+		{
+			RuntimeError = false;
+			Message = null;
+			Labels.Clear();
+			Scope = new Scope();
+		}
+		public void InitPicture()
+		{
+			for (int i = 0; i < Size; i++)
+			{
+				for (int j = 0; j < Size; j++)
+				{
+					Picture[i, j] = new Color(PredefColor.Transparent);
+				}
+
+			}
+		}
 	}
 }

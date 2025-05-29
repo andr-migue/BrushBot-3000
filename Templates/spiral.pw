@@ -1,11 +1,16 @@
-Spawn(32, 32)
+Spawn(100, 100)
 Color("Yellow")
-Size(1)
+Size(3)
 
 n <- 0
-
 Miguel
-n <- n + 2
-Print("Hola Elio")
+n <- n + 10
+Print("Hola BrushBot")
 DrawCircle(0, 0, n)
-GoTo [Miguel] (n < 10)
+GoTo [Miguel] (n < 50)
+
+i <- RGBA(0,125,125,254)
+Color(i)
+DrawCircle(0,0,n)
+
+Fill()

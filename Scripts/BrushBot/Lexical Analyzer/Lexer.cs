@@ -25,7 +25,7 @@ namespace BrushBot
         private HashSet<string> Functions = new HashSet<string>
         {
             "GetActualX", "GetActualY", "GetCanvasSize", "GetColorCount", "IsBrushColor", "IsBrushSize",
-            "IsCanvasColor", "ARGB"
+            "IsCanvasColor", "RGBA"
         };
         private HashSet<string> Operators = new HashSet<string>
         {
@@ -91,7 +91,7 @@ namespace BrushBot
             string result = "";
             int ActualCol = CurrentCol;
 
-            while (CurrentChar != '\0' && CurrentChar != '"' && char.IsLetter(CurrentChar) || CurrentChar == ' ')
+            while (CurrentChar != '\0' && CurrentChar != '"')
             {
                 result += CurrentChar;
                 Advance();

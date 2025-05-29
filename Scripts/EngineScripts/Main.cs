@@ -73,6 +73,7 @@ public partial class Main : Control
     void PressReset()
     {
         Context.Picture = new BrushBot.Color[Context.Size, Context.Size];
+        Context.InitPicture();
         grid.QueueRedraw();
     }
     void PressExit()
@@ -115,6 +116,7 @@ public partial class Main : Control
             int size = int.Parse(text);
             Context.Size = size;
             Context.Picture = new BrushBot.Color[size, size];
+            Context.InitPicture();
         }
         else
         {
