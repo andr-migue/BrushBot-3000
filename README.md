@@ -1,3 +1,1 @@
-# BrushBot-3000
-![image](https://github.com/user-attachments/assets/e8c1600c-f242-40b7-b07c-91ac9cbf1cae)
-Arte abstracto dirán algunos, mientras tanto Nintendo denunciándome por copyright
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
