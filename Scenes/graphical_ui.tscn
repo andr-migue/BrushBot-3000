@@ -91,7 +91,7 @@ keyword_colors = {
 "Unknown": "61afef"
 }
 
-[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "Terminal", "SizeEdit", "grid", "audio", "CurrentBrushSize", "CurrentPosition", "colorRect")]
+[node name="Graphical UI" type="Control" node_paths=PackedStringArray("saveDialog", "loadDialog", "edit", "Terminal", "SizeEdit", "grid", "audio", "CurrentBrushSize", "CurrentPosition", "colorRect", "slider")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -109,6 +109,7 @@ audio = NodePath("AudioStreamPlayer2D")
 CurrentBrushSize = NodePath("HBoxContainer/Label3")
 CurrentPosition = NodePath("HBoxContainer/Label5")
 colorRect = NodePath("Label4/ColorRect5")
+slider = NodePath("HSlider")
 
 [node name="Dall·e2025-03-3022_03_23-ARenaissance-styleTexturedBackgroundWithWarmSepiaTones,ResemblingAgedParchmentOrOldSketchbookPaper_TheSurfaceIsAdornedWithSubtle," type="Sprite2D" parent="."]
 position = Vector2(1352, 800)
@@ -489,9 +490,9 @@ flat = true
 z_index = 1
 z_as_relative = false
 layout_mode = 2
-offset_left = 808.0
+offset_left = 885.0
 offset_top = 1.0
-offset_right = 918.0
+offset_right = 995.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -501,9 +502,9 @@ icon_alignment = 1
 
 [node name="Size" type="LineEdit" parent="."]
 layout_mode = 2
-offset_left = 933.0
+offset_left = 794.0
 offset_top = 1.0
-offset_right = 1004.0
+offset_right = 865.0
 offset_bottom = 63.0
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
@@ -547,7 +548,7 @@ offset_bottom = 35.0
 layout_mode = 0
 offset_left = 1200.0
 offset_top = 11.0
-offset_right = 1665.0
+offset_right = 1542.0
 offset_bottom = 51.0
 
 [node name="Label3" type="Label" parent="HBoxContainer"]
@@ -562,6 +563,30 @@ theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 text = "Position: "
 
+[node name="HSlider" type="HSlider" parent="."]
+layout_mode = 0
+offset_left = 1856.0
+offset_top = 16.0
+offset_right = 2007.0
+offset_bottom = 47.0
+min_value = 1.0
+value = 1.0
+ticks_on_borders = true
+
+[node name="Label3" type="Label" parent="HSlider"]
+layout_mode = 0
+offset_left = -88.0
+offset_right = -11.0
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource("8_7wjfc")
+theme_override_font_sizes/font_size = 25
+text = "Delay"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
 [connection signal="text_changed" from="CodeEdit" to="." method="TextChanged"]
 [connection signal="text_changed" from="Doc" to="." method="TextChanged"]
 [connection signal="file_selected" from="FileDialog - Save" to="." method="SaveFile"]
@@ -575,3 +600,4 @@ text = "Position: "
 [connection signal="pressed" from="Mute" to="." method="PressMute"]
 [connection signal="text_submitted" from="Size" to="." method="ChangeSize"]
 [connection signal="pressed" from="Exit" to="." method="PressExit"]
+[connection signal="value_changed" from="HSlider" to="." method="Slider"]

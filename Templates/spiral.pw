@@ -9,8 +9,9 @@ Print("Hola BrushBot")
 DrawCircle(0, 0, n)
 GoTo [Miguel] (n < 50)
 
-i <- RGBA(0,125,125,254)
-Color(i)
+Aqua <- RGBA(0,125,125,254)
+Moradito <- RGBA(100, 30, 100, 254)
+Color(Moradito)
 DrawCircle(0,0,n)
 
 Fill()

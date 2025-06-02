@@ -478,7 +478,7 @@ namespace BrushBot
             }
             context.Flag = true;
         }
-        public static Godot.Color CheckColor(BrushBot.Color color)
+        public static Godot.Color CheckColor(Color color)
         {
             if (color.Predef != null)
             {

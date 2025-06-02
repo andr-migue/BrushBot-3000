@@ -9,12 +9,12 @@ public partial class Main : Control
     [Export] CodeEdit edit;
     [Export] TextEdit Terminal;
     [Export] LineEdit SizeEdit;
-    [Export] int Delay = 30;
     [Export] Printer grid;
     [Export] AudioStreamPlayer2D audio;
     [Export] Godot.Label CurrentBrushSize;
     [Export] Godot.Label CurrentPosition;
     [Export] ColorRect colorRect;
+    [Export] HSlider slider;
     private Context Context;
     public override void _Ready()
     {
@@ -24,6 +24,7 @@ public partial class Main : Control
         colorRect.Color = Handle.CheckColor(Context.BrushColor);
         CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
         CurrentPosition.Text = $"Position: {Context.Position}";
+        slider.Value = 30;
 
         grid.Init(Context);
 
@@ -57,6 +58,10 @@ public partial class Main : Control
     void PressPlay()
     {
         Execute();
+    }
+    void Slider(float value)
+    {
+        Handle.delay = (int)value;
     }
     void RefreshTerminal()
     {
@@ -164,7 +169,7 @@ public partial class Main : Control
     }
     async Task Execute()
     {
-        Handle.delay = Delay;
+        Handle.delay = (int)slider.Value;
         Context.Reset();
 
         string code = edit.Text;

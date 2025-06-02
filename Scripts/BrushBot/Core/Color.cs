@@ -11,6 +11,7 @@ namespace BrushBot
         public Color(PredefColor? predef, float? r = null, float? g = null, float? b = null, float? a = null)
         {
             Predef = predef;
+            
             R = r;
             G = g;
             B = b;
