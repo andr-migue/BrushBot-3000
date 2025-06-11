@@ -76,6 +76,8 @@ La forma en que el intérprete se conecta con la parte visual en Godot es crucia
 
 En resumen: **Script `.pw` -> Lexer -> Parser -> Semanter -> Interpreter -> `Handle.cs` (lógica de dibujo) -> `Context.cs` (estado) -> Actualización de Nodos de Godot (ej. `TextureRect`) -> ¡Magia Visual!** ✨
 
+![image](https://github.com/user-attachments/assets/830b8a44-1532-4687-a334-4c514c78496f)
+
 ## 🛠️ Tecnologías Utilizadas
 - **🎮 Motor de Juego**: Godot Engine (versión 4.x recomendada)
 - **💻 Lenguaje Principal**: C# (para la lógica del bot, el intérprete y la integración con Godot)
@@ -148,5 +150,5 @@ En resumen: **Script `.pw` -> Lexer -> Parser -> Semanter -> Interpreter -> `Han
 
 ¡Gracias por explorar BrushBot-3000! ¡Diviértete programando y dibujando! 🎉
 
-## Para información mas detallada
+## 📝 Documentación completa en DeepWiki 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
