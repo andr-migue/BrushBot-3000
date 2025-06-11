@@ -18,6 +18,7 @@ namespace BrushBot
             CurrentChar = Text.Length > 0 ? Text[0] : '\0';
             Errors = new();
         }
+        #region Sets
         private HashSet<string> Keywords = new HashSet<string>
         {
             "Spawn", "Respawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle", "Print"
@@ -43,16 +44,27 @@ namespace BrushBot
         {
             "true", "false"
         };
-        private void Advance()
+        #endregion
+        #region Gets
+        public (List<Token>, List<InterpreterError>) GetTokens()
         {
-            Position++;
-            CurrentCol++;
-            CurrentChar = Position < Text.Length ? Text[Position] : '\0';
-        }
-        private char Peek()
-        {
-            int PeekPosition = Position + 1;
-            return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
+            while (CurrentChar != '\0')
+            {
+                if (CurrentChar == '\r' || CurrentChar == '\n') tokens.Add(GetJumpLine());
+
+                else if (char.IsWhiteSpace(CurrentChar)) Advance();
+
+                else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
+
+                else if (CurrentChar == '"') tokens.Add(GetString());
+
+                else if (char.IsLetter(CurrentChar)) tokens.Add(GetWord());
+
+                else tokens.Add(GetOperatorOrDelimiter());
+            }
+            tokens.Add(new Token(TokenType.EndOfFile, "END", CurrentLn, CurrentCol));
+
+            return (tokens, Errors);
         }
         private Token GetJumpLine()
         {
@@ -107,6 +119,7 @@ namespace BrushBot
             Advance(); // Para saltar la comilla de cierre.
 
             if (Colors.Contains(result)) return new Token(TokenType.Color, result, CurrentLn, ActualCol);
+
             else
             {
                 return new Token(TokenType.String, result, CurrentLn, ActualCol);
@@ -144,6 +157,7 @@ namespace BrushBot
         {
             string result = "";
             result += CurrentChar;
+
             int ActualCol = CurrentCol;
 
             if (Operators.Contains(result) || result == "=")
@@ -182,25 +196,19 @@ namespace BrushBot
                 return new Token(TokenType.Unknown, result, CurrentLn, ActualCol);
             }
         }
-        public (List<Token>, List<InterpreterError>) GetTokens()
+        #endregion
+        #region Aux
+        private void Advance()
         {
-            while (CurrentChar != '\0')
-            {
-                if (CurrentChar == '\r' || CurrentChar == '\n') tokens.Add(GetJumpLine());
-
-                else if (char.IsWhiteSpace(CurrentChar)) Advance();
-
-                else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
-
-                else if (CurrentChar == '"') tokens.Add(GetString());
-
-                else if (char.IsLetter(CurrentChar)) tokens.Add(GetWord());
-
-                else tokens.Add(GetOperatorOrDelimiter());
-            }
-            tokens.Add(new Token(TokenType.EndOfFile, "END", CurrentLn, CurrentCol));
-
-            return (tokens, Errors);
+            Position++;
+            CurrentCol++;
+            CurrentChar = Position < Text.Length ? Text[Position] : '\0';
         }
+        private char Peek()
+        {
+            int PeekPosition = Position + 1;
+            return PeekPosition < Text.Length ? Text[PeekPosition] : '\0';
+        }
+        #endregion
     }
 }

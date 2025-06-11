@@ -21,7 +21,7 @@ public partial class Main : Control
         Context = new Context(64);
 
         SizeEdit.Text = Context.Size + "";
-        colorRect.Color = Handle.CheckColor(Context.BrushColor);
+        colorRect.Color = CheckColor.GetColor(Context.BrushColor);
         CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
         CurrentPosition.Text = $"Position: {Context.Position}";
         slider.Value = 30;
@@ -34,7 +34,7 @@ public partial class Main : Control
     {
         if (Context.Flag == true)
         {
-            colorRect.Color = Handle.CheckColor(Context.BrushColor);
+            colorRect.Color = CheckColor.GetColor(Context.BrushColor);
             CurrentBrushSize.Text = $"Brush Size: {Context.BrushSize}  ";
             CurrentPosition.Text = $"Position: {Context.Position}";
             grid.QueueRedraw();
@@ -53,7 +53,6 @@ public partial class Main : Control
             Context.Print = false;
         }
     }
-
     #region Buttons
     void PressPlay()
     {
@@ -119,14 +118,25 @@ public partial class Main : Control
         if (IsNumber(text))
         {
             int size = int.Parse(text);
-            Context.Size = size;
-            Context.Picture = new BrushBot.Color[size, size];
-            Context.InitPicture();
+
+            if (size >= 0 && size <= 256)
+            {
+                Context.Size = size;
+                Context.Picture = new BrushBot.Color[size, size];
+                Context.InitPicture();
+            }
+
+            else
+            {
+                SizeEdit.Text = Context.Size + "";
+            }
         }
+
         else
         {
             SizeEdit.Text = Context.Size + "";
         }
+
         grid.QueueRedraw();
     }
     private bool IsNumber(string text)

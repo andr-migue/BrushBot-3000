@@ -29,6 +29,5 @@ namespace BrushBot
 		IndexOutOfRange,
 		OutOfContext,
 		Undefined,
-		StackOverflow
 	}
 }

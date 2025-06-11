@@ -7,6 +7,7 @@ namespace BrushBot
     public static class Handle
     {
         public static int delay = 30;
+        #region Checks
         public static void CheckSpawn(List<Expression> parameters, Context context)
         {
             if (parameters.Count != 2)
@@ -108,6 +109,8 @@ namespace BrushBot
                 throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Fill().");
             }
         }
+        #endregion
+        #region Instructions
         public static async Task Spawn(List<Expression> parameters, Context context)
         {
             int x = (int)parameters[0].Evaluate(context);
@@ -297,6 +300,8 @@ namespace BrushBot
             context.Flag = true;
             context.Animation = false;
         }
+        #endregion
+        #region Functions
         public static Color RGBA(List<Expression> parameters, Context context)
         {
             if (parameters.Count != 4)
@@ -449,6 +454,8 @@ namespace BrushBot
             }
             else throw new CodeError(ErrorType.Typing, parameters[0].Location, "GetColorCount(string color, int x1, int y1, int x2, int y2).");
         }
+        #endregion
+        #region Aux
         private static bool IsValid(int x, int y, Context context)
         {
             return x >= 0 && x < context.Size && y >= 0 && y < context.Size;
@@ -478,31 +485,6 @@ namespace BrushBot
             }
             context.Flag = true;
         }
-        public static Godot.Color CheckColor(Color color)
-        {
-            if (color.Predef != null)
-            {
-                switch (color.Predef)
-                {
-                    case PredefColor.Transparent: return new Godot.Color(1, 1, 1, 0);
-                    case PredefColor.Red: return new Godot.Color(1, 0, 0);
-                    case PredefColor.Blue: return new Godot.Color(0, 0, 1);
-                    case PredefColor.Green: return new Godot.Color(0, 1, 0);
-                    case PredefColor.Yellow: return new Godot.Color(1, 1, 0);
-                    case PredefColor.Orange: return new Godot.Color(1, 0.647f, 0);
-                    case PredefColor.Purple: return new Godot.Color(0.627f, 0.125f, 0.941f);
-                    case PredefColor.Black: return new Godot.Color(0, 0, 0);
-                    case PredefColor.White: return new Godot.Color(1, 1, 1);
-                    case PredefColor.Pink: return new Godot.Color(1, 0.314f, 0.863f);
-
-                    default: return new Godot.Color(1, 1, 1, 0);
-                }
-            }
-            else
-            {
-                return new Godot.Color((float)color.R, (float)color.G, (float)color.B, (float)color.A);
-            }
-            
-        }
+        #endregion
     }
 }

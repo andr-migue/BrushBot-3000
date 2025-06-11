@@ -22,7 +22,11 @@ public partial class Printer : TextureRect
         float space = Size.X / size;
 
         DrawColor(size, space);
+        DrawGrid(size, space);
         UpdateBrushPosition(space);
+    }
+    private void DrawGrid(int size, float space)
+    {
         for (int i = 1; i < size; i++)
         {
             float c = i * space;
@@ -36,7 +40,7 @@ public partial class Printer : TextureRect
         {
             for (int j = 0; j < size; j++)
             {
-                Godot.Color color = Handle.CheckColor(Context.Picture[i, j]);
+                Godot.Color color = CheckColor.GetColor(Context.Picture[i, j]);
                 Rect2 rect = new Rect2(i * space, j * space, space, space);
                 DrawRect(rect, color);
             }

@@ -51,88 +51,6 @@ namespace BrushBot
             }
             return (nodes, Errors, result);
         }
-        private void Synchronize()
-        {
-            while (!IsEndToken())
-            {
-                if (CurrentToken().Type == TokenType.JumpLine)
-                {
-                    SkipJumpLine();
-                    return;
-                }
-                Advance();
-            }
-        }
-        private bool UnknownToken()
-        {
-            int start = Current;
-
-            while (!IsEndToken() && CurrentToken().Type != TokenType.JumpLine)
-            {
-                if (CurrentToken().Type == TokenType.Unknown)
-                {
-                    return true;
-                }
-                Advance();
-            }
-
-            Current = start;
-            return false;
-        }
-        private void SkipJumpLine()
-        {
-            while (Match(TokenType.JumpLine, null)) { }
-        }
-        private bool Match(TokenType type, string[] values)
-        {
-            if (values == null)
-            {
-                if (Check(type, null))
-                {
-                    Advance();
-                    return true;
-                }
-                return false;
-            }
-            foreach (var value in values)
-            {
-                if (Check(type, value))
-                {
-                    Advance();
-                    return true;
-                }
-            }
-            return false;
-        }
-        private bool Check(TokenType type, string value)
-        {
-            return CurrentToken().Type == type && (value == null || CurrentToken().Value == value);
-        }
-        private Token Advance()
-        {
-            if (!IsEndToken()) Current++;
-            return PreviousToken();
-        }
-        private bool IsEndToken()
-        {
-            return CurrentToken().Type == TokenType.EndOfFile;
-        }
-        private Token CurrentToken()
-        {
-            return Tokens[Current];
-        }
-        private Token PreviousToken()
-        {
-            return Tokens[Current - 1];
-        }
-        private bool ValidateExpression()
-        {
-            return CurrentToken().Type != TokenType.Keyword &&
-                   CurrentToken().Type != TokenType.Delimiter &&
-                   CurrentToken().Type != TokenType.JumpLine &&
-                   CurrentToken().Type != TokenType.Unknown &&
-                   CurrentToken().Type != TokenType.EndOfFile;
-        }
         private Node Node()
         {
             if (Match(TokenType.Keyword, null))
@@ -289,17 +207,7 @@ namespace BrushBot
             }
             else throw new CodeError(ErrorType.Expected, (CurrentToken().Ln, CurrentToken().Col), $"<-.");
         }
-        private void SynchronizeParameter()
-        {
-            while (!IsEndToken())
-            {
-                if (CurrentToken().Value == "," || CurrentToken().Value == ")")
-                {
-                    return;
-                }
-                Advance();
-            }
-        }
+        #region Expressions
         private Expression Expression()
         {
             return And();
@@ -459,5 +367,101 @@ namespace BrushBot
             }
             else throw new CodeError(ErrorType.Invalid, (CurrentToken().Ln, CurrentToken().Col), $"Expression.");
         }
+        #endregion
+        #region Aux
+        private void Synchronize()
+        {
+            while (!IsEndToken())
+            {
+                if (CurrentToken().Type == TokenType.JumpLine)
+                {
+                    SkipJumpLine();
+                    return;
+                }
+                Advance();
+            }
+        }
+        private bool UnknownToken()
+        {
+            int start = Current;
+
+            while (!IsEndToken() && CurrentToken().Type != TokenType.JumpLine)
+            {
+                if (CurrentToken().Type == TokenType.Unknown)
+                {
+                    return true;
+                }
+                Advance();
+            }
+
+            Current = start;
+            return false;
+        }
+        private void SkipJumpLine()
+        {
+            while (Match(TokenType.JumpLine, null)) { }
+        }
+        private bool Match(TokenType type, string[] values)
+        {
+            if (values == null)
+            {
+                if (Check(type, null))
+                {
+                    Advance();
+                    return true;
+                }
+                return false;
+            }
+            foreach (var value in values)
+            {
+                if (Check(type, value))
+                {
+                    Advance();
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool Check(TokenType type, string value)
+        {
+            return CurrentToken().Type == type && (value == null || CurrentToken().Value == value);
+        }
+        private Token Advance()
+        {
+            if (!IsEndToken()) Current++;
+            return PreviousToken();
+        }
+        private bool IsEndToken()
+        {
+            return CurrentToken().Type == TokenType.EndOfFile;
+        }
+        private Token CurrentToken()
+        {
+            return Tokens[Current];
+        }
+        private Token PreviousToken()
+        {
+            return Tokens[Current - 1];
+        }
+        private bool ValidateExpression()
+        {
+            return CurrentToken().Type != TokenType.Keyword &&
+                   CurrentToken().Type != TokenType.Delimiter &&
+                   CurrentToken().Type != TokenType.JumpLine &&
+                   CurrentToken().Type != TokenType.Unknown &&
+                   CurrentToken().Type != TokenType.EndOfFile;
+        }
+        private void SynchronizeParameter()
+        {
+            while (!IsEndToken())
+            {
+                if (CurrentToken().Value == "," || CurrentToken().Value == ")")
+                {
+                    return;
+                }
+                Advance();
+            }
+        }
+        #endregion
     }
 }
