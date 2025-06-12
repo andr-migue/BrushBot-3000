@@ -318,16 +318,16 @@ namespace BrushBot
 
                 int current = (int)expression.Evaluate(context);
 
-                if (!(current >= 0 && current < 255))
+                if (!(current >= 0 && current <= 255))
                 {
                     throw new CodeError(ErrorType.Invalid, expression.Location, $"{current} must be in range 0 to 254.");
                 }
             }
 
-            float R = (int)parameters[0].Evaluate(context) / 254f;
-            float G = (int)parameters[1].Evaluate(context) / 254f;
-            float B = (int)parameters[2].Evaluate(context) / 254f;
-            float A = (int)parameters[3].Evaluate(context) / 254f;
+            float R = (int)parameters[0].Evaluate(context) / 255f;
+            float G = (int)parameters[1].Evaluate(context) / 255f;
+            float B = (int)parameters[2].Evaluate(context) / 255f;
+            float A = (int)parameters[3].Evaluate(context) / 255f;
 
             return new Color(null, R, G, B, A);
         }

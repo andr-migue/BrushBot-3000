@@ -262,7 +262,7 @@ Devuelve true si el píxel desplazado vertical y horizontalmente desde la posici
 Si está fuera del canvas, devuelve false.
 
 RGBA(r, g, b, a)
-Crea un color personalizado con valores entre 0 y 254 para cada canal.
+Crea un color personalizado con valores entre 0 y 255 para cada canal.
 Ejemplo: Color(RGBA(254,0,0,127)) para rojo semitransparente.
 
 Etiquetas y Saltos:
