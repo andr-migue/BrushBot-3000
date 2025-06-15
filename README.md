@@ -177,5 +177,4 @@ BrushBot-3000 muestra estos errores directamente en la interfaz de usuario, en u
 
 ¡Gracias por explorar BrushBot-3000! ¡Diviértete programando y dibujando! 🎉
 
-## Para información mas detallada
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
+### Para información mas detallada: [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
