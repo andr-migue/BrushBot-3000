@@ -1,6 +1,8 @@
 # 🖌️ BrushBot-3000 🎨
 
-![image_2025-06-14_14-07-40](https://github.com/user-attachments/assets/b486a5f7-bf26-44be-b97e-ed1c1ba97a2e)
+![image](https://github.com/user-attachments/assets/64e68678-b950-4044-99cd-11437b3f4a91)
+
+*"Arte abstracto dirán algunos"* 😜
 
 ## 🌟 Descripción Breve
 BrushBot-3000 es una aplicación desarrollada en **Godot Engine** que te permite programar un simpático bot para crear dibujos y arte pixelado. ¡Todo esto mediante un lenguaje de scripting personalizado! Es una herramienta fantástica y educativa para sumergirse en los conceptos básicos de la programación y desatar tu creatividad gráfica. 🚀
@@ -73,6 +75,39 @@ La forma en que el intérprete se conecta con la parte visual en Godot es crucia
 6.  **Visualización del Pincel**: De manera similar, la posición y apariencia del nodo del pincel en la escena de Godot (`brush.tscn`) se actualizan basándose en el estado mantenido en `Context.cs` (ej. `Context.BrushPosition`, `Context.BrushColor`).
 
 En resumen: **Script `.pw` -> Lexer -> Parser -> Semanter -> Interpreter -> `Handle.cs` (lógica de dibujo) -> `Context.cs` (estado) -> Actualización de Nodos de Godot (ej. `TextureRect`) -> ¡Magia Visual!** ✨
+
+## ⚠️ Control de Errores y Feedback al Usuario
+
+BrushBot-3000 se esfuerza por proporcionar información clara cuando algo no va según lo planeado en tus scripts. Los errores se detectan y reportan en diferentes etapas del procesamiento:
+
+### 1. Errores Léxicos (Detectados por el `Lexer`)
+Estos errores ocurren cuando el script contiene secuencias de caracteres que no forman tokens válidos.
+- **Ejemplos Comunes**: Símbolos desconocidos (ej. `@`, `#` si no son parte de la sintaxis), cadenas de texto sin cerrar comillas.
+- **Feedback**: El `Lexer` identificará el carácter o secuencia problemática y su ubicación (línea y columna), reportando algo como: `Error Léxico: Carácter inesperado '?' en la línea 5, columna 10.`
+
+### 2. Errores Sintácticos (Detectados por el `Parser`)
+Estos errores surgen cuando la secuencia de tokens, aunque individualmente válidos, no sigue las reglas gramaticales del lenguaje BrushScript.
+- **Ejemplos Comunes**: Paréntesis desbalanceados, falta de argumentos en una instrucción, una instrucción en un lugar inesperado.
+- **Feedback**: El `Parser` indicará dónde se rompió la estructura gramatical, por ejemplo: `Error Sintáctico: Se esperaba ')' pero se encontró ';' en la línea 12, columna 20.`
+
+### 3. Errores Semánticos (Detectados por el `Semanter`)
+Estos errores ocurren cuando el script es sintácticamente correcto, pero no tiene sentido lógico o viola las reglas de tipo del lenguaje.
+- **Ejemplos Comunes**: Usar una variable no declarada, intentar asignar un tipo de dato incorrecto a una variable (ej. un string a una variable que espera un número sin conversión explícita), llamar a una instrucción con tipos de argumentos incorrectos (ej. `Size("grande")` en lugar de `Size(10)`).
+- **Feedback**: El `Semanter` proporcionará detalles sobre la incoherencia, como: `Error Semántico: La variable 'miColorFavorito' no ha sido declarada en la línea 8, columna 5.` o `Error Semántico: La instrucción 'Color' espera un argumento de tipo Color o String, pero recibió un Número en la línea 9, columna 7.`
+
+### 4. Errores en Tiempo de Ejecución (Detectados por el `Interpreter`)
+Estos errores aparecen durante la ejecución del script, cuando una operación, aunque sintáctica y semánticamente válida en su forma, resulta imposible de realizar bajo las condiciones actuales.
+- **Ejemplos Comunes**: División por cero, intentar dibujar fuera de los límites del lienzo, un salto a una etiqueta que no existe (aunque el Semanter intenta atrapar esto, algunos casos dinámicos podrían pasar).
+- **Feedback**: El `Interpreter` detendrá la ejecución o manejará el error según esté programado, mostrando un mensaje como: `Error de Ejecución: Intento de dibujar fuera de los límites del lienzo en la instrucción DrawLine en la línea 25, columna 3.`
+
+### 📢 Feedback Visual en Tiempo Real
+BrushBot-3000 muestra estos errores directamente en la interfaz de usuario, usualmente en un panel o consola dedicada. Esto te permite identificar y corregir problemas rápidamente.
+
+<!-- Aquí puedes insertar tu imagen de ejemplo -->
+<!-- ![Ejemplo de Feedback de Errores en BrushBot-3000](URL_DE_TU_IMAGEN_AQUI) -->
+```
+[Aquí puedes describir brevemente qué muestra la imagen, por ejemplo: "La imagen de arriba muestra cómo se resaltan los errores en el editor de scripts y se listan en la consola de errores."]
+```
 
 ![image](https://github.com/user-attachments/assets/830b8a44-1532-4687-a334-4c514c78496f)
 
@@ -148,5 +183,5 @@ En resumen: **Script `.pw` -> Lexer -> Parser -> Semanter -> Interpreter -> `Han
 
 ¡Gracias por explorar BrushBot-3000! ¡Diviértete programando y dibujando! 🎉
 
-
-### 📝 Para más documentación: [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
+## Para información mas detallada
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/andr-migue/BrushBot-3000)
