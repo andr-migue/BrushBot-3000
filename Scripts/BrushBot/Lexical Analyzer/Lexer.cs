@@ -54,6 +54,19 @@ namespace BrushBot
 
                 else if (char.IsWhiteSpace(CurrentChar)) Advance();
 
+                else if (CurrentChar == '/')
+                {
+                    if (Peek() == '/')
+                    {
+                        SkipComment(); 
+                    }
+
+                    else
+                    {
+                        tokens.Add(GetOperatorOrDelimiter());
+                    }
+                }
+
                 else if (char.IsDigit(CurrentChar)) tokens.Add(GetNumber());
 
                 else if (CurrentChar == '"') tokens.Add(GetString());
@@ -83,6 +96,16 @@ namespace BrushBot
                 Advance();
                 CurrentCol = 1;
                 return new Token(TokenType.JumpLine, "JumpLine", ActualLn, ActualCol);
+            }
+        }
+        private void SkipComment()
+        {
+            Advance();
+            Advance();
+
+            while (CurrentChar != '\0' && CurrentChar != '\r' && CurrentChar != '\n')
+            {
+                Advance();
             }
         }
         private Token GetNumber()
