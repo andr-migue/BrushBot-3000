@@ -1,8 +1,6 @@
 # 🖌️ BrushBot-3000 🎨
 
-![image](https://github.com/user-attachments/assets/64e68678-b950-4044-99cd-11437b3f4a91)
-
-*"Arte abstracto dirán algunos"* 😜
+![image_2025-06-12_17-23-24](https://github.com/user-attachments/assets/0346f2da-f12f-4c8c-8197-fc311ca36f4f)
 
 ## 🌟 Descripción Breve
 BrushBot-3000 es una aplicación desarrollada en **Godot Engine** que te permite programar un simpático bot para crear dibujos y arte pixelado. ¡Todo esto mediante un lenguaje de scripting personalizado! Es una herramienta fantástica y educativa para sumergirse en los conceptos básicos de la programación y desatar tu creatividad gráfica. 🚀
