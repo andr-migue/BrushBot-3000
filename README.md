@@ -74,6 +74,8 @@ La forma en que el intérprete se conecta con la parte visual en Godot es crucia
 
 En resumen: **Script `.pw` -> Lexer -> Parser -> Semanter -> Interpreter -> `Handle.cs` (lógica de dibujo) -> `Context.cs` (estado) -> Actualización de Nodos de Godot (ej. `TextureRect`) -> ¡Magia Visual!** ✨
 
+![image](https://github.com/user-attachments/assets/830b8a44-1532-4687-a334-4c514c78496f)
+
 ## ⚠️ Control de Errores y Feedback al Usuario
 
 BrushBot-3000 se esfuerza por proporcionar información clara cuando algo no va según lo planeado en tus scripts. Los errores se detectan y reportan en diferentes etapas del procesamiento:
@@ -99,15 +101,9 @@ Estos errores aparecen durante la ejecución del script, cuando una operación, 
 - **Feedback**: El `Interpreter` detendrá la ejecución o manejará el error según esté programado, mostrando un mensaje como: `Error de Ejecución: Intento de dibujar fuera de los límites del lienzo en la instrucción DrawLine en la línea 25, columna 3.`
 
 ### 📢 Feedback Visual en Tiempo Real
-BrushBot-3000 muestra estos errores directamente en la interfaz de usuario, usualmente en un panel o consola dedicada. Esto te permite identificar y corregir problemas rápidamente.
+BrushBot-3000 muestra estos errores directamente en la interfaz de usuario, en una terminal dedicada. Esto te permite identificar y corregir problemas rápidamente.
 
-<!-- Aquí puedes insertar tu imagen de ejemplo -->
-<!-- ![Ejemplo de Feedback de Errores en BrushBot-3000](URL_DE_TU_IMAGEN_AQUI) -->
-```
-[Aquí puedes describir brevemente qué muestra la imagen, por ejemplo: "La imagen de arriba muestra cómo se resaltan los errores en el editor de scripts y se listan en la consola de errores."]
-```
-
-![image](https://github.com/user-attachments/assets/830b8a44-1532-4687-a334-4c514c78496f)
+![image_2025-06-15_14-55-29](https://github.com/user-attachments/assets/3165c8bc-e98c-4470-927f-4c99917c7042)
 
 ## 🛠️ Tecnologías Utilizadas
 - **🎮 Motor de Juego**: Godot Engine (versión 4.x recomendada)
