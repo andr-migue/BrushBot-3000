@@ -39,11 +39,11 @@ namespace BrushBot
         {
             if (parameters.Count != 1)
             {
-                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Color(string color).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"Color(Color color).");
             }
             else if (!(parameters[0].Evaluate(context) is Color))
             {
-                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Color(string color).");
+                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Color(Color color).");
             }
         }
         public static void CheckSize(List<Expression> parameters, Context context)
@@ -107,6 +107,21 @@ namespace BrushBot
             if (parameters != null)
             {
                 throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Fill().");
+            }
+        }
+        public static void CheckSetPixel(List<Expression> parameters, Context context)
+        {
+            if (parameters.Count != 2)
+            {
+                throw new CodeError(ErrorType.Count, parameters[0].Location, $"SetPixel(int i, int j)");
+            }
+
+            foreach (Expression expression in parameters)
+            {
+                if (!(expression.Evaluate(context) is int))
+                {
+                    throw new CodeError(ErrorType.Typing, expression.Location, $"SetPixel(int i, int j)");
+                }
             }
         }
         #endregion
@@ -265,6 +280,7 @@ namespace BrushBot
 
             int i = context.Position.Item1;
             int j = context.Position.Item2;
+
             Color Current = context.Picture[i, j];
             if (Current == context.BrushColor) return;
 
@@ -300,20 +316,34 @@ namespace BrushBot
             context.Flag = true;
             context.Animation = false;
         }
+        public static async Task SetPixel(Context context, List<Expression> parameters)
+        {
+            int i = (int)parameters[0].Evaluate(context);
+            int j = (int)parameters[1].Evaluate(context);
+
+            if (IsValid(i, j, context))
+            {
+                context.Picture[i, j] = context.BrushColor;
+                context.Position = (i, j);
+                context.Flag = true;
+                context.Animation = true;
+                await Task.Delay(delay);
+            }
+        }
         #endregion
         #region Functions
         public static Color RGBA(List<Expression> parameters, Context context)
         {
             if (parameters.Count != 4)
             {
-                throw new CodeError(ErrorType.Count, parameters[0].Location, "ARGB(int alpha, int red, int green, int blue).");
+                throw new CodeError(ErrorType.Count, parameters[0].Location, "RGBA(int red, int green, int blue, int alpha).");
             }
 
             foreach (Expression expression in parameters)
             {
                 if (!(expression.Evaluate(context) is int))
                 {
-                    throw new CodeError(ErrorType.Typing, expression.Location, "ARGB(int alpha, int red, int green, int blue).");
+                    throw new CodeError(ErrorType.Typing, expression.Location, "RGBA(int red, int green, int blue, int alpha).");
                 }
 
                 int current = (int)expression.Evaluate(context);

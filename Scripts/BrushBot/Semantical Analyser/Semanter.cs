@@ -22,12 +22,12 @@ namespace BrushBot
                 {
                     if (firstLine.Keyword.Value != "Spawn")
                     {
-                        throw new CodeError(ErrorType.Invalid, firstLine.Location, $"Every code must start with a Spawn(int x, int y)");
+                        throw new CodeError(ErrorType.Invalid, firstLine.Location, $"Every code must be start with a Spawn(int x, int y)");
                     }
                 }
                 else
                 {
-                    throw new CodeError(ErrorType.Invalid, Nodes[0].Location, $"Every code must start with a Spawn(int x, int y)");
+                    throw new CodeError(ErrorType.Invalid, Nodes[0].Location, $"Every code must be start with a Spawn(int x, int y)");
                 }
             }
             catch (InterpreterError error)

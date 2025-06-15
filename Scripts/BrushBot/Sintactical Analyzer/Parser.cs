@@ -144,13 +144,13 @@ namespace BrushBot
 
             if (errors.Count > 0)
             {
-                string message = "Sintactical Errors in Parameters:\n";
+                string message = "Parameters\n";
 
                 foreach (CodeError error in errors)
                 {
                     message += error.Message + '\n';
                 }
-                throw new ParameterError(message);
+                throw new ParameterError(message, errors[0].Location);
             }
             else
             {

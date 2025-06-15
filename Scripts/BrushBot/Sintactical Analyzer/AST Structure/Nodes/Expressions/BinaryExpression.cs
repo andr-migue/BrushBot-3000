@@ -45,6 +45,7 @@ namespace BrushBot
                 }
                 else throw new CodeError(ErrorType.Invalid, Location, $"{left} and {right} are not comparables.");
             }
+            
             else
             {
                 if (!(left is string || right is string))
@@ -92,6 +93,7 @@ namespace BrushBot
                 }
             }
         }
+        #region Aux
         private bool ToBool(Object value)
         {
             if (value is bool b) return b;
@@ -127,5 +129,6 @@ namespace BrushBot
                 default: throw new CodeError(ErrorType.Invalid, Location, $"{oper}.");
             }
         }
+        #endregion
     }
 }

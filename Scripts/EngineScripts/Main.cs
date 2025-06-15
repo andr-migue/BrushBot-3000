@@ -2,6 +2,7 @@ using Godot;
 using BrushBot;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 public partial class Main : Control
 {
     [Export] FileDialog saveDialog;
@@ -15,7 +16,10 @@ public partial class Main : Control
     [Export] Godot.Label CurrentPosition;
     [Export] ColorRect colorRect;
     [Export] HSlider slider;
-    private Context Context;
+    Context Context;
+    Godot.Color colorError = new Godot.Color(1.0f, 0.2f, 0.2f, 0.3f);
+    Godot.Color transparent = new Godot.Color(0, 0, 0, 0);
+    private HashSet<int> errorLines = new();
     public override void _Ready()
     {
         Context = new Context(64);
@@ -43,7 +47,7 @@ public partial class Main : Control
 
         if (Context.RuntimeError)
         {
-            Terminal.Text += Context.Message + "\r\n";
+            Terminal.Text += "RunTime Error: " + Context.Message + "\r\n";
             Context.RuntimeError = false;
         }
 
@@ -139,18 +143,28 @@ public partial class Main : Control
 
         grid.QueueRedraw();
     }
+    #endregion
+    #region Aux
     private bool IsNumber(string text)
     {
         // Verificar si el texto ingresado es un número.
         if (string.IsNullOrEmpty(text)) return false;
+        
         for (int i = 0; i < text.Length; i++)
         {
             if (char.IsDigit(text[i])) return true;
         }
+
         return false;
     }
     void Analysis()
     {
+        foreach (var line in errorLines)
+        {
+            edit.SetLineBackgroundColor(line, transparent);
+        }
+        errorLines.Clear();
+
         Context.Reset();
         string code = edit.Text;
 
@@ -164,17 +178,26 @@ public partial class Main : Control
         var (checknodes, SemantErrors, context) = semanter.Semant();
 
         Terminal.Text = "\0";
+
         foreach (var error in LexerErrors)
         {
-            Terminal.Text += error.Message + "\r\n";
+            edit.SetLineBackgroundColor(error.Location.Item1 - 1, colorError);
+            errorLines.Add(error.Location.Item1 - 1);
+            Terminal.Text += "Lexical Error: " + error.Message + "\r\n";
         }
+
         foreach (var error in ParseErrors)
         {
-            Terminal.Text += error.Message + "\r\n";
+            edit.SetLineBackgroundColor(error.Location.Item1 - 1, colorError);
+            errorLines.Add(error.Location.Item1 - 1);
+            Terminal.Text += "Syntax Error: " + error.Message + "\r\n";
         }
+
         foreach (var error in SemantErrors)
         {
-            Terminal.Text += error.Message + "\r\n";
+            edit.SetLineBackgroundColor(error.Location.Item1 - 1, colorError);
+            errorLines.Add(error.Location.Item1 - 1);
+            Terminal.Text += "Semantic Error: " + error.Message + "\r\n";
         }
     }
     async Task Execute()
@@ -200,6 +223,7 @@ public partial class Main : Control
             Interpreter Interpreter = new Interpreter(checknodes);
             await Interpreter.Interpret(Context);
         }
+
         else
         {
             Terminal.Text += "Error: Can't execute without solve the errors." + "\r\n";

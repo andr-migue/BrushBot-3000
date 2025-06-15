@@ -1,0 +1,8 @@
+Spawn(0,0)
+Color("Red")
+
+n <- 0
+loop
+SetPixel(n,n)
+n <- n+1
+GoTo[loop](n < 20)

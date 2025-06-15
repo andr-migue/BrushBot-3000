@@ -37,7 +37,7 @@ namespace BrushBot
 			RuntimeError = false;
 			Message = null;
 			Labels.Clear();
-			Scope = new Scope();
+			Scope = new();
 		}
 		public void InitPicture()
 		{
@@ -47,7 +47,6 @@ namespace BrushBot
 				{
 					Picture[i, j] = new Color(PredefColor.Transparent);
 				}
-
 			}
 		}
 	}

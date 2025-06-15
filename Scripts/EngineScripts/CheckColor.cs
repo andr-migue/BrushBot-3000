@@ -1,13 +1,12 @@
 using BrushBot;
 public static class CheckColor
 {
-	public static Godot.Color GetColor(Color color)
+	public static Godot.Color GetColor(BrushBot.Color color)
 	{
 		if (color.Predef != null)
 		{
 			switch (color.Predef)
 			{
-				case PredefColor.Transparent: return new Godot.Color(1, 1, 1, 0);
 				case PredefColor.Red: return new Godot.Color(1, 0, 0);
 				case PredefColor.Blue: return new Godot.Color(0, 0, 1);
 				case PredefColor.Green: return new Godot.Color(0, 1, 0);

@@ -84,8 +84,12 @@ keyword_colors = {
 "Expected": "61afef",
 "IndexOutOfRange": "61afef",
 "Invalid": "61afef",
+"Lexical": "#ff2c2c",
 "OutOfContext": "61afef",
+"RunTime": "#ff2c2c",
+"Semantic": "#ff2c2c",
 "StackOverFlow": "61afef",
+"Syntax": "#ff2c2c",
 "Typing": "61afef",
 "Undefined": "61afef",
 "Unknown": "61afef"
@@ -310,6 +314,7 @@ theme_override_colors/font_readonly_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("8_7wjfc")
 theme_override_font_sizes/font_size = 25
 editable = false
+wrap_mode = 1
 scroll_smooth = true
 syntax_highlighter = SubResource("CodeHighlighter_7lov0")
 

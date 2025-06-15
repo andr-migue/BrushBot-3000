@@ -21,7 +21,7 @@ namespace BrushBot
         #region Sets
         private HashSet<string> Keywords = new HashSet<string>
         {
-            "Spawn", "Respawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle", "Print"
+            "Spawn", "Respawn", "Color", "Size", "Fill", "GoTo", "DrawLine", "DrawCircle", "DrawRectangle", "Print", "SetPixel"
         };
         private HashSet<string> Functions = new HashSet<string>
         {

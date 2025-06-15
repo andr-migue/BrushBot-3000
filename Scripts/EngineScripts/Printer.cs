@@ -2,10 +2,10 @@ using BrushBot;
 using Godot;
 public partial class Printer : TextureRect
 {
-    Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.1f);
     [Export] float LineWidth = 1.0f;
     [Export] AnimatedSprite2D Brush;
-    private Context Context;
+    Context Context;
+    Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.1f);
     public void Init(Context context)
     {
         Context = context;
@@ -29,9 +29,10 @@ public partial class Printer : TextureRect
     {
         for (int i = 1; i < size; i++)
         {
-            float c = i * space;
-            DrawLine(new Vector2(0, c), new Vector2(Size.X, c), GridColor, LineWidth);
-            DrawLine(new Vector2(c, 0), new Vector2(c, Size.Y), GridColor, LineWidth);
+            float scale = i * space;
+
+            DrawLine(new Vector2(0, scale), new Vector2(Size.X, scale), GridColor, LineWidth);
+            DrawLine(new Vector2(scale, 0), new Vector2(scale, Size.Y), GridColor, LineWidth);
         }
     }
     private void DrawColor(int size, float space)

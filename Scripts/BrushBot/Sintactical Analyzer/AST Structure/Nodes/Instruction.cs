@@ -43,6 +43,9 @@ namespace BrushBot
                 case "Fill" :
                     Handle.CheckFill(Parameters, context);
                     break;
+                case "SetPixel" :
+                    Handle.CheckSetPixel(Parameters, context);
+                    break;
                 default: throw new CodeError(ErrorType.Invalid, Location, $"{Keyword.Value}");
             }
         }
@@ -76,6 +79,9 @@ namespace BrushBot
                     break;
                 case "Fill" :
                     await Handle.Fill(context);
+                    break;
+                case "SetPixel" :
+                    await Handle.SetPixel(context, Parameters);
                     break;
                 default: throw new CodeError(ErrorType.Invalid, Location, $"{Keyword.Value}");;
             }
