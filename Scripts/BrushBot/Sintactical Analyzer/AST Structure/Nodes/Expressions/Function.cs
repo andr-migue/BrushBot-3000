@@ -16,7 +16,7 @@ namespace BrushBot
         {
             switch (Name.Value)
             {
-                case "RGBA" : return Handle.RGBA(Parameters, context);
+                case "RGBA": return Handle.RGBA(Parameters, context);
                 case "GetActualX": return Handle.GetActualX(Parameters, context);
                 case "GetActualY": return Handle.GetActualY(Parameters, context);
                 case "GetCanvasSize": return Handle.GetCanvasSize(Parameters, context);
@@ -24,6 +24,7 @@ namespace BrushBot
                 case "IsBrushSize": return Handle.IsBrushSize(Parameters, context);
                 case "IsCanvasColor": return Handle.IsCanvasColor(Parameters, context);
                 case "GetColorCount": return Handle.GetColorCount(Parameters, context);
+
                 default: throw new CodeError(ErrorType.Invalid, Location, $"{Name.Value}");
             }
         }

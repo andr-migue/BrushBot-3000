@@ -19,7 +19,7 @@ public partial class Main : Control
     Context Context;
     Godot.Color colorError = new Godot.Color(1.0f, 0.2f, 0.2f, 0.3f);
     Godot.Color transparent = new Godot.Color(0, 0, 0, 0);
-    private HashSet<int> errorLines = new();
+    HashSet<int> errorLines = new();
     public override void _Ready()
     {
         Context = new Context(64);

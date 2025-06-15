@@ -143,7 +143,7 @@ namespace BrushBot
         {
             context.Message = (string)parameters[0].Evaluate(context);
             context.Print = true;
-            await Task.Delay(delay);
+            await Task.Delay(0);
         }
         public static async Task Color(List<Expression> parameters, Context context)
         {
@@ -160,15 +160,21 @@ namespace BrushBot
             if (size % 2 == 0)
             {
                 context.BrushSize = size - 1;
-                context.Flag = true;
-                await Task.Delay(0);
+
             }
-            else context.BrushSize = size;
+            else
+            {
+                context.BrushSize = size;
+            }
+
+            context.Flag = true;
+            await Task.Delay(0);
         }
         public static async Task DrawLine(List<Expression> parameters, Context context)
         {
             int x = context.Position.Item1;
             int y = context.Position.Item2;
+
             Paint(x, y, context);
             await Task.Delay(delay);
 
@@ -257,7 +263,8 @@ namespace BrushBot
                     for (int j = topLeftY; j < bottomRightY; j++)
                     {
                         bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
-                        if (isBorder && IsValid(i, j, context))
+
+                        if (isBorder)
                         {
                             context.Position = (i, j);
                             Paint(i, j, context);
@@ -289,8 +296,8 @@ namespace BrushBot
             queue.Enqueue((i, j));
             context.Picture[i, j] = context.BrushColor;
 
-            int[] dirX = { 1, -1, 0, 0 };
-            int[] dirY = { 0, 0, 1, -1 };
+            int[] dirX = { 1, 1, 0, -1, -1, -1, 0, 1 };
+            int[] dirY = { 0, -1, -1, -1, 0, 1, 1, 1 };
 
             while (queue.Count > 0)
             {
@@ -350,7 +357,7 @@ namespace BrushBot
 
                 if (!(current >= 0 && current <= 255))
                 {
-                    throw new CodeError(ErrorType.Invalid, expression.Location, $"{current} must be in range 0 to 254.");
+                    throw new CodeError(ErrorType.Invalid, expression.Location, $"{current} must be in range 0 to 255.");
                 }
             }
 

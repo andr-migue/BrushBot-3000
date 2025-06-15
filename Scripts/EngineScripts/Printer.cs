@@ -5,7 +5,7 @@ public partial class Printer : TextureRect
     [Export] float LineWidth = 1.0f;
     [Export] AnimatedSprite2D Brush;
     Context Context;
-    Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.1f);
+    Godot.Color GridColor = new Godot.Color(0, 0, 0, 0.2f);
     public void Init(Context context)
     {
         Context = context;
