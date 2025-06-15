@@ -29,11 +29,6 @@ namespace BrushBot
             {
                 throw new CodeError(ErrorType.Count, parameters[0].Location, $"Print(string message).");
             }
-
-            if (!(parameters[0].Evaluate(context) is string))
-            {
-                throw new CodeError(ErrorType.Typing, parameters[0].Location, $"Print(string message).");
-            }
         }
         public static void CheckColor(List<Expression> parameters, Context context)
         {
@@ -141,7 +136,7 @@ namespace BrushBot
         }
         public static async Task Print(List<Expression> parameters, Context context)
         {
-            context.Message = (string)parameters[0].Evaluate(context);
+            context.Message = parameters[0].Evaluate(context).ToString();
             context.Print = true;
             await Task.Delay(0);
         }
@@ -296,8 +291,8 @@ namespace BrushBot
             queue.Enqueue((i, j));
             context.Picture[i, j] = context.BrushColor;
 
-            int[] dirX = { 1, 1, 0, -1, -1, -1, 0, 1 };
-            int[] dirY = { 0, -1, -1, -1, 0, 1, 1, 1 };
+            int[] dirX = { 1, 0, -1, 0 };
+            int[] dirY = { 0, -1, 0, 1 };
 
             while (queue.Count > 0)
             {
@@ -336,6 +331,8 @@ namespace BrushBot
                 context.Animation = true;
                 await Task.Delay(delay);
             }
+
+            else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"SetPixel(int {i}, int {j})");
         }
         #endregion
         #region Functions

@@ -17,6 +17,18 @@ namespace BrushBot
             B = b;
             A = a;
         }
+        public override string ToString()
+        {
+            if (Predef != null)
+            {
+                return Predef.ToString();
+            }
+
+            else
+            {
+                return R.ToString() + G.ToString() + B.ToString() + A.ToString();
+            }
+		}
 
         // Sobrecargas necesarias para comparar Colores.
         public override bool Equals(object obj)

@@ -43,12 +43,19 @@ namespace BrushBot
 
                     return oper == "==" ? newLeft == newRight : newLeft != newRight;
                 }
+                else if (left is Color && right is Color)
+                {
+                    Color newleft = (Color)left;
+                    Color newright = (Color)right;
+
+                    return oper == "==" ? newleft == newright : newleft != newright;
+                }
                 else throw new CodeError(ErrorType.Invalid, Location, $"{left} and {right} are not comparables.");
             }
             
             else
             {
-                if (!(left is string || right is string))
+                if (!(left is string || right is string) && !(left is Color || right is Color))
                 {
                     int newLeft = ToInt(left);
                     int newRight = ToInt(right);
