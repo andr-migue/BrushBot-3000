@@ -259,7 +259,7 @@ namespace BrushBot
                     {
                         bool isBorder = (i == topLeftX) || (i == bottomRightX - 1) || (j == topLeftY) || (j == bottomRightY - 1);
 
-                        if (isBorder)
+                        if (isBorder && IsValid(i,j, context))
                         {
                             context.Position = (i, j);
                             Paint(i, j, context);
