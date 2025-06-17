@@ -331,8 +331,9 @@ namespace BrushBot
                 context.Animation = true;
                 await Task.Delay(delay);
             }
-
             else throw new CodeError(ErrorType.IndexOutOfRange, parameters[0].Location, $"SetPixel(int {i}, int {j})");
+
+            context.Animation = false;
         }
         #endregion
         #region Functions
