@@ -87,14 +87,24 @@ namespace BrushBot
 
                     else if (Nodes[i] is Jump jump)
                     {
-                        if (jump.Expression.Evaluate(context) is bool)
+                        var expression = jump.Expression.Evaluate(context);
+
+                        if (expression is bool || expression is int)
                         {
+                            if (expression is int)
+                            {
+                                if (expression is not 1 && expression is not 0)
+                                {
+                                    throw new CodeError(ErrorType.Invalid, jump.Location, $"{expression} isn't evaluable like boolean expression.");
+                                }
+                            }
+                            
                             if (!context.Labels.ContainsKey(jump.Label.Value))
                             {
                                 throw new CodeError(ErrorType.OutOfContext, jump.Location, $"Label {jump.Label.Value}.");
                             }
                         }
-                        else throw new CodeError(ErrorType.Invalid, jump.Location, $"Expression of GoTo must be boolean.");
+                        else throw new CodeError(ErrorType.Invalid, jump.Location, $"Expression of GoTo must be boolean or integer.");
                     }
                 }
                 catch (InterpreterError error)

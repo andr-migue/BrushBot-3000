@@ -33,7 +33,9 @@ namespace BrushBot
 
                     else if (Nodes[i] is Jump jump)
                     {
-                        if (jump.Expression.Evaluate(context) is true)
+                        var expression = jump.Expression.Evaluate(context);
+
+                        if (expression is true || expression is 1)
                         {
                             string label = jump.Label.Value;
 
