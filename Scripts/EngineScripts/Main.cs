@@ -123,7 +123,7 @@ public partial class Main : Control
         {
             int size = int.Parse(text);
 
-            if (size >= 0 && size <= 256)
+            if (size >= 1 && size <= 256)
             {
                 Context.Size = size;
                 Context.Picture = new BrushBot.Color[size, size];
